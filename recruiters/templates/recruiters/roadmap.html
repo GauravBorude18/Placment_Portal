@@ -1,0 +1,163 @@
+{% extends 'recruiters/base_recruiter.html' %}
+{% load static %}
+
+{% block title %}Hiring Process Road Map for {{ jaf.company.name }} | A2Z Placement Cell{% endblock %}
+
+{% block content %}
+<div class="recruiter-dashboard-wrap">
+
+  <!-- Roadmap Header Card -->
+  <div style="background: linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e293b 100%); border: 1px solid rgba(6, 182, 212, 0.35); border-radius: var(--radius-lg); padding: 1.35rem 1.6rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.15); flex-wrap: wrap;">
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <div style="width: 50px; height: 50px; border-radius: 14px; background: linear-gradient(135deg, #0284c7, #06b6d4); color: #ffffff; font-weight: 800; font-size: 1rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 16px rgba(6, 182, 212, 0.35); flex-shrink: 0;">
+        {{ jaf.company.logo_fallback }}
+      </div>
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
+          <h2 style="font-size: 1.3rem; color: #ffffff; margin: 0;">{{ jaf.company.name }} • Hiring Process Road Map</h2>
+          <span style="background: rgba(6, 182, 212, 0.2); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.4); font-size: 0.72rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: var(--radius-full);">
+            {{ jaf.role_title }}
+          </span>
+        </div>
+        <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.35rem; line-height: 1.4;">
+          Visual timeline and milestone tracker showing exactly where your recruitment drive stands from initial registration to final offer rollout.
+        </p>
+      </div>
+    </div>
+
+    <!-- Action Buttons & JAF Selector -->
+    <div style="display: flex; gap: 0.65rem; align-items: center; flex-wrap: wrap;">
+      
+      <!-- JAF Selector -->
+      {% if all_jafs|length > 1 %}
+      <select onchange="window.location.href='{% url 'recruiters:roadmap_default' %}' + this.value + '/';" style="padding: 0.45rem 0.75rem; font-size: 0.78rem; font-weight: 700; border-radius: var(--radius-sm); border: 1px solid #cbd5e1; background: #ffffff; color: #0f172a; cursor: pointer;">
+        {% for role in all_jafs %}
+        <option value="{{ role.id }}" {% if role.id == jaf.id %}selected{% endif %}>
+          📋 {{ role.role_title }}
+        </option>
+        {% endfor %}
+      </select>
+      {% endif %}
+
+      <a href="{% url 'recruiters:configure_process' jaf.id %}" class="btn btn-primary btn-sm" style="background: #0284c7; border-color: #0284c7;">
+        <span>⚙️</span> Configure Hiring Workflow
+      </a>
+      <a href="{% url 'recruiters:dashboard' %}" class="btn btn-secondary btn-sm">
+        ← Dashboard
+      </a>
+    </div>
+  </div>
+
+  <!-- Interactive Road Map Stepper / Timeline Container -->
+  <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 2rem 1.75rem; box-shadow: var(--shadow-sm);">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.75rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 1rem;">
+      <div>
+        <h3 style="font-size: 1.15rem; color: #0f172a; font-weight: 800; margin: 0;">Live Recruitment Stages & Milestones</h3>
+        <p style="font-size: 0.78rem; color: var(--text-secondary); margin-top: 0.2rem;">
+          Package: <strong>{{ jaf.ctc_display }}</strong> • Total Pipeline Rounds: <strong>{{ rounds.count }}</strong>
+        </p>
+      </div>
+      <span style="font-size: 0.75rem; background: #eff6ff; color: #1d4ed8; padding: 0.25rem 0.65rem; border-radius: var(--radius-full); font-weight: 700;">
+        📍 Live Drive Progress
+      </span>
+    </div>
+
+    <!-- Timeline Steps Layout -->
+    <div style="display: flex; flex-direction: column; gap: 1.5rem; position: relative;">
+      
+      {% for r in rounds %}
+      <div style="display: flex; gap: 1.25rem; align-items: flex-start; position: relative;">
+        
+        <!-- Left: Step Indicator Badge -->
+        <div style="display: flex; flex-direction: column; align-items: center; flex-shrink: 0; width: 44px;">
+          <div style="width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; z-index: 2; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            {% if r.status == 'COMPLETED' %}
+              background: #ecfdf5; color: #059669; border: 2px solid #10b981;
+            {% elif r.status == 'ACTIVE' %}
+              background: #eff6ff; color: #2563eb; border: 2px solid #3b82f6; animation: pulse 2s infinite;
+            {% else %}
+              background: #f8fafc; color: #94a3b8; border: 2px dashed #cbd5e1;
+            {% endif %}
+          ">
+            {% if r.status == 'COMPLETED' %}✓{% else %}{{ r.round_number }}{% endif %}
+          </div>
+          
+          {% if not forloop.last %}
+          <div style="width: 3px; height: 100%; min-height: 70px; background: {% if r.status == 'COMPLETED' %}#10b981{% else %}#e2e8f0{% endif %}; margin-top: 0.4rem;"></div>
+          {% endif %}
+        </div>
+
+        <!-- Right: Detailed Round Card -->
+        <div style="flex: 1; background: #f8fafc; border: 1px solid {% if r.status == 'ACTIVE' %}#93c5fd{% else %}#e2e8f0{% endif %}; border-radius: 14px; padding: 1.2rem 1.35rem; box-shadow: 0 1px 4px rgba(0,0,0,0.02); transition: transform 0.2s ease;">
+          
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.5rem;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                <h4 style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 0;">{{ r.title }}</h4>
+                
+                <!-- Status Pill -->
+                {% if r.status == 'COMPLETED' %}
+                <span style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: var(--radius-full);">
+                  ✓ Completed
+                </span>
+                {% elif r.status == 'ACTIVE' %}
+                <span style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: var(--radius-full);">
+                  ⚡ Active In Progress
+                </span>
+                {% else %}
+                <span style="background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: var(--radius-full);">
+                  ⏳ Scheduled / Upcoming
+                </span>
+                {% endif %}
+              </div>
+              <p style="font-size: 0.8rem; color: #64748b; margin-top: 0.25rem;">{{ r.description }}</p>
+            </div>
+
+            <!-- HR Quick Progression Actions -->
+            <div style="display: flex; gap: 0.4rem; align-items: center;">
+              {% if r.status != 'COMPLETED' %}
+              <a href="{% url 'recruiters:update_round_status' r.id %}?status=COMPLETED" class="btn btn-secondary btn-sm" style="font-size: 0.72rem; padding: 0.25rem 0.55rem; color: #059669; border-color: #a7f3d0;" title="Mark this milestone as completed">
+                ✓ Mark Completed
+              </a>
+              {% endif %}
+              {% if r.status != 'ACTIVE' %}
+              <a href="{% url 'recruiters:update_round_status' r.id %}?status=ACTIVE" class="btn btn-secondary btn-sm" style="font-size: 0.72rem; padding: 0.25rem 0.55rem; color: #0284c7;" title="Set as current active round">
+                ▶ Set Active
+              </a>
+              {% endif %}
+              <a href="{% url 'recruiters:delete_round' r.id %}?next=roadmap" class="btn btn-secondary btn-sm" style="font-size: 0.72rem; padding: 0.25rem 0.45rem; color: #dc2626; border-color: #fecaca; background: #fff1f2;" onclick="return confirm('Are you sure you want to delete {{ r.title }} from your hiring road map?');" title="Remove this stage">
+                🗑️
+              </a>
+            </div>
+          </div>
+
+          <!-- Round Metadata Grid (Date, Time, Venue, Passing Criteria) -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.65rem; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed #e2e8f0; font-size: 0.78rem;">
+            <div style="color: #475569;">
+              <span style="color: #94a3b8; font-weight: 600;">📅 Date & Time:</span>
+              <div style="font-weight: 700; color: #0f172a; margin-top: 0.1rem;">{{ r.scheduled_date }} • {{ r.scheduled_time }}</div>
+            </div>
+
+            <div style="color: #475569;">
+              <span style="color: #94a3b8; font-weight: 600;">📍 Venue / Platform:</span>
+              <div style="font-weight: 700; color: #0f172a; margin-top: 0.1rem;">{{ r.location_or_platform }}</div>
+            </div>
+
+            <div style="color: #475569;">
+              <span style="color: #94a3b8; font-weight: 600;">🎯 Passing Criteria:</span>
+              <div style="font-weight: 700; color: #0284c7; margin-top: 0.1rem;">{{ r.passing_criteria }}</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+      {% endfor %}
+
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

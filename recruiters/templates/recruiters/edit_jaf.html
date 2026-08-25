@@ -1,0 +1,312 @@
+{% extends 'recruiters/base_recruiter.html' %}
+{% load static %}
+
+{% block title %}Edit Job Announcement Form (JAF) - {{ jaf.role_title }} | {{ company.name }}{% endblock %}
+
+{% block content %}
+<div class="login-page-wrapper" style="padding: 1.5rem 0; max-width: 860px; margin: 0 auto;">
+  <div class="login-card-container" style="max-width: 860px; width: 100%;">
+    
+    <div class="login-card" style="border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
+      
+      <!-- Header Banner -->
+      <div class="login-header" style="text-align: left; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 1rem; flex-wrap: wrap; gap: 0.75rem;">
+        <div style="display: flex; align-items: center; gap: 0.85rem;">
+          <div style="width: 46px; height: 46px; border-radius: 12px; background: linear-gradient(135deg, #0284c7, #06b6d4); color: #fff; font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 16px rgba(6, 182, 212, 0.35);">
+            {{ company.logo_fallback }}
+          </div>
+          <div>
+            <h2 style="font-size: 1.25rem; margin: 0; color: #0f172a;">✏️ Edit JAF for {{ company.name }}</h2>
+            <p style="font-size: 0.78rem; color: var(--text-secondary); margin: 0.15rem 0 0;">Update role title, 10th/12th/CPI cutoffs, 12th subjects, SGPA pointers & backlog rules</p>
+          </div>
+        </div>
+        <a href="{% url 'recruiters:dashboard' %}" class="btn btn-secondary btn-sm">← Back to Dashboard</a>
+      </div>
+
+      <form method="POST" action="{% url 'recruiters:edit_jaf' jaf_id=jaf.id %}" class="login-body">
+        {% csrf_token %}
+
+        <!-- 1. Job Role & Compensation Package -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.1rem; margin-bottom: 1.25rem;">
+          <div style="font-weight: 700; font-size: 0.88rem; color: #0f172a; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
+            <span>💼</span> 1. Job Role & Compensation Package
+          </div>
+
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 0.85rem; margin-bottom: 0.75rem;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label">Job Role Title *</label>
+              <input type="text" name="role_title" value="{{ jaf.role_title }}" class="form-input" placeholder="e.g. Software Development Engineer" required>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label">Industry Sector *</label>
+              <select name="sector" class="filter-select" style="width: 100%; padding: 0.65rem; border-radius: var(--radius-sm);">
+                <option value="Software & AI" {% if jaf.sector == "Software & AI" %}selected{% endif %}>Software & AI</option>
+                <option value="Quant & Finance" {% if jaf.sector == "Quant & Finance" %}selected{% endif %}>Quant & Finance</option>
+                <option value="Core Engineering" {% if jaf.sector == "Core Engineering" %}selected{% endif %}>Core Engineering</option>
+                <option value="Management Consulting" {% if jaf.sector == "Management Consulting" %}selected{% endif %}>Management Consulting</option>
+                <option value="Analytics & Data" {% if jaf.sector == "Analytics & Data" %}selected{% endif %}>Analytics & Data</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label">CTC / Salary Package (₹ LPA or ₹ Cr) *</label>
+              <input type="text" name="ctc" value="{{ jaf.ctc_display }}" class="form-input" placeholder="e.g. ₹36.0 LPA or ₹1.2 Cr" required>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label">Compensation Breakdown</label>
+              <input type="text" name="ctc_breakdown" value="{{ jaf.ctc_breakdown }}" class="form-input" placeholder="e.g. ₹28L Base + ₹4L Bonus + ₹4L Stocks">
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Standard Academic Cutoffs (10th, 12th & Degree CPI) -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.1rem; margin-bottom: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
+            <div style="font-weight: 700; font-size: 0.88rem; color: #0f172a; display: flex; align-items: center; gap: 0.4rem;">
+              <span>🎓</span> 2. Standard Academic Cutoffs (10th, 12th & Degree CPI)
+            </div>
+            <span style="font-size: 0.72rem; color: #0284c7; font-weight: 600;">✓ Checked = Rule Active | Unchecked = No Rule</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.85rem; margin-bottom: 0.85rem;">
+            
+            <!-- 10th Cutoff Toggle Box -->
+            <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 0.75rem;">
+              <label style="display: flex; align-items: center; gap: 0.45rem; font-weight: 700; font-size: 0.8rem; color: #0f172a; cursor: pointer; margin-bottom: 0.4rem;">
+                <input type="checkbox" name="require_tenth_cutoff" id="chk-tenth" {% if jaf.require_tenth_cutoff %}checked{% endif %} onchange="toggleCriteriaInput('chk-tenth', 'box-tenth')">
+                <span>📘 10th Standard %</span>
+              </label>
+              <div id="box-tenth" style="{% if not jaf.require_tenth_cutoff %}opacity: 0.4; pointer-events: none;{% endif %}">
+                <input type="number" step="0.1" name="min_tenth_percentage" id="input-tenth" class="form-input" value="{{ jaf.min_tenth_percentage }}" placeholder="Min %" style="font-size: 0.82rem; padding: 0.45rem;">
+                <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 0.2rem;">Min overall 10th %</div>
+              </div>
+            </div>
+
+            <!-- 12th / Diploma Cutoff Toggle Box -->
+            <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 0.75rem;">
+              <label style="display: flex; align-items: center; gap: 0.45rem; font-weight: 700; font-size: 0.8rem; color: #0f172a; cursor: pointer; margin-bottom: 0.4rem;">
+                <input type="checkbox" name="require_twelfth_cutoff" id="chk-twelfth" {% if jaf.require_twelfth_cutoff %}checked{% endif %} onchange="toggleCriteriaInput('chk-twelfth', 'box-twelfth')">
+                <span>📙 12th / Diploma %</span>
+              </label>
+              <div id="box-twelfth" style="{% if not jaf.require_twelfth_cutoff %}opacity: 0.4; pointer-events: none;{% endif %}">
+                <input type="number" step="0.1" name="min_twelfth_diploma_percentage" id="input-twelfth" class="form-input" value="{{ jaf.min_twelfth_diploma_percentage }}" placeholder="Min %" style="font-size: 0.82rem; padding: 0.45rem;">
+                <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 0.2rem;">12th HSC or MSBTE Diploma</div>
+              </div>
+            </div>
+
+            <!-- Degree CPI Cutoff Toggle Box -->
+            <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 0.75rem;">
+              <label style="display: flex; align-items: center; gap: 0.45rem; font-weight: 700; font-size: 0.8rem; color: #0f172a; cursor: pointer; margin-bottom: 0.4rem;">
+                <input type="checkbox" name="require_cgpa_cutoff" id="chk-cpi" {% if jaf.require_cgpa_cutoff %}checked{% endif %} onchange="toggleCriteriaInput('chk-cpi', 'box-cpi')">
+                <span>🎯 Degree Overall CPI</span>
+              </label>
+              <div id="box-cpi" style="{% if not jaf.require_cgpa_cutoff %}opacity: 0.4; pointer-events: none;{% endif %}">
+                <input type="number" step="0.01" min="0" max="10" name="cgpa_cutoff" id="input-cpi" class="form-input" value="{{ jaf.cgpa_cutoff }}" placeholder="Min CPI" style="font-size: 0.82rem; padding: 0.45rem;">
+                <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 0.2rem;">Cumulative CPI (0 - 10)</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Admission Route (12th 8-Sems vs Diploma 6-Sems) -->
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Allowed Degree Admission Routes</label>
+            <select name="allowed_entry_routes" class="filter-select" style="width: 100%; padding: 0.65rem; border-radius: var(--radius-sm);">
+              <option value="BOTH" {% if jaf.allowed_entry_routes == "BOTH" %}selected{% endif %}>✓ Both 12th Regular (All 8 Semesters) & Diploma DSE (All 6 Semesters)</option>
+              <option value="12TH_ONLY" {% if jaf.allowed_entry_routes == "12TH_ONLY" %}selected{% endif %}>12th Standard Regular Route Only (8 Semesters)</option>
+              <option value="DIPLOMA_ONLY" {% if jaf.allowed_entry_routes == "DIPLOMA_ONLY" %}selected{% endif %}>Diploma / Direct Second Year Route Only (6 Semesters)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 3. 12th Subject-Wise Cutoff Section -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.1rem; margin-bottom: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <label style="display: flex; align-items: center; gap: 0.45rem; font-weight: 700; font-size: 0.88rem; color: #0f172a; cursor: pointer; margin-bottom: 0;">
+              <input type="checkbox" name="require_twelfth_subjects" id="chk-subjects" {% if jaf.require_twelfth_subjects %}checked{% endif %} onchange="toggleCriteriaInput('chk-subjects', 'box-subjects')">
+              <span>📐 3. Enforce 12th Subject-Wise Cutoffs (Optional)</span>
+            </label>
+            <span style="font-size: 0.72rem; color: #64748b;">(Useful for SDE, Quant, and Core IC Roles)</span>
+          </div>
+
+          <div id="box-subjects" style="{% if not jaf.require_twelfth_subjects %}opacity: 0.4; pointer-events: none;{% endif %}">
+            
+            <!-- Standard Core Subjects Grid -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.65rem; margin-bottom: 0.85rem;">
+              <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0.6rem;">
+                <label style="font-size: 0.72rem; font-weight: 700; color: #1e293b;">📐 Mathematics %</label>
+                <input type="number" step="0.1" name="min_twelfth_maths" value="{{ jaf.min_twelfth_maths }}" class="form-input" style="font-size: 0.8rem; padding: 0.35rem; margin-top: 0.25rem;">
+              </div>
+
+              <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0.6rem;">
+                <label style="font-size: 0.72rem; font-weight: 700; color: #1e293b;">⚡ Physics %</label>
+                <input type="number" step="0.1" name="min_twelfth_physics" value="{{ jaf.min_twelfth_physics }}" class="form-input" style="font-size: 0.8rem; padding: 0.35rem; margin-top: 0.25rem;">
+              </div>
+
+              <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0.6rem;">
+                <label style="font-size: 0.72rem; font-weight: 700; color: #1e293b;">🧪 Chemistry %</label>
+                <input type="number" step="0.1" name="min_twelfth_chemistry" value="{{ jaf.min_twelfth_chemistry }}" class="form-input" style="font-size: 0.8rem; padding: 0.35rem; margin-top: 0.25rem;">
+              </div>
+
+              <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0.6rem;">
+                <label style="font-size: 0.72rem; font-weight: 700; color: #1e293b;">🗣️ English %</label>
+                <input type="number" step="0.1" name="min_twelfth_english" value="{{ jaf.min_twelfth_english }}" class="form-input" style="font-size: 0.8rem; padding: 0.35rem; margin-top: 0.25rem;">
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 4. Degree Semester-Wise Minimum SGPA Pointer Section -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.1rem; margin-bottom: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <label style="display: flex; align-items: center; gap: 0.45rem; font-weight: 700; font-size: 0.88rem; color: #0f172a; cursor: pointer; margin-bottom: 0;">
+              <input type="checkbox" name="require_min_sem_sgpa" id="chk-sem-sgpa" {% if jaf.require_min_sem_sgpa %}checked{% endif %} onchange="toggleCriteriaInput('chk-sem-sgpa', 'box-sem-sgpa')">
+              <span>📊 4. Degree Minimum SGPA in Every Single Semester (Optional)</span>
+            </label>
+            <span style="font-size: 0.72rem; color: #64748b;">(Evaluates Sem 1-8 for 12th & Sem 3-8 for Diploma)</span>
+          </div>
+
+          <div id="box-sem-sgpa" style="{% if not jaf.require_min_sem_sgpa %}opacity: 0.4; pointer-events: none;{% endif %} display: flex; flex-direction: column; gap: 0.65rem;">
+            
+            <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 0.85rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+              <div>
+                <div style="font-size: 0.82rem; font-weight: 700; color: #0f172a;">Minimum Passing SGPA Pointer per Semester:</div>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">Candidates with any individual semester pointer below this value will be flagged.</div>
+              </div>
+              <div style="display: flex; align-items: center; gap: 0.4rem;">
+                <input type="number" step="0.01" min="0" max="10" name="min_sem_sgpa" value="{{ jaf.min_sem_sgpa }}" class="form-input" style="width: 90px; padding: 0.45rem; font-size: 0.85rem; font-weight: 700;">
+                <span style="font-size: 0.8rem; font-weight: 700; color: #64748b;">/ 10.0</span>
+              </div>
+            </div>
+
+            <!-- Route Evaluation Transparency Strip -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; font-size: 0.73rem;">
+              <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 0.55rem 0.75rem; color: #1e40af;">
+                <strong>📘 12th Regular Route:</strong> Evaluates all <strong>8 Semesters (Sem 1 to 8)</strong> + semester-wise backlog history.
+              </div>
+              <div style="background: #f0fdfa; border: 1px solid #99f6e4; border-radius: 8px; padding: 0.55rem 0.75rem; color: #0f766e;">
+                <strong>📙 Diploma (DSE) Route:</strong> Evaluates <strong>6 Semesters (Sem 3 to 8)</strong> (Sem 1 & 2 are exempted) + backlogs history.
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 5. Backlog Policy (Two Independent Checkboxes: Live vs Past Dead Backlogs) -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.1rem; margin-bottom: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
+            <div style="font-weight: 700; font-size: 0.88rem; color: #0f172a; display: flex; align-items: center; gap: 0.4rem;">
+              <span>🚫</span> 5. Backlog Policy (Independent Toggles)
+            </div>
+            <span style="font-size: 0.72rem; color: #64748b;">(Toggle live or history backlog rules separately)</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+            
+            <!-- 5A. Active / Live Backlogs Checkbox Box -->
+            <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 0.75rem;">
+              <label style="display: flex; align-items: center; gap: 0.45rem; font-weight: 700; font-size: 0.82rem; color: #0f172a; cursor: pointer; margin-bottom: 0.4rem;">
+                <input type="checkbox" name="require_active_backlogs_cutoff" id="chk-live-backlog" {% if jaf.require_active_backlogs_cutoff %}checked{% endif %} onchange="toggleCriteriaInput('chk-live-backlog', 'box-live-backlog')">
+                <span>🔴 Enforce Active/Live Backlog Limit</span>
+              </label>
+              <div id="box-live-backlog" style="{% if not jaf.require_active_backlogs_cutoff %}opacity: 0.4; pointer-events: none;{% endif %}">
+                <select name="max_active_backlogs" class="filter-select" style="width: 100%; padding: 0.55rem; border-radius: var(--radius-sm); font-size: 0.8rem;">
+                  <option value="0" {% if jaf.max_active_backlogs == 0 %}selected{% endif %}>0 Backlogs (Strictly 0 Live Backlogs Allowed)</option>
+                  <option value="1" {% if jaf.max_active_backlogs == 1 %}selected{% endif %}>Max 1 Active Live Backlog Allowed</option>
+                  <option value="2" {% if jaf.max_active_backlogs == 2 %}selected{% endif %}>Max 2 Active Live Backlogs Allowed</option>
+                </select>
+                <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 0.2rem;">Checks current ongoing live backlogs</div>
+              </div>
+            </div>
+
+            <!-- 5B. History of Past Dead Backlogs Checkbox Box -->
+            <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 0.75rem;">
+              <label style="display: flex; align-items: center; gap: 0.45rem; font-weight: 700; font-size: 0.82rem; color: #0f172a; cursor: pointer; margin-bottom: 0.4rem;">
+                <input type="checkbox" name="require_history_backlogs_cutoff" id="chk-dead-backlog" {% if jaf.require_history_backlogs_cutoff %}checked{% endif %} onchange="toggleCriteriaInput('chk-dead-backlog', 'box-dead-backlog')">
+                <span>⚪ Enforce Past Dead Backlogs Limit</span>
+              </label>
+              <div id="box-dead-backlog" style="{% if not jaf.require_history_backlogs_cutoff %}opacity: 0.4; pointer-events: none;{% endif %}">
+                <select name="max_history_backlogs" class="filter-select" style="width: 100%; padding: 0.55rem; border-radius: var(--radius-sm); font-size: 0.8rem;">
+                  <option value="0" {% if jaf.max_history_backlogs == 0 %}selected{% endif %}>0 - Clean History (Never Backlogged)</option>
+                  <option value="1" {% if jaf.max_history_backlogs == 1 %}selected{% endif %}>Max 1 Past Cleared Backlog</option>
+                  <option value="2" {% if jaf.max_history_backlogs == 2 %}selected{% endif %}>Max 2 Past Cleared Backlogs</option>
+                  <option value="99" {% if jaf.max_history_backlogs == 99 %}selected{% endif %}>Any Past Backlogs Allowed (if cleared)</option>
+                </select>
+                <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 0.2rem;">Checks past cleared backlog history</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 6. Eligible Departments Checkboxes -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.1rem; margin-bottom: 1.25rem;">
+          <div style="font-weight: 700; font-size: 0.88rem; color: #0f172a; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
+            <span>🌿</span> 6. Eligible Engineering Departments (Toggle Branches)
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; font-size: 0.82rem;">
+            <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer;">
+              <input type="checkbox" name="eligible_branches" value="Computer Science & Engineering" {% if "Computer Science & Engineering" in jaf.eligible_branches %}checked{% endif %}>
+              <span>Computer Science & Engineering</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer;">
+              <input type="checkbox" name="eligible_branches" value="Electrical Engineering" {% if "Electrical Engineering" in jaf.eligible_branches %}checked{% endif %}>
+              <span>Electrical Engineering</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer;">
+              <input type="checkbox" name="eligible_branches" value="Mathematics & Computing" {% if "Mathematics & Computing" in jaf.eligible_branches %}checked{% endif %}>
+              <span>Mathematics & Computing</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer;">
+              <input type="checkbox" name="eligible_branches" value="Mechanical Engineering" {% if "Mechanical Engineering" in jaf.eligible_branches %}checked{% endif %}>
+              <span>Mechanical Engineering</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.4rem; cursor: pointer;">
+              <input type="checkbox" name="eligible_branches" value="Data Science & AI Centre" {% if "Data Science & AI Centre" in jaf.eligible_branches %}checked{% endif %}>
+              <span>Data Science & AI Centre</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- 7. Job Description & Responsibilities -->
+        <div class="form-group" style="margin-bottom: 1.25rem;">
+          <label class="form-label">Job Description & Skill Requirements *</label>
+          <textarea name="description" class="form-input" rows="4" style="font-family: inherit; font-size: 0.85rem;" required>{{ jaf.description }}</textarea>
+        </div>
+
+        <!-- Form Actions -->
+        <div style="display: flex; gap: 0.75rem; justify-content: flex-end; border-top: 1px solid #f1f5f9; padding-top: 1.25rem;">
+          <a href="{% url 'recruiters:dashboard' %}" class="btn btn-secondary">Cancel</a>
+          <button type="submit" class="btn btn-primary" style="background: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%); border: none; font-weight: 800;">
+            <span>💾</span> Update JAF & Save to Database
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function toggleCriteriaInput(chkId, boxId) {
+  const chk = document.getElementById(chkId);
+  const box = document.getElementById(boxId);
+  if (chk && box) {
+    if (chk.checked) {
+      box.style.opacity = '1';
+      box.style.pointerEvents = 'auto';
+    } else {
+      box.style.opacity = '0.4';
+      box.style.pointerEvents = 'none';
+    }
+  }
+}
+</script>
+{% endblock %}

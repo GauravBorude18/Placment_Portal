@@ -1,0 +1,59 @@
+{% extends 'students/base_student.html' %}
+{% load static %}
+
+{% block title %}Placement Policy & Guidelines | A2Z Placement Cell{% endblock %}
+
+{% block content %}
+<div class="policy-wrapper" style="max-width: 1000px; margin: 0 auto;">
+  
+  <!-- Header Card -->
+  <div style="background: linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e293b 100%); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 16px; padding: 1.5rem 1.75rem; color: #ffffff; margin-bottom: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.12);">
+    <div style="display: flex; align-items: center; gap: 0.85rem;">
+      <span style="font-size: 2rem;">📜</span>
+      <div>
+        <h2 style="font-size: 1.35rem; font-weight: 800; color: #ffffff; margin: 0;">Official Campus Placement Policy & Code of Conduct</h2>
+        <p style="font-size: 0.82rem; color: #94a3b8; margin: 0.25rem 0 0;">Phase 1 & Phase 2 Recruitment Season Rules (Academic Year 2025-26)</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Policy Articles Grid -->
+  <div style="display: flex; flex-direction: column; gap: 1rem;">
+    
+    <!-- Rule 1: One Student One Job (Dream Offer Clause) -->
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem; box-shadow: var(--shadow-sm);">
+      <div style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.5rem;">
+        <span style="background: #eff6ff; color: #1d4ed8; font-weight: 800; font-size: 0.8rem; padding: 0.2rem 0.55rem; border-radius: 6px; border: 1px solid #bfdbfe;">Rule 1</span>
+        <h3 style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin: 0;">One Job Policy & Dream Company Upgrade</h3>
+      </div>
+      <p style="font-size: 0.84rem; color: #475569; line-height: 1.6; margin: 0;">
+        Once a student secures an official campus placement offer, they are marked as <strong>Placed</strong> and deregistered from standard open drives. A student may apply for an upgrade only if the subsequent opening is designated as a <em>Super Dream Category (Package &ge; 1.5x of current offer)</em>.
+      </p>
+    </div>
+
+    <!-- Rule 2: Eligibility & Verification -->
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem; box-shadow: var(--shadow-sm);">
+      <div style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.5rem;">
+        <span style="background: #ecfdf5; color: #047857; font-weight: 800; font-size: 0.8rem; padding: 0.2rem 0.55rem; border-radius: 6px; border: 1px solid #a7f3d0;">Rule 2</span>
+        <h3 style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin: 0;">Verified Academic Credentials & DPC Sign-off</h3>
+      </div>
+      <p style="font-size: 0.84rem; color: #475569; line-height: 1.6; margin: 0;">
+        All 10th marks, 12th/Diploma percentages, subject breakdowns, semester SGPA pointers, and backlog status must be verified by the Department Placement Coordinator (DPC). Any falsification of data leads to immediate debarment.
+      </p>
+    </div>
+
+    <!-- Rule 3: Slot Attendance & Interview Punctuality -->
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem; box-shadow: var(--shadow-sm);">
+      <div style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.5rem;">
+        <span style="background: #fefce8; color: #ca8a04; font-weight: 800; font-size: 0.8rem; padding: 0.2rem 0.55rem; border-radius: 6px; border: 1px solid #fef08a;">Rule 3</span>
+        <h3 style="font-size: 1.05rem; font-weight: 700; color: #0f172a; margin: 0;">Interview Punctuality & Anti-Ghosting Policy</h3>
+      </div>
+      <p style="font-size: 0.84rem; color: #475569; line-height: 1.6; margin: 0;">
+        Shortlisted candidates must appear for designated interview slots at least 15 minutes prior to scheduled time. Unexcused absence from an allocated slot results in a 14-day recruitment suspension.
+      </p>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

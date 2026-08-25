@@ -1,0 +1,99 @@
+{% extends 'recruiters/base_recruiter.html' %}
+{% load static %}
+
+{% block title %}Deleted Job Postings Archive | {{ current_company.name }}{% endblock %}
+
+{% block content %}
+<div class="recruiter-dashboard-wrap">
+
+  <!-- Header Banner -->
+  <div style="background: linear-gradient(135deg, #1e1b4b 0%, #311b92 100%); border: 1px solid rgba(167, 139, 250, 0.3); border-radius: 14px; padding: 1.2rem 1.5rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; box-shadow: 0 4px 16px rgba(0,0,0,0.15); margin-bottom: 1.5rem; flex-wrap: wrap;">
+    <div>
+      <div style="display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;">
+        <h1 style="font-size: 1.25rem; color: #ffffff; margin: 0; font-weight: 800;">
+          🗑️ Deleted Job Postings Archive • {{ current_company.name }}
+        </h1>
+        <span style="background: rgba(239, 68, 68, 0.25); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); font-size: 0.72rem; font-weight: 800; padding: 0.15rem 0.6rem; border-radius: 9999px;">
+          {{ deleted_count }} Soft-Deleted Openings
+        </span>
+      </div>
+      <p style="font-size: 0.8rem; color: #c7d2fe; margin-top: 0.25rem; margin-bottom: 0;">
+        Review job openings previously removed from your active dashboard. You can restore them anytime or delete them permanently.
+      </p>
+    </div>
+
+    <div>
+      <a href="{% url 'recruiters:dashboard' %}" class="btn btn-secondary btn-sm" style="background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.3); color: #ffffff; font-weight: 800;">
+        <span>⬅️</span> Back to Active Dashboard
+      </a>
+    </div>
+  </div>
+
+  <!-- Deleted Jobs Table / Cards Grid -->
+  {% if deleted_jafs %}
+  <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 14px; padding: 1.25rem; box-shadow: 0 2px 10px rgba(0,0,0,0.04);">
+    <div style="overflow-x: auto;">
+      <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        <thead>
+          <tr style="border-bottom: 2px solid #e2e8f0; font-size: 0.78rem; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.04em;">
+            <th style="padding: 0.75rem 1rem;">Role Title & Sector</th>
+            <th style="padding: 0.75rem 1rem;">CTC Package</th>
+            <th style="padding: 0.75rem 1rem;">Total Applicants</th>
+            <th style="padding: 0.75rem 1rem;">Deleted Date</th>
+            <th style="padding: 0.75rem 1rem; text-align: right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for j in deleted_jafs %}
+          <tr style="border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; font-weight: 700;">
+            <td style="padding: 1rem;">
+              <strong style="color: #0f172a; font-size: 0.95rem; display: block;">💼 {{ j.role_title }}</strong>
+              <span style="font-size: 0.74rem; color: #64748b; font-weight: 600;">{{ j.sector }} • {{ j.location }}</span>
+            </td>
+            <td style="padding: 1rem; color: #059669; font-weight: 900;">
+              {{ j.ctc_display }}
+            </td>
+            <td style="padding: 1rem;">
+              <span style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 0.75rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 6px;">
+                👥 {{ j.app_count }} Applicants
+              </span>
+            </td>
+            <td style="padding: 1rem; color: #64748b; font-size: 0.78rem;">
+              {{ j.deleted_at|date:"M d, Y • h:i A"|default:"Recently Deleted" }}
+            </td>
+            <td style="padding: 1rem; text-align: right;">
+              <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                
+                <!-- Restore Button -->
+                <a href="{% url 'recruiters:restore_jaf' jaf_id=j.id %}" class="btn btn-sm" style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; font-weight: 800; font-size: 0.78rem; padding: 0.35rem 0.75rem; border-radius: 8px;">
+                  <span>♻️</span> Restore Opening
+                </a>
+
+                <!-- Permanent Delete Button -->
+                <a href="{% url 'recruiters:permanent_delete_jaf' jaf_id=j.id %}" onclick="return confirm('⚠️ Are you sure you want to PERMANENTLY delete {{ j.role_title }}? This cannot be undone!')" class="btn btn-sm" style="background: #fff1f2; color: #b91c1c; border: 1px solid #fecaca; font-weight: 800; font-size: 0.78rem; padding: 0.35rem 0.75rem; border-radius: 8px;">
+                  <span>💥</span> Delete Permanently
+                </a>
+
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 3rem 1.5rem; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03);">
+    <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🎉</div>
+    <h3 style="font-size: 1.1rem; color: #0f172a; font-weight: 800; margin-bottom: 0.35rem;">No Deleted Job Postings</h3>
+    <p style="font-size: 0.82rem; color: #64748b; max-width: 420px; margin: 0 auto 1.25rem;">
+      Your company has no soft-deleted openings. When you delete a job announcement, it will safely appear here for review and restoration.
+    </p>
+    <a href="{% url 'recruiters:dashboard' %}" class="btn btn-primary btn-sm" style="background: #0284c7; border: none; font-weight: 800;">
+      <span>⬅️</span> Return to Active Dashboard
+    </a>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

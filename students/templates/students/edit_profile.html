@@ -1,0 +1,828 @@
+{% extends 'students/base_student.html' %}
+{% load static %}
+
+{% block title %}Update Student Profile & Registration Records | A2Z Placement Cell{% endblock %}
+
+{% block content %}
+<div class="login-page-wrapper" style="padding: 2.5rem 1rem;">
+  <div class="login-card-container" style="max-width: 740px;">
+    
+    <div class="login-card">
+      <!-- Header -->
+      <div class="login-header" style="text-align: left; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <div style="display: flex; align-items: center; gap: 0.85rem;">
+          <div class="login-crest-wrap" style="width: 48px; height: 48px; font-size: 1.15rem; margin-bottom: 0;">A2Z</div>
+          <div>
+            <h2 style="font-size: 1.25rem;">Update Official Profile</h2>
+            <p style="font-size: 0.78rem;">Modify Personal, Address, 10th/12th Academics & Resumes</p>
+          </div>
+        </div>
+        <a href="{% url 'students:student_dashboard' %}" class="btn btn-secondary btn-sm">
+          <span>←</span> Back to Dashboard
+        </a>
+      </div>
+
+      <!-- Update Form -->
+      <form method="POST" action="{% url 'students:edit_profile' %}" enctype="multipart/form-data" class="login-body">
+        {% csrf_token %}
+
+        {% if success_message %}
+        <div style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #047857; padding: 0.85rem 1rem; border-radius: var(--radius-sm); font-size: 0.84rem; display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1rem;">
+          <span style="font-size: 1.2rem;">✓</span>
+          <span><strong>{{ success_message }}</strong></span>
+        </div>
+        {% endif %}
+
+        {% if error_message %}
+        <div class="login-alert">
+          <span>⚠️</span>
+          <span>{{ error_message }}</span>
+        </div>
+        {% endif %}
+
+        <!-- 1. Official Candidate Passport Photo & Identification -->
+        <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.25rem; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.5rem;">
+            <div style="font-weight: 800; font-size: 0.95rem; color: #0f172a; display: flex; align-items: center; gap: 0.4rem;">
+              <span>📸</span> 1. Candidate Passport Photo (Profile Picture)
+            </div>
+            <span style="font-size: 0.72rem; color: #059669; font-weight: 700; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 0.15rem 0.5rem; border-radius: 9999px;">
+              ✓ Visible to Recruiters & TPO
+            </span>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
+            <div style="position: relative; width: 92px; height: 92px; border-radius: 12px; border: 2px dashed #94a3b8; overflow: hidden; background: #f8fafc; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.08); flex-shrink: 0;" id="photo-preview-box">
+              {% if student.profile_picture_url %}
+                <img src="{{ student.profile_picture_url }}" alt="{{ student.full_name }}" id="student-photo-preview-img" style="width: 100%; height: 100%; object-fit: cover;">
+              {% else %}
+                <div id="student-photo-fallback-initials" style="font-size: 1.8rem; font-weight: 800; color: #1e40af; background: #eff6ff; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                  {{ student.full_name|slice:":2"|upper }}
+                </div>
+              {% endif %}
+            </div>
+
+            <div style="flex: 1; min-width: 260px;">
+              <label class="form-label" style="font-weight: 700; color: #1e293b; margin-bottom: 0.35rem;">Upload Passport Size Photo (JPG / PNG)</label>
+              <input type="file" name="profile_picture" id="profile-picture-input" accept="image/jpeg,image/png,image/webp" class="form-input" style="padding: 0.45rem; font-size: 0.8rem; background: #f8fafc; cursor: pointer;" onchange="previewStudentPhoto(this)">
+              <div style="font-size: 0.72rem; color: #64748b; margin-top: 0.35rem; line-height: 1.4;">
+                📌 Recommended: Formal passport photo with clear plain background (Max size: 2MB).
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Identity & Student Login Credentials -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 1.1rem; margin-bottom: 1.25rem;">
+          <div style="font-weight: 700; font-size: 0.9rem; color: #0f172a; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
+            <span>👤</span> 2. Student Identity & Login
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+            <div class="form-group" style="margin-bottom: 0.5rem;">
+              <label for="prof-fullname" class="form-label">Full Name (Alphabets only) *</label>
+              <div class="form-input-wrap">
+                <span class="form-input-icon">📛</span>
+                <input type="text" name="full_name" id="prof-fullname" class="form-input" value="{{ student.full_name }}" required oninput="this.value = this.value.replace(/[^a-zA-Z\s.]/g, '')">
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0.5rem;">
+              <label for="prof-roll" class="form-label">Roll Number (Locked by DPC)</label>
+              <div class="form-input-wrap">
+                <span class="form-input-icon">🆔</span>
+                <input type="text" id="prof-roll" class="form-input" value="{{ student.roll_number }}" disabled style="background: #f1f5f9; cursor: not-allowed;">
+              </div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; margin-top: 0.5rem;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="prof-email" class="form-label">Official Student Email ID *</label>
+              <div class="form-input-wrap">
+                <span class="form-input-icon">✉️</span>
+                <input type="email" name="email" id="prof-email" class="form-input" value="{{ student.user.email }}" required>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="prof-username" class="form-label">Student Login ID / Username</label>
+              <div class="form-input-wrap">
+                <span class="form-input-icon">💻</span>
+                <input type="text" id="prof-username" class="form-input" value="{{ student.user.username }}" disabled style="background: #f1f5f9; cursor: not-allowed;">
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 2. Contact Information & Permanent Address -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 1.1rem; margin-bottom: 1.25rem;">
+          <div style="font-weight: 700; font-size: 0.9rem; color: #0f172a; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
+            <span>🏠</span> 2. Contact & Permanent Address
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; margin-bottom: 0.75rem;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="prof-phone" class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Primary Mobile Number (10 digits) *</span>
+                <span id="prof-phone-badge" style="font-size: 0.7rem; font-weight: 700; color: #64748b;">10/10 digits</span>
+              </label>
+              <div class="form-input-wrap">
+                <span class="form-input-icon">📞</span>
+                <input type="tel" name="phone_number" id="prof-phone" class="form-input" value="{{ student.phone_number }}" placeholder="e.g. 9820154321" maxlength="10" required oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10); updatePhoneBadge(this, 'prof-phone-badge')">
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="prof-alt-phone" class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Alternate / Guardian Phone</span>
+                <span id="prof-alt-phone-badge" style="font-size: 0.7rem; font-weight: 700; color: #64748b;">Optional</span>
+              </label>
+              <div class="form-input-wrap">
+                <span class="form-input-icon">📱</span>
+                <input type="tel" name="alternate_phone" id="prof-alt-phone" class="form-input" value="{{ student.alternate_phone }}" placeholder="e.g. 9123456789" maxlength="10" oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10); updatePhoneBadge(this, 'prof-alt-phone-badge')">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0.75rem;">
+            <label for="prof-address" class="form-label">Permanent Residential Address *</label>
+            <textarea name="permanent_address" id="prof-address" class="form-input" rows="2" placeholder="House / Flat No., Street, Landmark" required style="resize: vertical; padding: 0.6rem 0.85rem; width: 100%;">{{ student.permanent_address }}</textarea>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="prof-pincode" class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>PIN Code (6 digits) *</span>
+                <span id="prof-pincode-badge" style="display: none; font-size: 0.7rem; font-weight: 700;"></span>
+              </label>
+              <input type="text" name="pincode" id="prof-pincode" class="form-input" value="{{ student.pincode }}" placeholder="e.g. 411001" maxlength="6" required oninput="this.value = this.value.replace(/\D/g, '').slice(0, 6); handlePincodeLookup(this.value, 'prof-city', 'prof-state', 'prof-pincode-badge')">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="prof-city" class="form-label">City (Auto-filled) *</label>
+              <input type="text" name="city" id="prof-city" class="form-input" value="{{ student.city }}" placeholder="e.g. Pune" required>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="prof-state" class="form-label">State (Auto-filled) *</label>
+              <input type="text" name="state" id="prof-state" class="form-input" value="{{ student.state }}" placeholder="e.g. Maharashtra" required>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. 10th & 12th / Diploma Academic Records -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 1.1rem; margin-bottom: 1.25rem;">
+          <div style="font-weight: 700; font-size: 0.9rem; color: #0f172a; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
+            <span>🏫</span> 3. 10th & 12th / Diploma Academic Credentials
+          </div>
+
+          <!-- Entry Route Switcher -->
+          <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--radius-sm); padding: 0.75rem 1rem; margin-bottom: 0.85rem;">
+            <label class="form-label" style="font-weight: 700; color: #1e40af; margin-bottom: 0.4rem; display: block; font-size: 0.76rem;">
+              Admission / Entry Route to Degree
+            </label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+              <label style="display: flex; align-items: center; gap: 0.5rem; background: #ffffff; border: 1.5px solid {% if student.entry_route != 'DIPLOMA_DSE' %}#2563eb{% else %}#cbd5e1{% endif %}; border-radius: 8px; padding: 0.5rem 0.75rem; cursor: pointer;" id="label-edit-route-12th">
+                <input type="radio" name="entry_route" value="12TH_REGULAR" {% if student.entry_route != 'DIPLOMA_DSE' %}checked{% endif %} onchange="toggleEntryRouteEdit(this.value)">
+                <div>
+                  <div style="font-size: 0.8rem; font-weight: 700; color: #0f172a;">🎓 12th Standard HSC Route</div>
+                  <div style="font-size: 0.68rem; color: #64748b;">4-Year Regular (Sem 1 to Sem 8)</div>
+                </div>
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.5rem; background: #ffffff; border: 1.5px solid {% if student.entry_route == 'DIPLOMA_DSE' %}#2563eb{% else %}#cbd5e1{% endif %}; border-radius: 8px; padding: 0.5rem 0.75rem; cursor: pointer;" id="label-edit-route-diploma">
+                <input type="radio" name="entry_route" value="DIPLOMA_DSE" {% if student.entry_route == 'DIPLOMA_DSE' %}checked{% endif %} onchange="toggleEntryRouteEdit(this.value)">
+                <div>
+                  <div style="font-size: 0.8rem; font-weight: 700; color: #0f172a;">⚙️ Diploma / DSE Route</div>
+                  <div style="font-size: 0.68rem; color: #64748b;">Direct Second Year (Sem 3 to Sem 8)</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- 10th Record -->
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 0.85rem; margin-bottom: 0.85rem;">
+            <div style="font-weight: 600; font-size: 0.82rem; color: #1e40af; margin-bottom: 0.5rem;">📘 10th Standard Details</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin-bottom: 0.5rem;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" style="font-size: 0.72rem;">Board</label>
+                <div class="form-input-wrap">
+                  <span class="form-input-icon">🏛️</span>
+                  <input type="text" name="tenth_board" class="form-input" value="{{ student.tenth_board|default:'CBSE' }}">
+                </div>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" style="font-size: 0.72rem;">Percentage (0-100%)</label>
+                <div class="form-input-wrap">
+                  <span class="form-input-icon">📊</span>
+                  <input type="number" step="0.01" min="0" max="100" name="tenth_percentage" class="form-input" value="{{ student.tenth_percentage }}" oninput="if(parseFloat(this.value)>100) this.value=100; if(parseFloat(this.value)<0) this.value=0;">
+                </div>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" style="font-size: 0.72rem;">Passing Year (4 digits)</label>
+                <div class="form-input-wrap">
+                  <span class="form-input-icon">📅</span>
+                  <input type="text" name="tenth_year" class="form-input" value="{{ student.tenth_year|default:'2020' }}" maxlength="4" oninput="this.value = this.value.replace(/\D/g, '').slice(0, 4)">
+                </div>
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" style="font-size: 0.72rem;">10th School Name</label>
+              <div class="form-input-wrap">
+                <span class="form-input-icon">🏫</span>
+                <input type="text" name="tenth_school" class="form-input" value="{{ student.tenth_school }}" placeholder="e.g. Delhi Public School">
+              </div>
+            </div>
+          </div>
+
+          <!-- 12th Record Container -->
+          <div id="container-edit-12th" style="{% if student.entry_route == 'DIPLOMA_DSE' %}display: none;{% endif %} background: #ffffff; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 0.85rem;">
+            <div style="font-weight: 600; font-size: 0.82rem; color: #1e40af; margin-bottom: 0.5rem;">📙 12th Standard / Junior College Details & Subject Marks</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin-bottom: 0.5rem;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" style="font-size: 0.72rem;">Board</label>
+                <div class="form-input-wrap">
+                  <span class="form-input-icon">🏛️</span>
+                  <input type="text" name="twelfth_board" class="form-input" value="{{ student.twelfth_board|default:'CBSE' }}">
+                </div>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" style="font-size: 0.72rem;">Aggregate % (0-100%)</label>
+                <div class="form-input-wrap">
+                  <span class="form-input-icon">📊</span>
+                  <input type="number" step="0.01" min="0" max="100" name="twelfth_percentage" class="form-input" value="{{ student.twelfth_percentage }}" oninput="if(parseFloat(this.value)>100) this.value=100; if(parseFloat(this.value)<0) this.value=0;">
+                </div>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" style="font-size: 0.72rem;">Passing Year (4 digits)</label>
+                <div class="form-input-wrap">
+                  <span class="form-input-icon">📅</span>
+                  <input type="text" name="twelfth_year" class="form-input" value="{{ student.twelfth_year|default:'2022' }}" maxlength="4" oninput="this.value = this.value.replace(/\D/g, '').slice(0, 4)">
+                </div>
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 0.75rem;">
+              <label class="form-label" style="font-size: 0.72rem;">12th College / School Name</label>
+              <div class="form-input-wrap">
+                <span class="form-input-icon">🏫</span>
+                <input type="text" name="twelfth_school" class="form-input" value="{{ student.twelfth_school }}" placeholder="e.g. National Junior College">
+              </div>
+            </div>
+
+            <!-- Subject-Wise Marks Matrix with 1-Click Remove [✕] -->
+            <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0.85rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <div>
+                  <span style="font-size: 0.82rem; font-weight: 700; color: #1e40af;">📝 12th Subject-Wise Marks (%)</span>
+                  <div style="font-size: 0.7rem; color: #64748b;">Standard subjects & additional elective subjects</div>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="add12thCustomSubjectEdit()" style="font-size: 0.74rem; font-weight: 700; padding: 0.3rem 0.65rem; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 0.3rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                  <span>➕</span> Add More Subject
+                </button>
+              </div>
+
+              <!-- Standard Core 5 Subjects with 1-Click Delete [✕] -->
+              <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; margin-bottom: 0.65rem;">
+                
+                <div class="subject-box-item" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.35rem 0.45rem;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.15rem;">
+                    <label style="font-size: 0.68rem; font-weight: 700; color: #475569; margin: 0;">📐 Maths</label>
+                    <button type="button" onclick="this.closest('.subject-box-item').remove()" title="हा विषय काढून टाका" style="border: none; background: #fee2e2; color: #dc2626; border-radius: 3px; width: 16px; height: 16px; font-size: 0.6rem; display: flex; align-items: center; justify-content: center; cursor: pointer; line-height: 1; padding: 0; font-weight: bold;">✕</button>
+                  </div>
+                  <input type="number" step="0.01" min="0" max="100" name="twelfth_maths" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.78rem; text-align: center;" value="{{ student.twelfth_maths|default:'95.00' }}">
+                </div>
+
+                <div class="subject-box-item" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.35rem 0.45rem;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.15rem;">
+                    <label style="font-size: 0.68rem; font-weight: 700; color: #475569; margin: 0;">⚡ Physics</label>
+                    <button type="button" onclick="this.closest('.subject-box-item').remove()" title="हा विषय काढून टाका" style="border: none; background: #fee2e2; color: #dc2626; border-radius: 3px; width: 16px; height: 16px; font-size: 0.6rem; display: flex; align-items: center; justify-content: center; cursor: pointer; line-height: 1; padding: 0; font-weight: bold;">✕</button>
+                  </div>
+                  <input type="number" step="0.01" min="0" max="100" name="twelfth_physics" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.78rem; text-align: center;" value="{{ student.twelfth_physics|default:'94.00' }}">
+                </div>
+
+                <div class="subject-box-item" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.35rem 0.45rem;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.15rem;">
+                    <label style="font-size: 0.68rem; font-weight: 700; color: #475569; margin: 0;">🧪 Chemistry</label>
+                    <button type="button" onclick="this.closest('.subject-box-item').remove()" title="हा विषय काढून टाका" style="border: none; background: #fee2e2; color: #dc2626; border-radius: 3px; width: 16px; height: 16px; font-size: 0.6rem; display: flex; align-items: center; justify-content: center; cursor: pointer; line-height: 1; padding: 0; font-weight: bold;">✕</button>
+                  </div>
+                  <input type="number" step="0.01" min="0" max="100" name="twelfth_chemistry" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.78rem; text-align: center;" value="{{ student.twelfth_chemistry|default:'92.00' }}">
+                </div>
+
+                <div class="subject-box-item" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.35rem 0.45rem;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.15rem;">
+                    <label style="font-size: 0.68rem; font-weight: 700; color: #475569; margin: 0;">🗣️ English</label>
+                    <button type="button" onclick="this.closest('.subject-box-item').remove()" title="हा विषय काढून टाका" style="border: none; background: #fee2e2; color: #dc2626; border-radius: 3px; width: 16px; height: 16px; font-size: 0.6rem; display: flex; align-items: center; justify-content: center; cursor: pointer; line-height: 1; padding: 0; font-weight: bold;">✕</button>
+                  </div>
+                  <input type="number" step="0.01" min="0" max="100" name="twelfth_english" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.78rem; text-align: center;" value="{{ student.twelfth_english|default:'90.00' }}">
+                </div>
+
+                <div class="subject-box-item" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.35rem 0.45rem;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.15rem;">
+                    <label style="font-size: 0.68rem; font-weight: 700; color: #475569; margin: 0;">💻 Comp Sci</label>
+                    <button type="button" onclick="this.closest('.subject-box-item').remove()" title="हा विषय काढून टाका" style="border: none; background: #fee2e2; color: #dc2626; border-radius: 3px; width: 16px; height: 16px; font-size: 0.6rem; display: flex; align-items: center; justify-content: center; cursor: pointer; line-height: 1; padding: 0; font-weight: bold;">✕</button>
+                  </div>
+                  <input type="number" step="0.01" min="0" max="100" name="twelfth_computer_science" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.78rem; text-align: center;" value="{{ student.twelfth_computer_science|default:'98.00' }}">
+                </div>
+
+              </div>
+
+              <!-- Section for dynamically added elective subjects -->
+              <div id="dynamic-subjects-header" style="{% if not student.custom_subject_marks %}display: none;{% endif %} margin-bottom: 0.4rem; font-size: 0.72rem; font-weight: 700; color: #334155; display: flex; align-items: center; justify-content: space-between;">
+                <span>📚 Additional Elective Subjects Added:</span>
+                <span style="font-size: 0.68rem; color: #059669; font-weight: 600;">✓ Active in Record</span>
+              </div>
+
+              <!-- Container for dynamically added subjects -->
+              <div id="edit-dynamic-subjects-list" style="display: flex; flex-direction: column; gap: 0.45rem;">
+                {% if student.custom_subject_marks %}
+                  {% for sub_name, sub_mark in student.custom_subject_marks.items %}
+                  <div class="custom-subject-row" style="display: grid; grid-template-columns: 2fr 1fr auto auto; gap: 0.5rem; align-items: center; background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 6px; padding: 0.35rem 0.6rem; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
+                    <div style="display: flex; align-items: center; gap: 0.35rem;">
+                      <span style="font-size: 0.8rem;">🏷️</span>
+                      <input type="text" name="custom_subject_name[]" value="{{ sub_name }}" placeholder="Subject Name (e.g. Hindi, Biology)" class="form-input" style="padding: 0.25rem 0.4rem; font-size: 0.78rem;" required>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.35rem;">
+                      <span style="font-size: 0.8rem;">🎯</span>
+                      <input type="number" step="0.01" min="0" max="100" name="custom_subject_marks[]" value="{{ sub_mark }}" placeholder="Marks %" class="form-input" style="padding: 0.25rem 0.4rem; font-size: 0.78rem;" required oninput="if(parseFloat(this.value)>100) this.value=100; if(parseFloat(this.value)<0) this.value=0;">
+                    </div>
+                    <span style="font-size: 0.68rem; color: #059669; font-weight: 700; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 0.2rem 0.45rem; border-radius: 4px;">✓ Included</span>
+                    <button type="button" onclick="this.closest('.custom-subject-row').remove()" style="background: #fee2e2; border: 1px solid #fca5a5; color: #b91c1c; border-radius: 4px; padding: 0.25rem 0.5rem; font-size: 0.72rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.25rem; font-weight: 600;" title="Remove this subject row">
+                      <span>🗑️</span> Remove
+                    </button>
+                  </div>
+                  {% endfor %}
+                {% endif %}
+              </div>
+
+              <!-- Helpful Note -->
+              <div style="margin-top: 0.5rem; font-size: 0.7rem; color: #64748b; background: #eff6ff; border: 1px solid #dbeafe; border-radius: 6px; padding: 0.4rem 0.65rem; display: flex; align-items: center; gap: 0.35rem;">
+                <span>💡</span>
+                <span><strong>टीप (Tip):</strong> येथे विषय व टक्केवारी टाकल्यावर ते आपोआप जोडले जातात. खालील <strong>"💾 Save & Update Official Record"</strong> बटणावर क्लिक करताच सर्व विषय रेकॉर्डमध्ये कायमस्वरूपी सेव्ह होतील.</span>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Diploma Record Container -->
+          <div id="container-edit-diploma" style="{% if student.entry_route != 'DIPLOMA_DSE' %}display: none;{% endif %} background: #ffffff; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 0.85rem;">
+            <div style="font-weight: 600; font-size: 0.82rem; color: #1e40af; margin-bottom: 0.5rem;">⚙️ Diploma / Polytechnic Credentials & Semester Marks (DSE)</div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" style="font-size: 0.72rem;">Diploma Board</label>
+                <input type="text" name="diploma_board" class="form-input" value="{{ student.diploma_board|default:'MSBTE' }}">
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" style="font-size: 0.72rem;">Aggregate Percentage (0-100%)</label>
+                <input type="number" step="0.01" min="0" max="100" name="diploma_percentage" class="form-input" value="{{ student.diploma_percentage|default:'85.00' }}" oninput="if(parseFloat(this.value)>100) this.value=100; if(parseFloat(this.value)<0) this.value=0;">
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" style="font-size: 0.72rem;">Polytechnic College Name</label>
+                <input type="text" name="diploma_college" class="form-input" value="{{ student.diploma_college|default:'' }}" placeholder="e.g. Govt Polytechnic">
+              </div>
+            </div>
+
+            <!-- Diploma Semester 1 to 6 Breakdown -->
+            <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0.75rem;">
+              <div style="font-size: 0.78rem; font-weight: 700; color: #1e40af; margin-bottom: 0.45rem;">
+                📊 Diploma Semester-Wise Marks Percentage (Sem 1 to Sem 6)
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.45rem;">
+                <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.35rem;">
+                  <label style="font-size: 0.65rem; font-weight: 700; color: #475569; display: block; margin-bottom: 0.15rem;">Sem 1 %</label>
+                  <input type="number" step="0.01" min="0" max="100" name="diploma_sem1_percentage" class="form-input" style="padding: 0.2rem 0.35rem; font-size: 0.78rem;" value="{{ student.diploma_sem1_percentage|default:'85.00' }}">
+                </div>
+                <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.35rem;">
+                  <label style="font-size: 0.65rem; font-weight: 700; color: #475569; display: block; margin-bottom: 0.15rem;">Sem 2 %</label>
+                  <input type="number" step="0.01" min="0" max="100" name="diploma_sem2_percentage" class="form-input" style="padding: 0.2rem 0.35rem; font-size: 0.78rem;" value="{{ student.diploma_sem2_percentage|default:'86.00' }}">
+                </div>
+                <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.35rem;">
+                  <label style="font-size: 0.65rem; font-weight: 700; color: #475569; display: block; margin-bottom: 0.15rem;">Sem 3 %</label>
+                  <input type="number" step="0.01" min="0" max="100" name="diploma_sem3_percentage" class="form-input" style="padding: 0.2rem 0.35rem; font-size: 0.78rem;" value="{{ student.diploma_sem3_percentage|default:'88.00' }}">
+                </div>
+                <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.35rem;">
+                  <label style="font-size: 0.65rem; font-weight: 700; color: #475569; display: block; margin-bottom: 0.15rem;">Sem 4 %</label>
+                  <input type="number" step="0.01" min="0" max="100" name="diploma_sem4_percentage" class="form-input" style="padding: 0.2rem 0.35rem; font-size: 0.78rem;" value="{{ student.diploma_sem4_percentage|default:'87.50' }}">
+                </div>
+                <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.35rem;">
+                  <label style="font-size: 0.65rem; font-weight: 700; color: #475569; display: block; margin-bottom: 0.15rem;">Sem 5 %</label>
+                  <input type="number" step="0.01" min="0" max="100" name="diploma_sem5_percentage" class="form-input" style="padding: 0.2rem 0.35rem; font-size: 0.78rem;" value="{{ student.diploma_sem5_percentage|default:'89.00' }}">
+                </div>
+                <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.35rem;">
+                  <label style="font-size: 0.65rem; font-weight: 700; color: #475569; display: block; margin-bottom: 0.15rem;">Sem 6 %</label>
+                  <input type="number" step="0.01" min="0" max="100" name="diploma_sem6_percentage" class="form-input" style="padding: 0.2rem 0.35rem; font-size: 0.78rem;" value="{{ student.diploma_sem6_percentage|default:'90.50' }}">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Degree Program, CPI & Semester-Wise Pointers -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 1.1rem; margin-bottom: 1.25rem;">
+          <div style="font-weight: 700; font-size: 0.9rem; color: #0f172a; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
+            <span>🎓</span> 4. Degree Program & Semester-Wise SGPA Pointers
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; margin-bottom: 0.75rem;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="prof-degree" class="form-label">Degree Program *</label>
+              <select name="degree" id="prof-degree" class="filter-select" style="width: 100%; padding: 0.65rem; border-radius: var(--radius-sm);" required>
+                <option value="B.Tech in Computer Science & Engineering" {% if "Computer Science" in student.degree %}selected{% endif %}>B.Tech in Computer Science & Engineering</option>
+                <option value="B.Tech in Electrical Engineering" {% if "Electrical" in student.degree %}selected{% endif %}>B.Tech in Electrical Engineering</option>
+                <option value="B.Tech in Mechanical Engineering" {% if "Mechanical" in student.degree %}selected{% endif %}>B.Tech in Mechanical Engineering</option>
+                <option value="Dual Degree (B.Tech + M.Tech) in CSE" {% if "Dual Degree" in student.degree %}selected{% endif %}>Dual Degree (B.Tech + M.Tech) in CSE</option>
+                <option value="M.Tech in Artificial Intelligence & Data Science" {% if "AI" in student.degree %}selected{% endif %}>M.Tech in AI & Data Science</option>
+                <option value="BS in Mathematics & Computing" {% if "Mathematics" in student.degree %}selected{% endif %}>BS in Mathematics & Computing</option>
+              </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="prof-department" class="form-label">Department *</label>
+              <select name="department" id="prof-department" class="filter-select" style="width: 100%; padding: 0.65rem; border-radius: var(--radius-sm);" required>
+                <option value="Computer Science & Engineering" {% if "Computer Science" in student.department %}selected{% endif %}>Computer Science & Engineering</option>
+                <option value="Electrical Engineering" {% if "Electrical" in student.department %}selected{% endif %}>Electrical Engineering</option>
+                <option value="Mechanical Engineering" {% if "Mechanical" in student.department %}selected{% endif %}>Mechanical Engineering</option>
+                <option value="Mathematics & Computing" {% if "Mathematics" in student.department %}selected{% endif %}>Mathematics & Computing</option>
+                <option value="Data Science & AI Centre" {% if "Data Science" in student.department %}selected{% endif %}>Data Science & AI Centre</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.85rem; margin-bottom: 0.85rem;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="prof-cgpa" class="form-label">Overall CPI / CGPA (0.0 to 10.0) *</label>
+              <div class="form-input-wrap">
+                <span class="form-input-icon">🎯</span>
+                <input type="number" step="0.01" min="0" max="10" name="cgpa" id="prof-cgpa" class="form-input" value="{{ student.cgpa }}" required oninput="if(parseFloat(this.value)>10) this.value=10; if(parseFloat(this.value)<0) this.value=0;">
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="prof-active-backlogs" class="form-label">Live Active Backlogs *</label>
+              <div class="form-input-wrap">
+                <span class="form-input-icon">⚠️</span>
+                <input type="number" min="0" max="20" name="active_backlogs" id="prof-active-backlogs" class="form-input" value="{{ student.active_backlogs }}" required>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="prof-specialization" class="form-label">Specialization / Minor</label>
+              <div class="form-input-wrap">
+                <span class="form-input-icon">🏷️</span>
+                <input type="text" name="specialization" id="prof-specialization" class="form-input" value="{{ student.specialization }}" placeholder="e.g. Honours in AI • Minor in Finance">
+              </div>
+            </div>
+          </div>
+
+          <!-- Semester-Wise SGPA Pointers Matrix -->
+          <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: var(--radius-sm); padding: 0.85rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem;">
+              <span style="font-size: 0.82rem; font-weight: 700; color: #1e40af;">📊 Degree Semester Pointers (SGPA) & Backlogs (Sem 1 to 8)</span>
+              <span style="font-size: 0.72rem; color: #059669; font-weight: 600;">Visible to Recruiters & TPO</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.6rem;">
+              <!-- Sem 1 -->
+              <div id="box-edit-sem1" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.45rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem;">
+                  <label style="font-size: 0.68rem; font-weight: 700; color: #475569; margin: 0;">Sem 1 SGPA</label>
+                  <label style="font-size: 0.62rem; color: #dc2626; margin: 0;">Backlogs</label>
+                </div>
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 0.3rem;">
+                  <input type="number" step="0.01" min="0" max="10" name="sem1_sgpa" class="form-input" style="padding: 0.2rem 0.35rem; font-size: 0.8rem;" value="{{ student.sem1_sgpa|default:'9.20' }}">
+                  <input type="number" min="0" max="10" name="sem1_backlogs" class="form-input" style="padding: 0.2rem 0.35rem; font-size: 0.8rem;" value="{{ student.sem1_backlogs|default:'0' }}">
+                </div>
+              </div>
+              <!-- Sem 2 -->
+              <div id="box-edit-sem2" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.45rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem;">
+                  <label style="font-size: 0.68rem; font-weight: 700; color: #475569; margin: 0;">Sem 2 SGPA</label>
+                  <label style="font-size: 0.62rem; color: #dc2626; margin: 0;">Backlogs</label>
+                </div>
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 0.3rem;">
+                  <input type="number" step="0.01" min="0" max="10" name="sem2_sgpa" class="form-input" style="padding: 0.2rem 0.35rem; font-size: 0.8rem;" value="{{ student.sem2_sgpa|default:'9.40' }}">
+                  <input type="number" min="0" max="10" name="sem2_backlogs" class="form-input" style="padding: 0.2rem 0.35rem; font-size: 0.8rem;" value="{{ student.sem2_backlogs|default:'0' }}">
+                </div>
+              </div>
+              <!-- Sem 3 -->
+              <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.45rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem;">
+                  <label style="font-size: 0.68rem; font-weight: 700; color: #475569; margin: 0;">Sem 3 SGPA</label>
+                  <label style="font-size: 0.62rem; color: #dc2626; margin: 0;">Backlogs</label>
+                </div>
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 0.3rem;">
+                  <input type="number" step="0.01" min="0" max="10" name="sem3_sgpa" class="form-input" style="padding: 0.2rem 0.35rem; font-size: 0.8rem;" value="{{ student.sem3_sgpa|default:'9.10' }}">
+                  <input type="number" min="0" max="10" name="sem3_backlogs" class="form-input" style="padding: 0.2rem 0.35rem; font-size: 0.8rem;" value="{{ student.sem3_backlogs|default:'0' }}">
+                </div>
+              </div>
+              <!-- Sem 4 -->
+              <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.45rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem;">
+                  <label style="font-size: 0.68rem; font-weight: 700; color: #475569; margin: 0;">Sem 4 SGPA</label>
+                  <label style="font-size: 0.62rem; color: #dc2626; margin: 0;">Backlogs</label>
+                </div>
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 0.3rem;">
+                  <input type="number" step="0.01" min="0" max="10" name="sem4_sgpa" class="form-input" style="padding: 0.2rem 0.35rem; font-size: 0.8rem;" value="{{ student.sem4_sgpa|default:'9.50' }}">
+                  <input type="number" min="0" max="10" name="sem4_backlogs" class="form-input" style="padding: 0.2rem 0.35rem; font-size: 0.8rem;" value="{{ student.sem4_backlogs|default:'0' }}">
+                </div>
+              </div>
+              <!-- Sem 5 -->
+              <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.45rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem;">
+                  <label style="font-size: 0.68rem; font-weight: 700; color: #475569; margin: 0;">Sem 5 SGPA</label>
+                  <label style="font-size: 0.62rem; color: #dc2626; margin: 0;">Backlogs</label>
+                </div>
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 0.3rem;">
+                  <input type="number" step="0.01" min="0" max="10" name="sem5_sgpa" class="form-input" style="padding: 0.2rem 0.35rem; font-size: 0.8rem;" value="{{ student.sem5_sgpa|default:'9.60' }}">
+                  <input type="number" min="0" max="10" name="sem5_backlogs" class="form-input" style="padding: 0.2rem 0.35rem; font-size: 0.8rem;" value="{{ student.sem5_backlogs|default:'0' }}">
+                </div>
+              </div>
+              <!-- Sem 6 -->
+              <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.45rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem;">
+                  <label style="font-size: 0.68rem; font-weight: 700; color: #475569; margin: 0;">Sem 6 SGPA</label>
+                  <label style="font-size: 0.62rem; color: #dc2626; margin: 0;">Backlogs</label>
+                </div>
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 0.3rem;">
+                  <input type="number" step="0.01" min="0" max="10" name="sem6_sgpa" class="form-input" style="padding: 0.2rem 0.35rem; font-size: 0.8rem;" value="{{ student.sem6_sgpa|default:'9.40' }}">
+                  <input type="number" min="0" max="10" name="sem6_backlogs" class="form-input" style="padding: 0.2rem 0.35rem; font-size: 0.8rem;" value="{{ student.sem6_backlogs|default:'0' }}">
+                </div>
+              </div>
+              <!-- Sem 7 -->
+              <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.45rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem;">
+                  <label style="font-size: 0.68rem; font-weight: 700; color: #475569; margin: 0;">Sem 7 SGPA</label>
+                  <label style="font-size: 0.62rem; color: #dc2626; margin: 0;">Backlogs</label>
+                </div>
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 0.3rem;">
+                  <input type="number" step="0.01" min="0" max="10" name="sem7_sgpa" class="form-input" style="padding: 0.2rem 0.35rem; font-size: 0.8rem;" value="{{ student.sem7_sgpa|default:'9.50' }}">
+                  <input type="number" min="0" max="10" name="sem7_backlogs" class="form-input" style="padding: 0.2rem 0.35rem; font-size: 0.8rem;" value="{{ student.sem7_backlogs|default:'0' }}">
+                </div>
+              </div>
+              <!-- Sem 8 -->
+              <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.45rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem;">
+                  <label style="font-size: 0.68rem; font-weight: 700; color: #475569; margin: 0;">Sem 8 SGPA</label>
+                  <label style="font-size: 0.62rem; color: #dc2626; margin: 0;">Backlogs</label>
+                </div>
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 0.3rem;">
+                  <input type="number" step="0.01" min="0" max="10" name="sem8_sgpa" class="form-input" style="padding: 0.2rem 0.35rem; font-size: 0.8rem;" value="{{ student.sem8_sgpa|default:'9.60' }}">
+                  <input type="number" min="0" max="10" name="sem8_backlogs" class="form-input" style="padding: 0.2rem 0.35rem; font-size: 0.8rem;" value="{{ student.sem8_backlogs|default:'0' }}">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. Master Resumes Upload -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 1.1rem; margin-bottom: 1.25rem;">
+          <div style="font-weight: 700; font-size: 0.9rem; color: #0f172a; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
+            <span>📁</span> 5. Master Resumes (PDF Format)
+          </div>
+
+          <!-- SDE Master Resume -->
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 0.85rem; margin-bottom: 0.75rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+              <span style="font-size: 0.82rem; font-weight: 700; color: #0f172a;">📄 Master PDF Resume (SDE / Core)</span>
+              <span id="sde-resume-edit-badge" style="font-size: 0.72rem; color: #059669; font-weight: 700; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 0.15rem 0.55rem; border-radius: 6px;">
+                ✓ Current: {{ student.resume_sde_name|default:"Master_Resume.pdf" }}
+              </span>
+            </div>
+            <input type="file" name="resume_sde_file" id="edit-resume-sde-input" accept=".pdf" class="form-input" style="padding: 0.4rem; font-size: 0.78rem;" onchange="previewEditResume(this, 'sde-resume-edit-badge')">
+            <div id="edit-resume-help" style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.35rem;">
+              Upload a new PDF document to replace your current verified Master Resume.
+            </div>
+          </div>
+        </div>
+
+        <!-- 6. Core Technical Skills & Key Projects/Experience -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 1.1rem; margin-bottom: 1.25rem;">
+          <div style="font-weight: 700; font-size: 0.9rem; color: #0f172a; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
+            <span>💻</span> 6. Core Technical Skills & Key Projects / Experience
+          </div>
+
+          <!-- Technical Skills -->
+          <div class="form-group" style="margin-bottom: 0.85rem;">
+            <label class="form-label">💻 Core Technical Skills & Specializations (Comma-separated)</label>
+            <input type="text" name="technical_skills" class="form-input" value="{{ student.technical_skills }}" placeholder="e.g. Data Structures & Algorithms, Python / Django, C++ Systems Programming, PostgreSQL, REST APIs">
+            <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.25rem;">Separate skills with commas (e.g. Data Structures & Algorithms, Python / Django, C++ Systems Programming)</div>
+          </div>
+
+          <!-- Key Projects -->
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">🚀 Key Projects & Industry Experience (One per line)</label>
+            <textarea name="key_projects_experience" class="form-input" rows="4" style="font-family: inherit; font-size: 0.85rem;" placeholder="Enterprise High-Throughput Matching Engine: Designed distributed order matching pipeline handling 10,000+ requests/sec with Redis & Celery.">{{ student.key_projects_experience }}</textarea>
+            <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.25rem;">Add key project descriptions or honours, one item per line.</div>
+          </div>
+        </div>
+
+        <!-- Submit & Cancel Buttons -->
+        <div style="display: flex; gap: 0.75rem; margin-top: 1rem;">
+          <a href="{% url 'students:student_dashboard' %}" class="btn btn-secondary" style="flex: 1; text-align: center;">Cancel</a>
+          <button type="submit" class="btn-login-submit" style="flex: 2; margin-top: 0;">
+            <span>💾</span> Save & Update Official Record
+          </button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function handlePincodeLookup(pinValue, cityInputId, stateInputId, badgeId) {
+  const cleanPin = pinValue.replace(/\D/g, '');
+  const badge = document.getElementById(badgeId);
+  const cityInput = document.getElementById(cityInputId);
+  const stateInput = document.getElementById(stateInputId);
+
+  if (cleanPin.length === 6) {
+    if (badge) {
+      badge.style.display = 'inline-block';
+      badge.style.color = '#2563eb';
+      badge.innerHTML = '🔍 Locating...';
+    }
+
+    fetch(`/api/pincode-lookup/${cleanPin}/`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          if (cityInput) {
+            cityInput.value = data.city;
+            cityInput.style.borderColor = '#10b981';
+            cityInput.style.background = '#f0fdf4';
+          }
+          if (stateInput) {
+            stateInput.value = data.state;
+            stateInput.style.borderColor = '#10b981';
+            stateInput.style.background = '#f0fdf4';
+          }
+          if (badge) {
+            badge.style.display = 'inline-block';
+            badge.style.color = '#059669';
+            badge.innerHTML = `✓ ${data.city}, ${data.state}`;
+          }
+        } else {
+          if (badge) {
+            badge.style.display = 'inline-block';
+            badge.style.color = '#d97706';
+            badge.innerHTML = '⚠️ Custom Region';
+          }
+        }
+      })
+      .catch(() => {
+        if (badge) badge.style.display = 'none';
+      });
+  } else {
+    if (badge) badge.style.display = 'none';
+  }
+}
+
+function updatePhoneBadge(input, badgeId) {
+  const badge = document.getElementById(badgeId);
+  if (!badge) return;
+  const len = input.value.length;
+  if (len === 10) {
+    badge.innerText = "✓ 10/10 digits";
+    badge.style.color = "#059669";
+    input.style.borderColor = "#10b981";
+  } else if (len > 0) {
+    badge.innerText = `${len}/10 digits`;
+    badge.style.color = "#d97706";
+    input.style.borderColor = "#f59e0b";
+  } else {
+    badge.innerText = badgeId.includes('alt') ? "Optional" : "0/10 digits";
+    badge.style.color = "#64748b";
+    input.style.borderColor = "#cbd5e1";
+  }
+}
+
+function add12thCustomSubjectEdit() {
+  const container = document.getElementById('edit-dynamic-subjects-list');
+  const header = document.getElementById('dynamic-subjects-header');
+  if (!container) return;
+  if (header) header.style.display = 'flex';
+  
+  const div = document.createElement('div');
+  div.className = 'custom-subject-row';
+  div.style.cssText = "display: grid; grid-template-columns: 2fr 1fr auto auto; gap: 0.5rem; align-items: center; background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 6px; padding: 0.35rem 0.6rem; box-shadow: 0 1px 2px rgba(0,0,0,0.03);";
+  div.innerHTML = `
+    <div style="display: flex; align-items: center; gap: 0.35rem;">
+      <span style="font-size: 0.8rem;">🏷️</span>
+      <input type="text" name="custom_subject_name[]" placeholder="Subject Name (e.g. Hindi, Biology)" class="form-input" style="padding: 0.25rem 0.4rem; font-size: 0.78rem;" required>
+    </div>
+    <div style="display: flex; align-items: center; gap: 0.35rem;">
+      <span style="font-size: 0.8rem;">🎯</span>
+      <input type="number" step="0.01" min="0" max="100" name="custom_subject_marks[]" placeholder="Marks %" class="form-input" style="padding: 0.25rem 0.4rem; font-size: 0.78rem;" required oninput="if(parseFloat(this.value)>100) this.value=100; if(parseFloat(this.value)<0) this.value=0;">
+    </div>
+    <span style="font-size: 0.68rem; color: #059669; font-weight: 700; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 0.2rem 0.45rem; border-radius: 4px;">✓ Included</span>
+    <button type="button" onclick="this.closest('.custom-subject-row').remove()" style="background: #fee2e2; border: 1px solid #fca5a5; color: #b91c1c; border-radius: 4px; padding: 0.25rem 0.5rem; font-size: 0.72rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.25rem; font-weight: 600;" title="Remove this subject row">
+      <span>🗑️</span> Remove
+    </button>
+  `;
+  container.appendChild(div);
+}
+
+function toggleEntryRouteEdit(route) {
+  const container12th = document.getElementById('container-edit-12th');
+  const containerDiploma = document.getElementById('container-edit-diploma');
+  const label12th = document.getElementById('label-edit-route-12th');
+  const labelDiploma = document.getElementById('label-edit-route-diploma');
+  const boxSem1 = document.getElementById('box-edit-sem1');
+  const boxSem2 = document.getElementById('box-edit-sem2');
+
+  if (route === 'DIPLOMA_DSE') {
+    if (container12th) container12th.style.display = 'none';
+    if (containerDiploma) containerDiploma.style.display = 'block';
+    if (label12th) { label12th.style.borderColor = '#cbd5e1'; }
+    if (labelDiploma) { labelDiploma.style.borderColor = '#2563eb'; }
+    if (boxSem1) {
+      boxSem1.style.opacity = '0.5';
+      boxSem1.innerHTML = `<label style="font-size: 0.68rem; font-weight: 700; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Sem 1</label><input type="text" value="Exempted (Diploma)" disabled class="form-input" style="padding: 0.25rem 0.4rem; font-size: 0.78rem; background: #f1f5f9; cursor: not-allowed; color: #64748b;">`;
+    }
+    if (boxSem2) {
+      boxSem2.style.opacity = '0.5';
+      boxSem2.innerHTML = `<label style="font-size: 0.68rem; font-weight: 700; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Sem 2</label><input type="text" value="Exempted (Diploma)" disabled class="form-input" style="padding: 0.25rem 0.4rem; font-size: 0.78rem; background: #f1f5f9; cursor: not-allowed; color: #64748b;">`;
+    }
+  } else {
+    if (container12th) container12th.style.display = 'block';
+    if (containerDiploma) containerDiploma.style.display = 'none';
+    if (label12th) { label12th.style.borderColor = '#2563eb'; }
+    if (labelDiploma) { labelDiploma.style.borderColor = '#cbd5e1'; }
+    if (boxSem1) {
+      boxSem1.style.opacity = '1';
+      boxSem1.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem;">
+          <label style="font-size: 0.68rem; font-weight: 700; color: #475569; margin: 0;">Sem 1 SGPA</label>
+          <label style="font-size: 0.62rem; color: #dc2626; margin: 0;">Backlogs</label>
+        </div>
+        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 0.3rem;">
+          <input type="number" step="0.01" min="0" max="10" name="sem1_sgpa" class="form-input" style="padding: 0.2rem 0.35rem; font-size: 0.8rem;" value="{{ student.sem1_sgpa|default:'9.20' }}">
+          <input type="number" min="0" max="10" name="sem1_backlogs" class="form-input" style="padding: 0.2rem 0.35rem; font-size: 0.8rem;" value="{{ student.sem1_backlogs|default:'0' }}">
+        </div>
+      `;
+    }
+    if (boxSem2) {
+      boxSem2.style.opacity = '1';
+      boxSem2.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem;">
+          <label style="font-size: 0.68rem; font-weight: 700; color: #475569; margin: 0;">Sem 2 SGPA</label>
+          <label style="font-size: 0.62rem; color: #dc2626; margin: 0;">Backlogs</label>
+        </div>
+        </div>
+      `;
+    }
+  }
+}
+
+function previewStudentPhoto(input) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const box = document.getElementById('photo-preview-box');
+      if (box) {
+        box.innerHTML = `<img src="${e.target.result}" alt="Preview" style="width: 100%; height: 100%; object-fit: cover;">`;
+      }
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function previewEditResume(input, badgeId) {
+  const badge = document.getElementById(badgeId);
+  if (!input || !input.files || input.files.length === 0) return;
+  const file = input.files[0];
+  const fileExt = file.name.split('.').pop().toLowerCase();
+  const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+
+  if (fileExt !== 'pdf') {
+    if (badge) {
+      badge.innerText = `⚠️ Invalid Format (${file.name} is not a PDF)`;
+      badge.style.color = '#dc2626';
+      badge.style.background = '#fef2f2';
+      badge.style.borderColor = '#fecaca';
+    }
+    input.value = '';
+    return;
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    if (badge) {
+      badge.innerText = `⚠️ Too Large (${fileSizeMB} MB > 5MB limit)`;
+      badge.style.color = '#dc2626';
+      badge.style.background = '#fef2f2';
+      badge.style.borderColor = '#fecaca';
+    }
+    input.value = '';
+    return;
+  }
+
+  if (badge) {
+    badge.innerText = `✓ Selected: ${file.name.slice(0, 20)}... (${fileSizeMB} MB)`;
+    badge.style.color = '#059669';
+    badge.style.background = '#ecfdf5';
+    badge.style.borderColor = '#a7f3d0';
+  }
+}
+</script>
+{% endblock %}

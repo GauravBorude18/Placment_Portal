@@ -1,0 +1,288 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}A2Z Placement Cell | Recruiter Desk{% endblock %}</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'recruiters/css/recruiter.css' %}?v=1.2">
+  <style>
+    /* Full-Width Solid Topbar - Flush Top & Flush Right */
+    html, body {
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow-x: hidden !important;
+    }
+
+    .recruiter-content-wrapper {
+      margin-left: 270px !important;
+      width: calc(100% - 270px) !important;
+      max-width: calc(100% - 270px) !important;
+      min-height: 100vh !important;
+      display: flex !important;
+      flex-direction: column !important;
+      background: #f8fafc !important;
+    }
+
+    .recruiter-topbar {
+      position: fixed !important;
+      top: 0 !important;
+      left: 270px !important;
+      right: 0 !important;
+      height: 64px !important;
+      margin: 0 !important;
+      padding: 0 1.5rem !important;
+      border-radius: 0 !important;
+      background: #ffffff !important;
+      border-bottom: 1.5px solid #cbd5e1 !important;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      z-index: 9999 !important;
+      box-sizing: border-box !important;
+    }
+
+    .recruiter-main-body {
+      margin-top: 64px !important;
+      padding: 1.5rem 2rem !important;
+      flex: 1 !important;
+    }
+
+    /* Mobile & Tablet Responsive Media Queries */
+    @media (max-width: 992px) {
+      .recruiter-sidebar {
+        transform: translateX(-100%) !important;
+        transition: transform 0.3s ease !important;
+        z-index: 10000 !important;
+        box-shadow: 4px 0 20px rgba(0,0,0,0.15) !important;
+      }
+      .recruiter-sidebar.show {
+        transform: translateX(0) !important;
+      }
+      .recruiter-content-wrapper {
+        margin-left: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+      .recruiter-topbar {
+        left: 0 !important;
+      }
+      .recruiter-main-body {
+        padding: 1rem !important;
+      }
+    }
+
+    @keyframes pulse-blink {
+      0% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      50% { transform: scale(1.05); opacity: 0.85; box-shadow: 0 0 14px 4px rgba(239, 68, 68, 0.4); }
+      100% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+    }
+
+    .blinking-workflow-alert {
+      animation: pulse-blink 1.5s infinite ease-in-out;
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Master Recruiter Layout (Left Sidebar + Right Content Area) -->
+  <div class="recruiter-app-layout">
+
+    <!-- 1. LEFT SIDEBAR -->
+    <aside class="recruiter-sidebar">
+      
+      <div>
+        <!-- Sidebar Brand Head -->
+        <a href="{% url 'recruiters:dashboard' %}" class="sidebar-brand-head">
+          <div class="sidebar-crest">A2Z</div>
+          <div class="sidebar-brand-text">
+            <h1>Recruiter Desk</h1>
+            <p>Talent Acquisition Portal</p>
+          </div>
+        </a>
+
+        <!-- Navigation Menu Container -->
+        <div class="sidebar-nav-container">
+          
+          <!-- Group 1: Core Navigation -->
+          <div>
+            <div class="sidebar-group-title">MAIN NAVIGATION</div>
+            <ul class="sidebar-menu-list">
+              <li>
+                <a href="{% url 'recruiters:dashboard' %}" class="sidebar-link {% if active_tab == 'recruiter_dashboard' %}active{% endif %}">
+                  <span class="link-icon">📊</span>
+                  <span>Hiring Dashboard</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'recruiters:roadmap_default' %}" class="sidebar-link {% if active_tab == 'roadmap' %}active{% endif %}">
+                  <span class="link-icon">🗺️</span>
+                  <span>Hiring Road Map</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'recruiters:pipeline' %}" class="sidebar-link {% if active_tab == 'pipeline' %}active{% endif %}">
+                  <span class="link-icon">👥</span>
+                  <span>Candidate Funnel</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'recruiters:company_list' %}" class="sidebar-link {% if active_tab == 'companies' %}active{% endif %}">
+                  <span class="link-icon">🏢</span>
+                  <span>Company Directory</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Group 2: JAF & Openings Management -->
+          <div>
+            <div class="sidebar-group-title">JOB POSTINGS & JAF</div>
+            <ul class="sidebar-menu-list">
+              <li>
+                <a href="{% url 'recruiters:create_jaf' %}" class="sidebar-link {% if active_tab == 'create_jaf' %}active{% endif %}">
+                  <span class="link-icon">➕</span>
+                  <span>Post New JAF</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'recruiters:deleted_jafs' %}" class="sidebar-link {% if active_tab == 'deleted_jafs' %}active{% endif %}">
+                  <span class="link-icon">🗑️</span>
+                  <span>Deleted Postings</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Group 3: Portal & Public Links -->
+          <div>
+            <div class="sidebar-group-title">GENERAL PORTAL</div>
+            <ul class="sidebar-menu-list">
+              <li>
+                <a href="{% url 'recruiters:profile' %}" class="sidebar-link {% if active_tab == 'profile' %}active{% endif %}">
+                  <span class="link-icon">👤</span>
+                  <span>Corporate HR Profile</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'students:landing' %}" class="sidebar-link">
+                  <span class="link-icon">🌐</span>
+                  <span>Public Home</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Sidebar Footer Card -->
+      <div class="sidebar-footer-card">
+        <div class="slot-tag">
+          <span style="display:inline-block; width:6px; height:6px; background:#22d3ee; border-radius:50%;"></span>
+          <span>Phase 1 • Day 1 Slot 1</span>
+        </div>
+        <p>IIT Campus Recruitment Season. For support, contact TPO In-Charge.</p>
+      </div>
+
+    </aside>
+
+    <!-- 2. RIGHT CONTENT AREA -->
+    <div class="recruiter-content-wrapper">
+      
+      <!-- Top Navbar (Search + Profile + Logout) -->
+      <header class="recruiter-topbar">
+        
+        <!-- Live Search Bar -->
+        <div class="recruiter-search-box">
+          <span style="font-size: 0.95rem; color: #64748b;">🔍</span>
+          <input type="text" id="recruiter-global-search" placeholder="Search applicants, roles, criteria, roll numbers..." onkeyup="filterRecruiterSearch(this.value)">
+        </div>
+
+        <!-- Topbar Actions Row -->
+        <div class="topbar-actions-row">
+          
+          <!-- Live Season Status Badge -->
+          <div class="topbar-status-badge">
+            <span class="live-dot"></span>
+            <span>{% if active_tpo.active_phase == 'PHASE_2' %}Phase 2 Active{% else %}Phase 1 Active{% endif %}</span>
+          </div>
+
+          <!-- Blinking Roadmap Notification Badge (If HR created a JAF without configuring rounds) -->
+          {% if pending_workflow_count > 0 and first_pending_jaf %}
+          <a href="{% url 'recruiters:configure_process' first_pending_jaf.id %}" class="blinking-workflow-alert" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: #ffffff; text-decoration: none; padding: 0.35rem 0.85rem; border-radius: 9999px; font-weight: 800; font-size: 0.76rem; display: inline-flex; align-items: center; gap: 0.4rem; border: 1px solid #fca5a5; cursor: pointer;" title="Action Required: Setup hiring roadmap before job posting is visible to students">
+            <span>⚠️</span>
+            <span>Hiring Roadmap Setup Required ({{ pending_workflow_count }})</span>
+          </a>
+          {% endif %}
+
+          <!-- Corporate HR Profile Badge (Clickable link to HR Profile) -->
+          <a href="{% url 'recruiters:profile' %}" class="topbar-profile-badge" style="text-decoration: none; cursor: pointer;" title="View & Edit HR Corporate Profile">
+            <div class="topbar-avatar" style="background: linear-gradient(135deg, #0284c7, #06b6d4); color: #ffffff; font-weight: 800; overflow: hidden; border: 1.5px solid #bfdbfe;">
+              {% if active_recruiter and active_recruiter.profile_picture_url %}
+              <img src="{{ active_recruiter.profile_picture_url }}" alt="HR Profile" style="width: 100%; height: 100%; object-fit: cover;">
+              {% elif active_company and active_company.logo_file %}
+              <img src="{{ active_company.logo_file.url }}" alt="Company Logo" style="width: 100%; height: 100%; object-fit: cover;">
+              {% elif active_company.logo_fallback %}{{ active_company.logo_fallback }}{% elif active_recruiter.company_name %}{{ active_recruiter.company_name|slice:":2"|upper }}{% else %}HR{% endif %}
+            </div>
+            <div class="topbar-profile-info">
+              <span class="topbar-profile-name" style="font-weight: 800; color: #0f172a;">
+                {% if active_recruiter %}{{ active_recruiter.hr_name }} • {{ active_recruiter.company_name }}{% elif active_company %}{{ active_company.name }} HR{% else %}Corporate HR Partner{% endif %}
+              </span>
+              <span class="topbar-profile-role" style="font-weight: 600; color: #0284c7;">
+                {% if active_recruiter %}{{ active_recruiter.designation }}{% else %}Talent Acquisition{% endif %}
+              </span>
+            </div>
+          </a>
+
+          <!-- Logout Button -->
+          <a href="{% url 'students:logout' %}" class="btn-topbar-logout" title="Sign out of Recruiter Desk">
+            <span>🚪</span>
+            <span>Logout</span>
+          </a>
+
+        </div>
+      </header>
+
+      <!-- Main Page Content Body -->
+      <main class="recruiter-main-body">
+        {% block content %}{% endblock %}
+      </main>
+
+    </div>
+
+  </div>
+
+  <script src="{% static 'recruiters/js/recruiter.js' %}"></script>
+  <script>
+    function filterRecruiterSearch(query) {
+      const q = query.toLowerCase().trim();
+      const cards = document.querySelectorAll('.recruiter-jaf-square-card');
+      const tableRows = document.querySelectorAll('tbody tr');
+
+      if (cards.length > 0) {
+        cards.forEach(card => {
+          const text = card.textContent.toLowerCase();
+          card.style.display = text.includes(q) ? 'flex' : 'none';
+        });
+      }
+
+      if (tableRows.length > 0) {
+        tableRows.forEach(row => {
+          const text = row.textContent.toLowerCase();
+          row.style.display = text.includes(q) ? '' : 'none';
+        });
+      }
+    }
+  </script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

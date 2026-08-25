@@ -1,0 +1,402 @@
+{% extends 'students/base.html' %}
+{% load static %}
+
+{% block title %}Corporate Recruiter Registration & OTP Verification | A2Z Placement Cell{% endblock %}
+
+{% block content %}
+<div style="max-width: 900px; margin: 2rem auto; padding-bottom: 3rem;">
+
+  <!-- Executive Header Banner -->
+  <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%); color: #ffffff; border-radius: 18px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.3); position: relative; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.1);">
+    <div style="position: absolute; right: -20px; bottom: -30px; font-size: 8rem; opacity: 0.08; pointer-events: none;">🏢</div>
+    <div>
+      <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.4rem;">
+        <span style="background: rgba(56, 189, 248, 0.2); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.4); padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">
+          🏢 Corporate Hiring Portal
+        </span>
+        <span style="color: #94a3b8; font-size: 0.75rem;">•</span>
+        <span style="color: #cbd5e1; font-size: 0.75rem; font-weight: 600;">Campus Placement Season 2026-27</span>
+      </div>
+      <h1 style="font-size: 1.75rem; font-weight: 900; color: #ffffff; margin: 0; letter-spacing: -0.02em;">
+        Corporate Recruiter & Employer Registration
+      </h1>
+      <p style="font-size: 0.88rem; color: #94a3b8; margin: 0.4rem 0 0 0; max-width: 680px; line-height: 1.5;">
+        Register your organization to hire graduating talent from A2Z Engineering & Technology Campus. Mandatory email OTP verification & TPO approval required.
+      </p>
+    </div>
+  </div>
+
+  <!-- Success Notification -->
+  {% if success_message %}
+  <div style="background: linear-gradient(135deg, #ecfdf5, #d1fae5); border: 2px solid #34d399; color: #065f46; padding: 1.25rem 1.5rem; border-radius: 16px; margin-bottom: 2rem; font-weight: 700; font-size: 0.92rem; box-shadow: 0 6px 20px rgba(16, 185, 129, 0.2); line-height: 1.5;">
+    <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+      <span style="font-size: 1.5rem;">🎉</span>
+      <div>
+        <div style="font-size: 1rem; font-weight: 800; color: #047857; margin-bottom: 0.2rem;">Registration Submitted Successfully!</div>
+        <span>{{ success_message }}</span>
+        <div style="margin-top: 1rem;">
+          <a href="{% url 'students:login' %}?role=recruiter" style="background: #047857; color: #ffffff; padding: 0.5rem 1.15rem; border-radius: 8px; font-weight: 800; font-size: 0.82rem; text-decoration: none; display: inline-block;">
+            Go to Recruiter Login Desk ➔
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Error Notification -->
+  {% if error_message %}
+  <div style="background: #fef2f2; border: 1.5px solid #fca5a5; color: #b91c1c; padding: 1rem 1.25rem; border-radius: 14px; margin-bottom: 1.5rem; font-weight: 700; font-size: 0.88rem; display: flex; align-items: center; gap: 0.6rem;">
+    <span style="font-size: 1.2rem;">⚠️</span>
+    <span>{{ error_message }}</span>
+  </div>
+  {% endif %}
+
+  {% if not success_message %}
+  <!-- Registration Form Card -->
+  <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 18px; box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08); overflow: hidden;">
+    
+    <div style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: #ffffff; padding: 1.1rem 1.6rem; display: flex; justify-content: space-between; align-items: center;">
+      <div style="display: flex; align-items: center; gap: 0.65rem;">
+        <span style="font-size: 1.2rem;">📝</span>
+        <div>
+          <h3 style="font-size: 1.02rem; font-weight: 800; color: #ffffff; margin: 0;">Fill Recruiter Credentials & Mandatory OTP Verification</h3>
+          <p style="font-size: 0.74rem; color: #a7f3d0; margin: 0.1rem 0 0 0;">Enter official HR contacts, verify corporate email, and set password</p>
+        </div>
+      </div>
+      <a href="{% url 'students:login' %}?role=recruiter" style="background: rgba(255,255,255,0.2); color: #ffffff; padding: 0.35rem 0.85rem; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-decoration: none;">
+        Already Registered? Log In ➔
+      </a>
+    </div>
+
+    <form method="POST" id="recruiter-register-form" action="{% url 'recruiters:register' %}" style="padding: 1.75rem; background: #f8fafc;">
+      {% csrf_token %}
+
+      <!-- SECTION 1: HR CONTACT INFORMATION -->
+      <div style="margin-bottom: 1.5rem;">
+        <h4 style="font-size: 0.82rem; font-weight: 800; color: #047857; text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 0.85rem 0; display: flex; align-items: center; gap: 0.4rem;">
+          <span>👤</span> Part 1: Official HR Representative Contact
+        </h4>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.15rem;">
+          <div>
+            <label style="font-size: 0.78rem; font-weight: 800; color: #1e293b; display: block; margin-bottom: 0.35rem;">
+              HR Representative Full Name <span style="color:#dc2626;">*</span>
+            </label>
+            <input type="text" name="hr_name" required placeholder="e.g. Ananya Sengupta" style="width: 100%; padding: 0.7rem 0.9rem; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.88rem; font-weight: 700; color: #0f172a; outline: none; background: #ffffff; box-sizing: border-box;">
+          </div>
+
+          <div>
+            <label style="font-size: 0.78rem; font-weight: 800; color: #1e293b; display: block; margin-bottom: 0.35rem;">
+              HR Designation / Role Title <span style="color:#dc2626;">*</span>
+            </label>
+            <input type="text" name="designation" required placeholder="e.g. University Relations Manager" style="width: 100%; padding: 0.7rem 0.9rem; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.88rem; font-weight: 600; color: #0f172a; outline: none; background: #ffffff; box-sizing: border-box;">
+          </div>
+
+          <div>
+            <label style="font-size: 0.78rem; font-weight: 800; color: #1e293b; display: block; margin-bottom: 0.35rem;">
+              Contact Phone / Mobile Number <span style="color:#dc2626;">*</span>
+            </label>
+            <input type="tel" name="phone_number" required placeholder="e.g. +91 9876543210" style="width: 100%; padding: 0.7rem 0.9rem; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.88rem; font-weight: 600; color: #0f172a; outline: none; background: #ffffff; box-sizing: border-box;">
+          </div>
+
+          <!-- CORPORATE EMAIL WITH OTP VERIFICATION WIDGET -->
+          <div>
+            <label style="font-size: 0.78rem; font-weight: 800; color: #1e293b; display: block; margin-bottom: 0.35rem;">
+              Official Corporate Email ID <span style="color:#dc2626;">*</span>
+            </label>
+            <div style="display: flex; gap: 0.4rem;">
+              <input type="email" id="official-email-input" name="official_email" required placeholder="e.g. hr@company.com" style="flex: 1; padding: 0.7rem 0.9rem; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.88rem; font-weight: 700; color: #0f172a; outline: none; background: #ffffff; box-sizing: border-box;">
+              <button type="button" id="send-otp-btn" onclick="sendEmailOTP()" style="background: #2563eb; color: #ffffff; border: none; padding: 0.7rem 0.9rem; border-radius: 10px; font-weight: 800; font-size: 0.78rem; cursor: pointer; white-space: nowrap; box-shadow: 0 2px 8px rgba(37,99,235,0.25);">
+                📩 Send OTP
+              </button>
+            </div>
+            <div id="otp-send-feedback" style="font-size: 0.74rem; font-weight: 700; margin-top: 0.3rem;"></div>
+          </div>
+        </div>
+
+        <!-- OTP VERIFICATION INPUT BOX (Appears after clicking Send OTP) -->
+        <div id="otp-verification-box" style="display: none; margin-top: 1rem; background: #eff6ff; border: 1.5px solid #93c5fd; border-radius: 12px; padding: 1rem; animation: fadeInStep 0.2s ease;">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;">
+            <div>
+              <label style="font-size: 0.78rem; font-weight: 800; color: #1e40af; display: block; margin-bottom: 0.2rem;">
+                Enter 6-Digit Email Verification OTP Code <span style="color:#dc2626;">*</span>
+              </label>
+              <span style="font-size: 0.7rem; color: #3b82f6;">Check your inbox for the 6-digit verification code.</span>
+            </div>
+            
+            <div style="display: flex; gap: 0.4rem; align-items: center;">
+              <input type="text" id="otp-code-input" maxlength="6" placeholder="123456" style="width: 110px; padding: 0.6rem; border: 2px solid #2563eb; border-radius: 8px; font-size: 1.1rem; font-weight: 900; text-align: center; font-family: monospace; outline: none; background: #ffffff;">
+              <button type="button" id="verify-otp-btn" onclick="verifyEmailOTP()" style="background: #059669; color: #ffffff; border: none; padding: 0.65rem 1rem; border-radius: 8px; font-weight: 800; font-size: 0.8rem; cursor: pointer; box-shadow: 0 2px 8px rgba(5,150,105,0.3);">
+                ✓ Verify OTP
+              </button>
+            </div>
+          </div>
+          <div id="otp-verify-feedback" style="font-size: 0.76rem; font-weight: 800; margin-top: 0.5rem;"></div>
+        </div>
+
+      </div>
+
+      <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 1.5rem 0;">
+
+      <!-- SECTION 2: COMPANY & INDUSTRY DETAILS -->
+      <div style="margin-bottom: 1.5rem;">
+        <h4 style="font-size: 0.82rem; font-weight: 800; color: #047857; text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 0.85rem 0; display: flex; align-items: center; gap: 0.4rem;">
+          <span>🏢</span> Part 2: Hiring Organization Details
+        </h4>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.15rem;">
+          <div>
+            <label style="font-size: 0.78rem; font-weight: 800; color: #1e293b; display: block; margin-bottom: 0.35rem;">
+              Company / Organization Name <span style="color:#dc2626;">*</span>
+            </label>
+            <input type="text" name="company_name" required placeholder="e.g. Google, Microsoft, NVIDIA, Amazon" style="width: 100%; padding: 0.7rem 0.9rem; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.88rem; font-weight: 700; color: #0f172a; outline: none; background: #ffffff; box-sizing: border-box;">
+          </div>
+
+          <div>
+            <label style="font-size: 0.78rem; font-weight: 800; color: #1e293b; display: block; margin-bottom: 0.35rem;">
+              Industry Sector <span style="color:#dc2626;">*</span>
+            </label>
+            <select name="sector" required style="width: 100%; padding: 0.7rem 0.9rem; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.88rem; font-weight: 700; color: #0f172a; outline: none; background: #ffffff; box-sizing: border-box;">
+              <option value="Software & AI">💻 Software & AI</option>
+              <option value="Quant & Finance">💎 Quant & Finance</option>
+              <option value="Core Engineering">⚡ Core Engineering</option>
+              <option value="Management Consulting">🏛️ Management Consulting</option>
+              <option value="E-Commerce & Cloud">☁️ E-Commerce & Cloud</option>
+              <option value="Analytics & Data Science">📊 Analytics & Data Science</option>
+            </select>
+          </div>
+
+          <div>
+            <label style="font-size: 0.78rem; font-weight: 800; color: #1e293b; display: block; margin-bottom: 0.35rem;">
+              Primary Office / Campus Location <span style="color:#dc2626;">*</span>
+            </label>
+            <input type="text" name="location" required placeholder="e.g. Bangalore / Hyderabad / Pune / Hybrid" style="width: 100%; padding: 0.7rem 0.9rem; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.88rem; font-weight: 600; color: #0f172a; outline: none; background: #ffffff; box-sizing: border-box;">
+          </div>
+
+          <div>
+            <label style="font-size: 0.78rem; font-weight: 800; color: #1e293b; display: block; margin-bottom: 0.35rem;">
+              Official Website URL <span style="color:#dc2626;">*</span>
+            </label>
+            <input type="url" name="website" required placeholder="e.g. https://www.company.com" style="width: 100%; padding: 0.7rem 0.9rem; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.88rem; font-weight: 600; color: #0f172a; outline: none; background: #ffffff; box-sizing: border-box;">
+          </div>
+        </div>
+      </div>
+
+      <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 1.5rem 0;">
+
+      <!-- SECTION 3: RECRUITER PASSWORD & CONFIRM PASSWORD -->
+      <div style="margin-bottom: 1.75rem;">
+        <h4 style="font-size: 0.82rem; font-weight: 800; color: #047857; text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 0.85rem 0; display: flex; align-items: center; gap: 0.4rem;">
+          <span>🔑</span> Part 3: Account Security & Password Matching
+        </h4>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.15rem;">
+          <div>
+            <label style="font-size: 0.78rem; font-weight: 800; color: #1e293b; display: block; margin-bottom: 0.35rem;">
+              Set Recruiter Password <span style="color:#dc2626;">*</span>
+            </label>
+            <input type="password" id="password-input" name="password" required minlength="6" placeholder="Min 6 characters" style="width: 100%; padding: 0.7rem 0.9rem; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.88rem; font-weight: 700; color: #0f172a; outline: none; background: #ffffff; box-sizing: border-box;" oninput="validatePasswordMatch()">
+          </div>
+
+          <div>
+            <label style="font-size: 0.78rem; font-weight: 800; color: #1e293b; display: block; margin-bottom: 0.35rem;">
+              Confirm Recruiter Password <span style="color:#dc2626;">*</span>
+            </label>
+            <input type="password" id="confirm-password-input" name="confirm_password" required minlength="6" placeholder="Re-enter password" style="width: 100%; padding: 0.7rem 0.9rem; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 0.88rem; font-weight: 700; color: #0f172a; outline: none; background: #ffffff; box-sizing: border-box;" oninput="validatePasswordMatch()">
+          </div>
+        </div>
+
+        <div id="password-match-feedback" style="font-size: 0.74rem; font-weight: 800; margin-top: 0.45rem;"></div>
+      </div>
+
+      <!-- SUBMIT BUTTON BAR -->
+      <div style="display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 1.1rem 1.35rem; box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
+        <div style="font-size: 0.76rem; color: #475569; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
+          <span>🛡️</span> Mandatory Email OTP Verification & TPO Approval Required.
+        </div>
+        
+        <button type="submit" id="submit-registration-btn" disabled style="background: #94a3b8; color: #ffffff; border: none; padding: 0.85rem 1.85rem; border-radius: 10px; font-weight: 800; font-size: 0.94rem; cursor: not-allowed; display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s ease;">
+          <span>🔒</span> Verify Email OTP to Submit
+        </button>
+      </div>
+
+    </form>
+  </div>
+  {% endif %}
+
+</div>
+
+<script>
+let isEmailVerified = false;
+
+function sendEmailOTP() {
+  const emailInput = document.getElementById('official-email-input');
+  const feedback = document.getElementById('otp-send-feedback');
+  const otpBox = document.getElementById('otp-verification-box');
+  const sendBtn = document.getElementById('send-otp-btn');
+
+  if (!emailInput || !emailInput.value || !emailInput.value.includes('@')) {
+    if (feedback) {
+      feedback.style.color = '#dc2626';
+      feedback.innerHTML = '⚠️ Please enter a valid Official Corporate Email address first.';
+    }
+    return;
+  }
+
+  sendBtn.disabled = true;
+  sendBtn.innerText = 'Sending OTP...';
+  feedback.style.color = '#1d4ed8';
+  feedback.innerHTML = '⏳ Generating and sending 6-digit OTP code to ' + emailInput.value + '...';
+
+  const formData = new FormData();
+  formData.append('email', emailInput.value);
+
+  fetch("{% url 'recruiters:api_send_otp' %}", {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'X-CSRFToken': '{{ csrf_token }}'
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    sendBtn.disabled = false;
+    sendBtn.innerText = '📩 Resend OTP';
+    if (data.success) {
+      feedback.style.color = '#059669';
+      feedback.innerHTML = '📩 OTP Sent! (Debug Code: <strong style="font-family:monospace; background:#dcfce7; padding:0.1rem 0.4rem; border-radius:4px; font-size:0.85rem;">' + (data.otp_debug || 'Check Email') + '</strong>)';
+      if (otpBox) otpBox.style.display = 'block';
+    } else {
+      feedback.style.color = '#dc2626';
+      feedback.innerHTML = '❌ ' + (data.error || 'Failed to send OTP. Try again.');
+    }
+  })
+  .catch(err => {
+    sendBtn.disabled = false;
+    sendBtn.innerText = '📩 Send OTP';
+    feedback.style.color = '#dc2626';
+    feedback.innerHTML = '❌ Network error sending OTP. Please try again.';
+  });
+}
+
+function verifyEmailOTP() {
+  const emailInput = document.getElementById('official-email-input');
+  const otpInput = document.getElementById('otp-code-input');
+  const verifyFeedback = document.getElementById('otp-verify-feedback');
+  const sendFeedback = document.getElementById('otp-send-feedback');
+  const verifyBtn = document.getElementById('verify-otp-btn');
+  const submitBtn = document.getElementById('submit-registration-btn');
+
+  if (!otpInput || !otpInput.value || otpInput.value.length !== 6) {
+    if (verifyFeedback) {
+      verifyFeedback.style.color = '#dc2626';
+      verifyFeedback.innerHTML = '⚠️ Please enter the full 6-digit OTP code.';
+    }
+    return;
+  }
+
+  verifyBtn.disabled = true;
+  verifyBtn.innerText = 'Verifying...';
+
+  const formData = new FormData();
+  formData.append('email', emailInput.value);
+  formData.append('otp', otpInput.value);
+
+  fetch("{% url 'recruiters:api_verify_otp' %}", {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'X-CSRFToken': '{{ csrf_token }}'
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    verifyBtn.disabled = false;
+    verifyBtn.innerText = '✓ Verify OTP';
+    if (data.success) {
+      isEmailVerified = true;
+      verifyFeedback.style.color = '#059669';
+      verifyFeedback.innerHTML = '🎉 ' + data.message;
+      sendFeedback.style.color = '#059669';
+      sendFeedback.innerHTML = '✅ Official Email Verified (' + emailInput.value + ')';
+      
+      // Lock email input
+      emailInput.readOnly = true;
+      emailInput.style.background = '#f0fdf4';
+      emailInput.style.borderColor = '#10b981';
+
+      validateFormState();
+    } else {
+      isEmailVerified = false;
+      verifyFeedback.style.color = '#dc2626';
+      verifyFeedback.innerHTML = data.error || '❌ Invalid OTP code.';
+      validateFormState();
+    }
+  })
+  .catch(err => {
+    verifyBtn.disabled = false;
+    verifyBtn.innerText = '✓ Verify OTP';
+    verifyFeedback.style.color = '#dc2626';
+    verifyFeedback.innerHTML = '❌ Connection error verifying OTP.';
+  });
+}
+
+function validatePasswordMatch() {
+  const p1 = document.getElementById('password-input')?.value || '';
+  const p2 = document.getElementById('confirm-password-input')?.value || '';
+  const feedback = document.getElementById('password-match-feedback');
+
+  if (!feedback) return;
+
+  if (!p1 && !p2) {
+    feedback.innerHTML = '';
+    validateFormState();
+    return;
+  }
+
+  if (p1.length < 6) {
+    feedback.style.color = '#dc2626';
+    feedback.innerHTML = '⚠️ Password must be at least 6 characters long.';
+  } else if (p1 === p2) {
+    feedback.style.color = '#059669';
+    feedback.innerHTML = '✓ Passwords match perfectly!';
+  } else {
+    feedback.style.color = '#dc2626';
+    feedback.innerHTML = '⚠️ Passwords do not match.';
+  }
+
+  validateFormState();
+}
+
+function validateFormState() {
+  const submitBtn = document.getElementById('submit-registration-btn');
+  const p1 = document.getElementById('password-input')?.value || '';
+  const p2 = document.getElementById('confirm-password-input')?.value || '';
+
+  const passwordsValid = (p1.length >= 6 && p1 === p2);
+
+  if (isEmailVerified && passwordsValid) {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.style.background = 'linear-gradient(135deg, #059669 0%, #10b981 100%)';
+      submitBtn.style.cursor = 'pointer';
+      submitBtn.style.boxShadow = '0 4px 18px rgba(16, 185, 129, 0.35)';
+      submitBtn.innerHTML = '<span>🚀</span> Submit Recruiter Registration Request';
+    }
+  } else {
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.style.background = '#94a3b8';
+      submitBtn.style.cursor = 'not-allowed';
+      submitBtn.style.boxShadow = 'none';
+      if (!isEmailVerified) {
+        submitBtn.innerHTML = '<span>🔒</span> Verify Email OTP to Submit';
+      } else if (!passwordsValid) {
+        submitBtn.innerHTML = '<span>🔒</span> Confirm Password Match to Submit';
+      }
+    }
+  }
+}
+</script>
+{% endblock %}

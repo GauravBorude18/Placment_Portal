@@ -1,0 +1,521 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A2Z Placement Cell - Training & Placement Officer (TPO) Control Desk">
+  <title>{% block title %}TPO Officer Desk | A2Z Placement Cell{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}?v=3.2">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+  
+  <style>
+    /* Complete Luxury TPO Workspace Theme & Layout (Fixed Sidebar + Sticky Topbar) */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; background: #f8fafc; color: #0f172a; margin: 0; padding: 0; }
+    
+    .tpo-app-layout {
+      display: flex;
+      min-height: 100vh;
+      background: #f8fafc;
+      width: 100%;
+    }
+
+    /* 1. Left Sidebar - PERMANENTLY FIXED & STABLE */
+    .tpo-sidebar {
+      width: 260px;
+      min-width: 260px;
+      background: linear-gradient(180deg, #062b1e 0%, #091a14 45%, #0b1520 100%);
+      border-right: 1px solid rgba(16, 185, 129, 0.25);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      height: 100vh;
+      padding: 1.35rem 1rem;
+      color: #ffffff;
+      z-index: 300;
+      box-shadow: 4px 0 20px rgba(0, 0, 0, 0.25);
+      flex-shrink: 0;
+      overflow-y: auto;
+    }
+
+    .tpo-sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      padding-bottom: 1.15rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .tpo-sidebar-crest {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #059669, #10b981);
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 16px rgba(16, 185, 129, 0.45);
+      flex-shrink: 0;
+    }
+
+    .tpo-sidebar-brand-text h1 {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+
+    .tpo-sidebar-brand-text p {
+      font-size: 0.68rem;
+      color: #34d399;
+      margin: 0.1rem 0 0;
+      font-weight: 600;
+    }
+
+    .tpo-sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin-top: 1.25rem;
+      flex: 1;
+    }
+
+    .tpo-nav-group-title {
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: #6ee7b7;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0 0.5rem 0.35rem;
+      opacity: 0.75;
+    }
+
+    .tpo-menu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .tpo-menu-link {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.6rem 0.75rem;
+      border-radius: 8px;
+      color: #cbd5e1;
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+      cursor: pointer;
+    }
+
+    .tpo-menu-link .menu-icon {
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+    }
+
+    .tpo-menu-link:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      transform: translateX(3px);
+    }
+
+    .tpo-menu-link.active {
+      background: linear-gradient(90deg, rgba(5, 150, 105, 0.35) 0%, rgba(16, 185, 129, 0.18) 100%);
+      color: #ffffff;
+      border-left: 3px solid #34d399;
+      font-weight: 700;
+    }
+
+    .tpo-menu-link.active .menu-icon {
+      filter: drop-shadow(0 0 6px rgba(52, 211, 153, 0.7));
+    }
+
+    .tpo-sidebar-footer {
+      background: rgba(6, 43, 30, 0.75);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-radius: 10px;
+      padding: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      margin-top: 1rem;
+    }
+
+    /* 2. Content Area - Shifted Right for Fixed Sidebar */
+    .tpo-content-wrapper {
+      margin-left: 260px;
+      width: calc(100% - 260px);
+      max-width: calc(100% - 260px);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: #f8fafc;
+    }
+
+    /* 3. Topbar - PERMANENTLY STICKY & STABLE AT TOP */
+    .tpo-topbar {
+      height: 64px;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid #e2e8f0;
+      padding: 0 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 250;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+      width: 100%;
+    }
+
+    .tpo-search-box {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 0.45rem 0.85rem;
+      width: 340px;
+      max-width: 100%;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    .tpo-search-box:focus-within {
+      background: #ffffff;
+      border-color: #059669;
+      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
+    }
+
+    .tpo-search-box input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 0.82rem;
+      color: #0f172a;
+      width: 100%;
+      font-family: inherit;
+    }
+
+    .tpo-search-box input::placeholder {
+      color: #94a3b8;
+    }
+
+    .tpo-main-body {
+      padding: 1.25rem 1.5rem;
+      flex: 1;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 768px) {
+      .tpo-sidebar {
+        display: none;
+      }
+      .tpo-content-wrapper {
+        margin-left: 0;
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+  </style>
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body style="background: #f8fafc; margin: 0; padding: 0;">
+
+  <div class="tpo-app-layout">
+    
+    <!-- 1. LEFT SIDEBAR (PERMANENTLY FIXED) -->
+    <aside class="tpo-sidebar">
+      <div>
+        <!-- Brand Logo Header -->
+        <a href="{% url 'tpo_officer:dashboard' %}" class="tpo-sidebar-brand">
+          <div class="tpo-sidebar-crest">TPO</div>
+          <div class="tpo-sidebar-brand-text">
+            <h1>TPO Officer Desk</h1>
+            <p>Placement Cell Authority</p>
+          </div>
+        </a>
+
+        <!-- Navigation Groups -->
+        <div class="tpo-sidebar-nav">
+          
+          <!-- Group 1: CORE GOVERNANCE -->
+          <div>
+            <div class="tpo-nav-group-title">CORE GOVERNANCE</div>
+            <ul class="tpo-menu-list">
+              <li>
+                <a href="{% url 'tpo_officer:dashboard' %}" class="tpo-menu-link {% if active_tab == 'tpo_dashboard' %}active{% endif %}">
+                  <span class="menu-icon">🏛️</span>
+                  <span>TPO Master Dashboard</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'tpo_officer:verify_students' %}" class="tpo-menu-link {% if active_tab == 'verify_students' %}active{% endif %}">
+                  <span class="menu-icon">🛡️</span>
+                  <span>Candidate Verifications</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'tpo_officer:analytics' %}" class="tpo-menu-link {% if active_tab == 'analytics' %}active{% endif %}">
+                  <span class="menu-icon">📈</span>
+                  <span>Placement Analytics</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'tpo_officer:registration_setup' %}" class="tpo-menu-link {% if active_tab == 'registration_setup' %}active{% endif %}">
+                  <span class="menu-icon">⚙️</span>
+                  <span>Registration Setup</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'tpo_officer:profile' %}" class="tpo-menu-link {% if active_tab == 'tpo_profile' %}active{% endif %}">
+                  <span class="menu-icon">👤</span>
+                  <span>TPO Profile & Handover</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Group 2: RECRUITMENT ECOSYSTEM -->
+          <div>
+            <div class="tpo-nav-group-title">RECRUITMENT ECOSYSTEM</div>
+            <ul class="tpo-menu-list">
+              <li>
+                <a href="{% url 'tpo_officer:all_jafs' %}" class="tpo-menu-link {% if active_tab == 'all_jafs' %}active{% endif %}">
+                  <span class="menu-icon">💼</span>
+                  <span>All Company JAFs</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'tpo_officer:companies' %}" class="tpo-menu-link {% if active_tab == 'companies' %}active{% endif %}">
+                  <span class="menu-icon">🏢</span>
+                  <span>Partner Companies</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Group 3: PORTAL NAVIGATION -->
+          <div>
+            <div class="tpo-nav-group-title">GENERAL</div>
+            <ul class="tpo-menu-list">
+              <li>
+                <a href="{% url 'students:landing' %}" class="tpo-menu-link">
+                  <span class="menu-icon">🌐</span>
+                  <span>Public Home</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Sidebar Footer Badge (Clickable to Profile) -->
+      <a href="{% url 'tpo_officer:profile' %}" class="tpo-sidebar-footer" style="text-decoration: none; cursor: pointer; transition: background 0.15s ease;" title="Manage TPO Profile & Handover">
+        <div style="font-size: 0.72rem; font-weight: 700; color: #34d399; display: flex; align-items: center; gap: 0.35rem;">
+          <span style="display:inline-block; width:6px; height:6px; background:#34d399; border-radius:50%;"></span>
+          <span>Placement Season 2026-27 (Live)</span>
+        </div>
+        <div style="font-size: 0.7rem; color: #cbd5e1; line-height: 1.35;">
+          <strong style="color: #ffffff;">{{ active_tpo.full_name|default:"Prof. S. Bhattacharya" }}</strong><br>
+          <span style="color: #94a3b8;">{{ active_tpo.designation|default:"Placement Head (TPO)" }}</span>
+        </div>
+      </a>
+
+    </aside>
+
+    <!-- 2. CONTENT WRAPPER & TOPBAR -->
+    <div class="tpo-content-wrapper">
+      
+      <!-- Clean TPO Topbar (PERMANENTLY STICKY) -->
+      <header class="tpo-topbar">
+        
+        <!-- Live Global Search Input -->
+        <div class="tpo-search-box">
+          <span style="font-size: 0.95rem; color: #64748b;">🔍</span>
+          <input type="text" id="tpo-global-search" placeholder="Search students, roll numbers, companies, JAFs..." onkeyup="filterTpoSearch(this.value)">
+        </div>
+
+        <!-- Topbar Actions Row -->
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          
+          <!-- Live Season Badge -->
+          <div class="badge-live-season" style="background: {% if active_tpo.active_phase == 'PHASE_2' %}rgba(124, 58, 237, 0.12){% else %}rgba(5, 150, 105, 0.12){% endif %}; color: {% if active_tpo.active_phase == 'PHASE_2' %}#7c3aed{% else %}#059669{% endif %}; border: 1px solid {% if active_tpo.active_phase == 'PHASE_2' %}rgba(124, 58, 237, 0.3){% else %}rgba(5, 150, 105, 0.3){% endif %}; padding: 0.25rem 0.65rem; border-radius: 9999px; font-size: 0.72rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.4rem;">
+            <span class="pulse-dot" style="background: {% if active_tpo.active_phase == 'PHASE_2' %}#7c3aed{% else %}#059669{% endif %}; box-shadow: 0 0 8px {% if active_tpo.active_phase == 'PHASE_2' %}#7c3aed{% else %}#059669{% endif %}; width: 8px; height: 8px; border-radius: 50%; display: inline-block;"></span>
+            <span>{% if active_tpo.active_phase == 'PHASE_2' %}Phase 2 Active{% else %}Phase 1 Active{% endif %}</span>
+          </div>
+
+          <!-- TPO GOVERNANCE NOTIFICATION BELL ICON (ICON ONLY - NO TEXT NAME) -->
+          <div style="position: relative; display: inline-block;">
+            <button type="button" onclick="toggleTpoNotifDropdown()" style="position: relative; background: #ffffff; border: 1.5px solid #cbd5e1; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.06);" title="Governance Notifications Queue">
+              🔔
+              {% if tpo_notif_count > 0 %}
+              <span style="position: absolute; top: -3px; right: -3px; background: linear-gradient(135deg, #ef4444, #dc2626); color: #ffffff; font-size: 0.65rem; font-weight: 900; padding: 0.1rem 0.4rem; border-radius: 9999px; border: 2px solid #ffffff; box-shadow: 0 0 10px rgba(239, 68, 68, 0.6);">
+                {{ tpo_notif_count }}
+              </span>
+              {% endif %}
+            </button>
+
+            <!-- TPO NOTIFICATION CENTER DROPDOWN PANEL -->
+            <div id="tpo-notif-dropdown" style="display: none; position: absolute; right: 0; top: 48px; width: 350px; background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 16px; box-shadow: 0 12px 35px rgba(15, 23, 42, 0.18); z-index: 999; overflow: hidden; animation: fadeInStep 0.2s ease;">
+              
+              <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffffff; padding: 0.85rem 1.15rem; display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span style="font-size: 1.1rem;">🔔</span>
+                  <strong style="font-size: 0.88rem; color: #ffffff;">Governance Action Queue</strong>
+                </div>
+                <span style="background: rgba(16,185,129,0.2); color: #34d399; font-weight: 800; font-size: 0.7rem; padding: 0.15rem 0.55rem; border-radius: 20px;">
+                  {{ tpo_notif_count }} Action Pending
+                </span>
+              </div>
+
+              <div style="max-height: 340px; overflow-y: auto; padding: 0.75rem;">
+                
+                <!-- Pending Recruiter Registration Requests Section -->
+                {% if tpo_pending_recruiters_count > 0 %}
+                <div style="margin-bottom: 0.75rem;">
+                  <div style="font-size: 0.7rem; font-weight: 800; color: #b45309; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.4rem; display: flex; justify-content: space-between;">
+                    <span>🏢 Corporate Recruiter Approvals</span>
+                    <span>({{ tpo_pending_recruiters_count }})</span>
+                  </div>
+                  {% for rec in tpo_pending_recruiters %}
+                  <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 0.65rem 0.85rem; margin-bottom: 0.4rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                      <strong style="font-size: 0.8rem; color: #0f172a; display: block;">{{ rec.hr_name }}</strong>
+                      <span style="font-size: 0.7rem; color: #475569; font-weight: 600;">{{ rec.company_name }} • {{ rec.sector }}</span>
+                    </div>
+                    <a href="{% url 'tpo_officer:companies' %}" style="background: linear-gradient(135deg, #059669, #10b981); color: #ffffff; text-decoration: none; padding: 0.3rem 0.65rem; border-radius: 6px; font-weight: 800; font-size: 0.7rem;">
+                      Review ➔
+                    </a>
+                  </div>
+                  {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Pending Student Verifications Section -->
+                {% if tpo_unverified_students_count > 0 %}
+                <div style="margin-bottom: 0.5rem;">
+                  <div style="font-size: 0.7rem; font-weight: 800; color: #1d4ed8; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.4rem; display: flex; justify-content: space-between;">
+                    <span>🛡️ Candidate Verifications</span>
+                    <span>({{ tpo_unverified_students_count }})</span>
+                  </div>
+                  <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 0.65rem 0.85rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                      <strong style="font-size: 0.8rem; color: #1e40af; display: block;">{{ tpo_unverified_students_count }} Candidates Awaiting Verification</strong>
+                      <span style="font-size: 0.7rem; color: #3b82f6; font-weight: 600;">10th, 12th/Diploma & CPI Credentials</span>
+                    </div>
+                    <a href="{% url 'tpo_officer:verify_students' %}" style="background: #2563eb; color: #ffffff; text-decoration: none; padding: 0.3rem 0.65rem; border-radius: 6px; font-weight: 800; font-size: 0.7rem;">
+                      Verify ➔
+                    </a>
+                  </div>
+                </div>
+                {% endif %}
+
+                {% if tpo_notif_count == 0 %}
+                <div style="text-align: center; padding: 1.5rem 0; color: #64748b;">
+                  <div style="font-size: 2rem; margin-bottom: 0.3rem;">🎉</div>
+                  <strong style="font-size: 0.85rem; color: #0f172a; display: block;">Governance Queues Clean & Clear!</strong>
+                  <span style="font-size: 0.72rem;">No pending recruiter approvals or student verifications.</span>
+                </div>
+                {% endif %}
+
+              </div>
+
+              <div style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 0.5rem 1rem; text-align: center;">
+                <a href="{% url 'tpo_officer:companies' %}" style="font-size: 0.74rem; font-weight: 800; color: #059669; text-decoration: none;">
+                  Open Recruiter Directory Desk ➔
+                </a>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- TPO Head Profile Badge (Clickable to TPO Profile Hub) -->
+          <a href="{% url 'tpo_officer:profile' %}" class="user-profile-badge" style="display: flex; align-items: center; gap: 0.55rem; padding: 0.3rem 0.65rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 9999px; text-decoration: none; cursor: pointer; transition: all 0.15s ease;" title="Click to Manage TPO Profile & Succession Governance">
+            <div class="user-avatar" style="width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #059669, #10b981); color: #ffffff; font-weight: 800; font-size: 0.78rem; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1.5px solid #a7f3d0; flex-shrink: 0;">
+              {% if active_tpo.profile_picture_url %}
+                <img src="{{ active_tpo.profile_picture_url }}" alt="{{ active_tpo.full_name }}" style="width: 100%; height: 100%; object-fit: cover;">
+              {% else %}
+                🛡️
+              {% endif %}
+            </div>
+            <div class="user-name-role" style="display: flex; flex-direction: column; text-align: left;">
+              <span class="user-name" style="font-weight: 700; font-size: 0.8rem; color: #0f172a; line-height: 1.1;">{{ active_tpo.full_name|default:"Prof. S. Bhattacharya" }}</span>
+              <span class="user-roll" style="font-size: 0.68rem; color: #059669; font-weight: 600;">{{ active_tpo.designation|default:"Placement Head (TPO)" }}</span>
+            </div>
+          </a>
+
+          <!-- Logout Button -->
+          <a href="{% url 'students:logout' %}" class="btn btn-secondary btn-sm" style="color: #dc2626; border: 1px solid #fecaca; background: #fff1f2; font-weight: 700; text-decoration: none; padding: 0.4rem 0.75rem; border-radius: 8px; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 0.3rem;" title="Sign out of TPO Desk">
+            <span>🚪</span> Logout
+          </a>
+
+        </div>
+      </header>
+
+      <!-- Main Body -->
+      <main class="tpo-main-body">
+        {% block content %}{% endblock %}
+      </main>
+
+    </div>
+
+  </div>
+
+  <script>
+    function toggleTpoNotifDropdown() {
+      const dd = document.getElementById('tpo-notif-dropdown');
+      if (dd) {
+        dd.style.display = (dd.style.display === 'none' || dd.style.display === '') ? 'block' : 'none';
+      }
+    }
+
+    document.addEventListener('click', function(e) {
+      const dd = document.getElementById('tpo-notif-dropdown');
+      if (dd && dd.style.display === 'block') {
+        const isClickInside = e.target.closest('#tpo-notif-dropdown') || e.target.closest('button[onclick*="toggleTpoNotifDropdown"]');
+        if (!isClickInside) {
+          dd.style.display = 'none';
+        }
+      }
+    });
+
+    function filterTpoSearch(query) {
+      const q = query.toLowerCase().trim();
+      const rows = document.querySelectorAll('tbody tr');
+      if (rows && rows.length > 0) {
+        rows.forEach(row => {
+          const text = row.textContent.toLowerCase();
+          row.style.display = text.includes(q) ? '' : 'none';
+        });
+      }
+    }
+  </script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

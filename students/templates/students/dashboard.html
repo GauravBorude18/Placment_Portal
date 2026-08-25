@@ -1,0 +1,530 @@
+{% extends 'students/base_student.html' %}
+{% load static %}
+
+{% block title %}Career Hub & JAF Explorer | A2Z Placement Cell{% endblock %}
+
+{% block content %}
+
+  <!-- Verification Alert Banner for Student Status -->
+  {% if student.verification_status == 'ON_HOLD' %}
+  <div style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 1.5px solid #f59e0b; border-radius: var(--radius-md); padding: 1.1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.5rem; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.12);">
+    <div style="display: flex; align-items: flex-start; gap: 0.85rem;">
+      <span style="font-size: 1.8rem; line-height: 1;">⏸️</span>
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem;">
+          <strong style="color: #92400e; font-size: 1rem;">TEMPORARY VERIFICATION HOLD IN EFFECT ({{ student.hold_days }} Days)</strong>
+          <span style="background: #f59e0b; color: #ffffff; font-size: 0.65rem; font-weight: 800; padding: 0.1rem 0.45rem; border-radius: 9999px; text-transform: uppercase;">
+            Action by Prof. S. Bhattacharya
+          </span>
+        </div>
+        <p style="color: #b45309; font-size: 0.82rem; margin: 0; line-height: 1.45;">
+          <strong>Officer Remarks / Reason:</strong> <span style="background: rgba(255, 255, 255, 0.8); border: 1px solid #fde68a; padding: 0.15rem 0.45rem; border-radius: 4px; color: #78350f; font-weight: 600;">"{{ student.verification_remarks|default:'Pending academic documentation verification' }}"</span><br>
+          <span style="color: #64748b; font-size: 0.76rem; display: inline-block; margin-top: 0.25rem;">
+            ⏳ Your profile is paused and will <strong>automatically unlock on {{ student.hold_until|date:"M d, Y • h:i A" }}</strong>. Application submissions are temporarily locked during hold.
+          </span>
+        </p>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.4rem; flex-shrink: 0;">
+      <a href="{% url 'students:notifications' %}" class="btn btn-primary btn-sm" style="font-size: 0.75rem; padding: 0.4rem 0.85rem; background: #d97706; border-color: #d97706; color: #ffffff; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;">
+        <span>🔔</span> View Hold Alert
+      </a>
+      <a href="{% url 'students:edit_profile' %}" style="font-size: 0.7rem; color: #92400e; text-decoration: underline; font-weight: 600;">
+        Update Profile Records →
+      </a>
+    </div>
+  </div>
+  {% elif student.verification_status == 'DECLINED' %}
+  <div style="background: #fef2f2; border: 1.5px solid #f87171; border-radius: var(--radius-md); padding: 1.1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+    <div style="display: flex; align-items: flex-start; gap: 0.85rem;">
+      <span style="font-size: 1.8rem; line-height: 1;">❌</span>
+      <div>
+        <strong style="color: #991b1b; font-size: 1rem;">Registration Declined by Placement Head</strong>
+        <p style="color: #b91c1c; font-size: 0.82rem; margin: 0.2rem 0 0; line-height: 1.45;">
+          <strong>Feedback:</strong> "{{ student.verification_remarks|default:'Incomplete academic documentation or backlog discrepancy.' }}"<br>
+          Please edit your academic records and re-submit for review.
+        </p>
+      </div>
+    </div>
+    <a href="{% url 'students:edit_profile' %}" class="btn btn-primary btn-sm" style="font-size: 0.75rem; padding: 0.4rem 0.85rem; background: #dc2626; border-color: #dc2626; color: #ffffff; font-weight: 700; text-decoration: none;">
+      ✏️ Update Records
+    </a>
+  </div>
+  {% elif not student.is_dpc_verified %}
+  <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: var(--radius-md); padding: 1.1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.5rem; box-shadow: var(--shadow-sm);">
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <span style="font-size: 1.6rem;">🔒</span>
+      <div>
+        <strong style="color: #92400e; font-size: 0.98rem;">Placement Cell Sign-Off Required (Details & Applications Locked)</strong>
+        <p style="color: #b45309; font-size: 0.82rem; margin-top: 0.2rem; line-height: 1.4;">
+          Your student registration records (10th, 12th, and CPI {{ student.cgpa }}) and Master Resume are currently under official review by <strong>Prof. S. Bhattacharya (Head, Placement Cell & DPC In-Charge)</strong>.<br>
+          <span style="color: #dc2626; font-weight: 600;">⚠️ Without official approval, company recruitment criteria and application submissions are strictly locked.</span>
+        </p>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.4rem;">
+      <span style="background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; font-size: 0.75rem; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: var(--radius-full); white-space: nowrap;">
+        Pending Officer Approval
+      </span>
+      <button type="button" onclick="toggleStudentApproval()" class="btn btn-primary btn-sm" style="font-size: 0.75rem; padding: 0.35rem 0.7rem; white-space: nowrap; background: #059669; border-color: #059669;" title="Simulate Placement Head Approval for Testing">
+        <span>⚡</span> Head Sim: 1-Click Approve (Test)
+      </button>
+    </div>
+  </div>
+  {% else %}
+  <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: var(--radius-md); padding: 0.75rem 1.25rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+    <div style="display: flex; align-items: center; gap: 0.5rem; color: #047857; font-size: 0.85rem;">
+      <span style="font-size: 1.2rem;">✓</span>
+      <span><strong>Official Candidate Approval Verified:</strong> Signed off by {{ student.approved_by|default:"Prof. S. Bhattacharya (Head & DPC In-Charge)" }}. Full company JAFs and applications are unlocked.</span>
+    </div>
+    <button type="button" onclick="toggleStudentApproval()" class="btn btn-secondary btn-sm" style="font-size: 0.7rem; padding: 0.25rem 0.6rem; color: #b45309;" title="Toggle back to pending for testing">
+      <span>🔄</span> Set to Pending (Test)
+    </button>
+  </div>
+  {% endif %}
+
+  <!-- Student Hero Profile & Verification Bar -->
+  <section class="student-hero">
+    <div class="student-hero-content">
+      <div class="student-identity">
+        <div class="profile-avatar-large" style="overflow: hidden; display: flex; align-items: center; justify-content: center;">
+          {% if student.profile_picture_url %}
+            <img src="{{ student.profile_picture_url }}" alt="{{ student.full_name }}" style="width: 100%; height: 100%; object-fit: cover;">
+          {% else %}
+            {{ student.full_name|slice:":2"|upper }}
+          {% endif %}
+        </div>
+        <div class="identity-meta">
+          <h2>
+            <span>{{ student.full_name }}</span>
+            {% if student.is_dpc_verified %}
+            <span class="verified-pill">
+              <span>✓</span> Verified by Placement Head & DPC
+            </span>
+            {% else %}
+            <span class="verified-pill" style="background: #fef3c7; color: #92400e; border-color: #fcd34d;">
+              <span>⏳</span> Pending Head Approval
+            </span>
+            {% endif %}
+          </h2>
+          <div class="identity-sub">
+            <span class="dept-badge">{{ student.degree }}</span>
+            <span>•</span>
+            <span style="color: var(--text-secondary);">{{ student.batch }}</span>
+          </div>
+          <div class="academic-pills">
+            <span class="meta-pill cpi-pill">CPI / CGPA: <strong>{{ student.cgpa }}</strong> / 10.0</span>
+            <span class="meta-pill">Department Rank: <strong>#{{ student.department_rank }}</strong></span>
+            <span class="meta-pill">Specialization: <strong>{{ student.specialization }}</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Resume & Profile Actions -->
+      <div class="student-quick-actions">
+        <a href="{% url 'students:fee_receipt' %}" target="_blank" class="btn btn-outline-emerald btn-sm" style="border: 1.5px solid #10b981; color: #059669; background: #ecfdf5; font-weight: 700;" title="View & Print Official ₹99 Placement Enrollment Tax Invoice">
+          <span>🧾</span> ₹99 Fee Receipt (PDF)
+        </a>
+        <a href="{% url 'students:edit_profile' %}" class="btn btn-primary btn-sm" title="Edit Profile Credentials & Upload Resumes">
+          <span>✏️</span> Edit Profile & Resumes
+        </a>
+        <button class="btn btn-outline-cyan btn-sm" onclick="viewResumeModal('{{ student.resume_sde_name }}')">
+          <span>📄</span> Master Resume (SDE)
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="viewResumeModal('{{ student.resume_quant_name }}')">
+          <span>📊</span> Quant Resume
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Placement Season Live Metrics -->
+  <section class="stats-grid" aria-label="Placement Statistics">
+    <div class="stat-card">
+      <div class="stat-card-header">
+        <span class="stat-label">Applications</span>
+        <div class="stat-icon-wrap stat-icon-blue">📝</div>
+      </div>
+      <div class="stat-number" id="stat-applied-count">{{ student.applied_count }}</div>
+      <div class="stat-footer">
+        <span style="color: #60a5fa;">Active JAFs</span> submitted
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-card-header">
+        <span class="stat-label">Shortlisted</span>
+        <div class="stat-icon-wrap stat-icon-emerald">🎯</div>
+      </div>
+      <div class="stat-number" id="stat-shortlisted-count" style="color: #34d399;">{{ student.shortlisted_count }}</div>
+      <div class="stat-footer">
+        <span>Shortlist cleared for Day 1</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-card-header">
+        <span class="stat-label">Interviews</span>
+        <div class="stat-icon-wrap stat-icon-amber">⚡</div>
+      </div>
+      <div class="stat-number" id="stat-interviews-count" style="color: #fbbf24;">{{ student.interviews_count }}</div>
+      <div class="stat-footer">
+        <span>Slot 1 & Slot 2 scheduled</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-card-header">
+        <span class="stat-label">Final Offers</span>
+        <div class="stat-icon-wrap stat-icon-purple">🏆</div>
+      </div>
+      <div class="stat-number" id="stat-offers-count">{{ student.offers_count }}</div>
+      <div class="stat-footer">
+        <span style="color: var(--text-muted);">Results release on Dec 1 midnight</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Dashboard Grid (Content + Sidebar) -->
+  <div class="dashboard-layout">
+    
+    <!-- Left: Open JAFs Stream -->
+    <section class="content-section">
+      <!-- Upgraded Premium Header Banner -->
+      <div style="background: linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e293b 100%); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 14px; padding: 1.15rem 1.4rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12); flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 0.85rem;">
+          <div style="width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #1d4ed8, #0284c7); color: #ffffff; font-size: 1.25rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 16px rgba(2, 132, 199, 0.45); flex-shrink: 0;">
+            💼
+          </div>
+          <div>
+            <h2 style="font-size: 1.2rem; font-weight: 800; color: #ffffff; margin: 0; letter-spacing: -0.01em;">Active Job Announcement Forms (JAFs)</h2>
+            <p style="font-size: 0.75rem; color: #94a3b8; margin: 0.2rem 0 0;">Phase 1 Campus Recruitment Openings • Cryptographically Verified</p>
+          </div>
+        </div>
+
+        <span style="background: rgba(6, 182, 212, 0.15); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.45); font-size: 0.78rem; font-weight: 800; padding: 0.35rem 0.85rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.4rem; box-shadow: 0 0 14px rgba(6, 182, 212, 0.3);">
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: #22d3ee; box-shadow: 0 0 8px #22d3ee; display: inline-block;"></span>
+          <span id="jaf-count-badge">{{ jafs_count }} Openings Live</span>
+        </span>
+      </div>
+
+      <!-- Sector Filter Bar -->
+      <div class="sector-pills-bar">
+        <a href="?sector=all{% if current_search %}&q={{ current_search }}{% endif %}{% if current_cgpa != 'all' %}&cgpa={{ current_cgpa }}{% endif %}" class="sector-btn {% if current_sector == 'all' %}active{% endif %}">All Sectors</a>
+        <a href="?sector=Software & AI{% if current_search %}&q={{ current_search }}{% endif %}{% if current_cgpa != 'all' %}&cgpa={{ current_cgpa }}{% endif %}" class="sector-btn {% if current_sector == 'Software & AI' %}active{% endif %}">💻 Software & AI</a>
+        <a href="?sector=Quant & Finance{% if current_search %}&q={{ current_search }}{% endif %}{% if current_cgpa != 'all' %}&cgpa={{ current_cgpa }}{% endif %}" class="sector-btn {% if current_sector == 'Quant & Finance' %}active{% endif %}">📈 Quant & Finance</a>
+        <a href="?sector=Core Engineering{% if current_search %}&q={{ current_search }}{% endif %}{% if current_cgpa != 'all' %}&cgpa={{ current_cgpa }}{% endif %}" class="sector-btn {% if current_sector == 'Core Engineering' %}active{% endif %}">⚙️ Core Engineering</a>
+        <a href="?sector=Management Consulting{% if current_search %}&q={{ current_search }}{% endif %}{% if current_cgpa != 'all' %}&cgpa={{ current_cgpa }}{% endif %}" class="sector-btn {% if current_sector == 'Management Consulting' %}active{% endif %}">📊 Consulting</a>
+      </div>
+
+      <!-- Search & Filter Controls -->
+      <form method="GET" action="{% url 'students:student_dashboard' %}" id="filter-form" class="filter-bar">
+        <input type="hidden" name="sector" value="{{ current_sector }}">
+        
+        <div class="search-box-wrapper">
+          <span class="search-icon">🔍</span>
+          <input type="text" name="q" value="{{ current_search }}" id="job-search-input" class="search-input" placeholder="Search by company, role, technology or skill...">
+        </div>
+
+        <div class="filter-group">
+          <select name="cgpa" id="cgpa-filter-select" class="filter-select" aria-label="Filter by Eligibility">
+            <option value="all" {% if current_cgpa == 'all' %}selected{% endif %}>All Cutoffs</option>
+            <option value="eligible" {% if current_cgpa == 'eligible' %}selected{% endif %}>Eligible for My CGPA (>= {{ student.cgpa }})</option>
+            <option value="8.0" {% if current_cgpa == '8.0' %}selected{% endif %}>Max Cutoff <= 8.0</option>
+            <option value="8.5" {% if current_cgpa == '8.5' %}selected{% endif %}>Max Cutoff <= 8.5</option>
+            <option value="9.0" {% if current_cgpa == '9.0' %}selected{% endif %}>Max Cutoff <= 9.0</option>
+          </select>
+
+          <select name="sort" id="sort-filter-select" class="filter-select" aria-label="Sort Openings">
+            <option value="recommended" {% if current_sort == 'recommended' %}selected{% endif %}>Sort: Recommended</option>
+            <option value="deadline" {% if current_sort == 'deadline' %}selected{% endif %}>Sort: Application Deadline</option>
+          </select>
+        </div>
+      </form>
+
+      <!-- JAF Card List -->
+      <div class="jaf-list" id="jaf-list-container">
+        {% for card in jaf_cards %}
+          {% with jaf=card.obj is_applied=card.is_applied status=card.app_status %}
+          <div class="jaf-card {% if status == 'INTERVIEW' %}is-interview{% elif status == 'SHORTLISTED' %}is-shortlisted{% elif is_applied %}is-applied{% endif %}" id="card-{{ jaf.id }}">
+            <div class="jaf-card-header">
+              <div class="company-brand-meta">
+                <div class="company-logo-wrap">
+                  <img src="{{ jaf.company.logo_url }}" alt="{{ jaf.company.name }} Logo" class="company-logo-img" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'company-logo-fallback\'>{{ jaf.company.logo_fallback }}</div>';">
+                </div>
+                <div class="company-title-wrap">
+                  <h3>{{ jaf.role_title }}</h3>
+                  <p>
+                    <strong style="color: var(--text-primary);">{{ jaf.company.name }}</strong>
+                    <span>•</span>
+                    <span>{{ jaf.location }}</span>
+                  </p>
+                </div>
+              </div>
+              <div class="jaf-badge-slot">
+                {% if status == 'INTERVIEW' %}
+                  <span class="status-badge badge-interview">⚡ Interview Scheduled</span>
+                {% elif status == 'SHORTLISTED' %}
+                  <span class="status-badge badge-shortlisted">✓ Shortlisted</span>
+                {% elif is_applied %}
+                  <span class="status-badge badge-applied">Application Submitted</span>
+                {% else %}
+                  <span class="status-badge badge-open">Open for Phase 1</span>
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="jaf-details-grid">
+              <div class="detail-item">
+                <span class="label">Package (CTC)</span>
+                <span class="value ctc-val">{{ jaf.ctc_display }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">Min. CGPA Cutoff</span>
+                <span class="value">{{ jaf.cgpa_cutoff }} / 10.0</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">Hiring Slot</span>
+                <span class="value" style="color: var(--text-secondary);">{{ jaf.hiring_slot }}</span>
+              </div>
+              <div class="detail-item">
+                <span class="label">Sector Domain</span>
+                <span class="value" style="color: var(--accent-primary);">{{ jaf.sector }}</span>
+              </div>
+            </div>
+
+            <div class="jaf-branches">
+              <span style="font-size: 0.72rem; color: var(--text-muted); font-weight: 600;">Eligible:</span>
+              {% for branch in jaf.eligible_branches %}
+                <span class="branch-tag">{{ branch }}</span>
+              {% endfor %}
+            </div>
+
+            <div class="jaf-card-footer">
+              <div class="deadline-notice">
+                <span>⏰</span>
+                <span>Deadline: <strong>{{ jaf.deadline_display }}</strong></span>
+              </div>
+              <div class="jaf-actions">
+                {% if not student.is_dpc_verified %}
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="showLockedApprovalModal('{{ jaf.company.name }}')" style="color: #92400e; background: #fef3c7; border-color: #fcd34d;">
+                    <span>🔒</span> Details Locked
+                  </button>
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="showLockedApprovalModal('{{ jaf.company.name }}')" style="color: #92400e; background: #fef3c7; border-color: #fcd34d;">
+                    <span>🔒</span> Apply Locked
+                  </button>
+                {% else %}
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="openJAFDetailsModal({{ jaf.id }})">
+                    View JAF Details
+                  </button>
+                  {% if is_applied %}
+                    <button type="button" class="btn btn-applied btn-sm" id="apply-btn-{{ jaf.id }}" disabled>
+                      <span>✓</span> Applied
+                    </button>
+                    <button type="button" class="btn btn-sm track-flow-btn-{{ jaf.id }}" onclick="openHiringTrackerModal({{ jaf.id }})" style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 0.3rem; box-shadow: 0 1px 2px rgba(37,99,235,0.08);">
+                      <span>📊</span> View More (Hiring Flow) →
+                    </button>
+                  {% else %}
+                    <button type="button" class="btn btn-primary btn-sm" id="apply-btn-{{ jaf.id }}" onclick="handleApply({{ jaf.id }})">
+                      Apply with Verified Resume
+                    </button>
+                  {% endif %}
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          {% endwith %}
+        {% empty %}
+          <div style="text-align: center; padding: 3rem 1.5rem; background: var(--bg-card); border-radius: var(--radius-md); border: 1px solid var(--border-card);">
+            <p style="font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 0.5rem;">No job openings match your current search & filters.</p>
+            <a href="{% url 'students:student_dashboard' %}" class="btn btn-secondary btn-sm">Reset All Filters</a>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- Right Column: Sidebar (Schedule, Announcements, Resumes) -->
+    <aside class="sidebar-column">
+      
+      <!-- Upcoming Interview Slots -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-header">
+          <div class="sidebar-card-title">
+            <span>⚡</span>
+            <span>My Interview Slots</span>
+          </div>
+          <span style="font-size: 0.72rem; color: #fbbf24; font-weight: 600;">Day 1 (Dec 1)</span>
+        </div>
+        <div class="timeline-list">
+          {% for interview in interviews %}
+          <div class="timeline-item {% if 'Superday' in interview.interview_type %}superday{% endif %}">
+            <div class="timeline-company">{{ interview.jaf.company.name }}</div>
+            <div class="timeline-round">{{ interview.round_name }}</div>
+            <div class="timeline-meta">
+              <span>📅 {{ interview.interview_date }}</span>
+              <span>•</span>
+              <span>⏱️ {{ interview.interview_time }}</span>
+            </div>
+            <div style="font-size: 0.72rem; color: var(--text-secondary); margin-top: 0.2rem;">
+              📍 {{ interview.location }}
+            </div>
+            {% if interview.meeting_link %}
+            <a href="{{ interview.meeting_link }}" target="_blank" class="timeline-link">
+              <span>🔗 Join Video Room / Slot Link</span>
+            </a>
+            {% endif %}
+          </div>
+          {% empty %}
+          <p style="font-size: 0.8rem; color: var(--text-muted);">No upcoming interview slots scheduled yet.</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Urgent Announcements Notice Board -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-header">
+          <div class="sidebar-card-title">
+            <span>📢</span>
+            <span>Placement Notice Board</span>
+          </div>
+          <span class="pulse-dot"></span>
+        </div>
+        <div class="announcements-list">
+          {% for ann in announcements %}
+          <div class="announcement-item">
+            <div class="announcement-top">
+              <span class="ann-tag {{ ann.tag_type }}">{{ ann.tag }}</span>
+              <span class="ann-time">{{ ann.time_display }}</span>
+            </div>
+            <div class="ann-title">{{ ann.title }}</div>
+            <div class="ann-content">{{ ann.content }}</div>
+          </div>
+          {% empty %}
+          <p style="font-size: 0.8rem; color: var(--text-muted);">No announcements at this time.</p>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Verified Master Resumes -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-header">
+          <div class="sidebar-card-title">
+            <span>📁</span>
+            <span>Verified Master Resumes</span>
+          </div>
+          <span style="font-size: 0.72rem; color: #34d399; font-weight: 600;">2 Verified</span>
+        </div>
+        
+        <div class="resume-item-row">
+          <div class="resume-info">
+            <span class="resume-pdf-icon">📄</span>
+            <div>
+              <div class="resume-name" title="{{ student.resume_sde_name }}">{{ student.resume_sde_name }}</div>
+              <div style="font-size: 0.68rem; color: #34d399;">✓ Verified by DPC</div>
+            </div>
+          </div>
+          <button class="btn btn-secondary btn-sm" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" onclick="viewResumeModal('{{ student.resume_sde_name }}')">
+            View
+          </button>
+        </div>
+
+        <div class="resume-item-row">
+          <div class="resume-info">
+            <span class="resume-pdf-icon">📊</span>
+            <div>
+              <div class="resume-name" title="{{ student.resume_quant_name }}">{{ student.resume_quant_name }}</div>
+              <div style="font-size: 0.68rem; color: #34d399;">✓ Verified by DPC</div>
+            </div>
+          </div>
+          <button class="btn btn-secondary btn-sm" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;" onclick="viewResumeModal('{{ student.resume_quant_name }}')">
+            View
+          </button>
+        </div>
+
+        <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.75rem; line-height: 1.4;">
+          🔒 Master resumes are frozen for Phase 1. For emergency corrections, contact your Department Placement Coordinator (DPC).
+        </p>
+      </div>
+
+    </aside>
+  </div>
+
+  <!-- Locked Approval Modal -->
+  <div class="modal-overlay" id="locked-approval-modal" role="dialog" aria-modal="true">
+    <div class="modal-content" style="max-width: 540px;">
+      <div class="modal-header" style="background: #fffbeb; border-bottom: 1px solid #fde68a;">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span style="font-size: 1.5rem;">🔒</span>
+          <div>
+            <h3 style="font-size: 1.05rem; color: #92400e; font-weight: 700;">Company Details & Application Locked</h3>
+            <span style="font-size: 0.75rem; color: #b45309;">Placement Head Verification Required</span>
+          </div>
+        </div>
+        <button class="modal-close-btn" onclick="document.getElementById('locked-approval-modal').classList.remove('active')">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 1.5rem;">
+        <div style="text-align: center; margin-bottom: 1.25rem;">
+          <div style="width: 60px; height: 60px; border-radius: 50%; background: #fef3c7; color: #d97706; font-size: 1.8rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.75rem auto;">
+            🛡️
+          </div>
+          <h4 style="font-size: 1.1rem; color: #0f172a; margin-bottom: 0.5rem;" id="locked-modal-company-title">Company Recruitment Details</h4>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5;">
+            According to the <strong>A2Z Placement Cell Policy 2025-26</strong>, all candidate credentials (10th, 12th, CPI {{ student.cgpa }}, and Master Resume) must receive official sign-off from the <strong>Placement Head & DPC Coordinator (Prof. S. Bhattacharya)</strong> before accessing confidential company test links, JAF job descriptions, and submitting job applications.
+          </p>
+        </div>
+
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 0.85rem 1rem; font-size: 0.8rem; color: #334155;">
+          <div style="font-weight: 700; margin-bottom: 0.35rem; color: #0f172a;">Candidate Verification Status:</div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+            <span>Status:</span>
+            <strong style="color: #d97706;">⏳ Pending Officer Approval</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span>Reviewing Authority:</span>
+            <span>Prof. S. Bhattacharya (Head, TPO)</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="justify-content: space-between;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('locked-approval-modal').classList.remove('active')">Close</button>
+        <button type="button" onclick="toggleStudentApproval()" class="btn btn-primary btn-sm" style="background: #059669; border-color: #059669;">
+          <span>⚡</span> Head Sim: 1-Click Approve (Test)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  function showLockedApprovalModal(companyName) {
+    if (companyName) {
+      document.getElementById('locked-modal-company-title').innerText = `${companyName} • Recruitment JAF`;
+    }
+    document.getElementById('locked-approval-modal').classList.add('active');
+  }
+
+  function toggleStudentApproval() {
+    const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]') ? document.querySelector('[name=csrfmiddlewaretoken]').value : '';
+    
+    fetch('/api/student/toggle-approval/', {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': csrftoken,
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        window.location.reload();
+      } else {
+        alert(data.error || 'Failed to toggle status.');
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      window.location.reload();
+    });
+  }
+  </script>
+
+{% endblock %}

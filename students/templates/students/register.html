@@ -1,0 +1,2743 @@
+{% extends 'students/base.html' %}
+{% load static %}
+
+{% block title %}Student Enrollment & Multi-Part Registration | A2Z Placement Cell{% endblock %}
+
+{% block content %}
+<div class="login-page-wrapper" style="padding: 2.5rem 1rem;">
+  <div class="login-card-container" style="max-width: 720px;">
+    
+    <div class="login-card">
+      
+      <!-- A2Z Placement Cell Header -->
+      <div class="login-header" style="margin-bottom: 1.5rem;">
+        <div class="login-crest-wrap">A2Z</div>
+        <h2>Student Placement Registration</h2>
+        <p>A2Z Placement Cell • Phase 1 Multi-Part Enrollment</p>
+        
+        <div class="login-season-tag">
+          <span class="pulse-dot"></span>
+          <span>Open for Graduating Batch of 2026</span>
+        </div>
+      </div>
+
+      <!-- Multi-Part Progress Stepper -->
+      <div class="registration-stepper">
+        <div class="step-item active" id="step-tab-1" onclick="goToStep(1)">
+          <div class="step-circle">1</div>
+          <div class="step-label">Basic & OTP</div>
+        </div>
+        <div class="step-line" id="step-line-1"></div>
+        <div class="step-item" id="step-tab-2" onclick="goToStep(2)">
+          <div class="step-circle">2</div>
+          <div class="step-label">Address</div>
+        </div>
+        <div class="step-line" id="step-line-2"></div>
+        <div class="step-item" id="step-tab-3" onclick="goToStep(3)">
+          <div class="step-circle">3</div>
+          <div class="step-label">10th / 12th</div>
+        </div>
+        <div class="step-line" id="step-line-3"></div>
+        <div class="step-item" id="step-tab-4" onclick="goToStep(4)">
+          <div class="step-circle">4</div>
+          <div class="step-label">Degree & Resume</div>
+        </div>
+      </div>
+
+      <!-- Alert / Notification Message -->
+      {% if error_message %}
+      <div class="login-alert" id="server-alert">
+        <span>⚠️</span>
+        <span>{{ error_message }}</span>
+      </div>
+      {% endif %}
+
+      <div id="client-error-alert" class="login-alert" style="display: none; background: #fef2f2; border-color: #fecaca; color: #dc2626;">
+        <span>⚠️</span>
+        <span id="client-error-text">Please fill all required fields before proceeding.</span>
+      </div>
+
+      <!-- Multi-Step Registration Form -->
+      <form method="POST" action="{% url 'students:register' %}" enctype="multipart/form-data" class="login-body" id="multi-part-form" onsubmit="event.preventDefault(); initiatePaymentFlow(event); return false;">
+        {% csrf_token %}
+
+        <!-- ================================================================= -->
+        <!-- PART 1: Basic Identity & Email Verification with OTP -->
+        <!-- ================================================================= -->
+        <div class="form-step-section active" id="form-step-1">
+          <div class="step-section-heading">
+            <span class="step-badge-num">Part 1</span>
+            <h3>Personal Identity & Email Verification</h3>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+            <div class="form-group">
+              <label for="reg-fullname" class="form-label">Full Name (Alphabets only) *</label>
+              <div class="form-input-wrap">
+                <span class="form-input-icon">👤</span>
+                <input type="text" name="full_name" id="reg-fullname" class="form-input" placeholder="e.g. Priya Patel" required oninput="this.value = this.value.replace(/[^a-zA-Z\s.]/g, '')" value="{{ form_data.full_name|default:'' }}">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="reg-roll" class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Roll Number *</span>
+                <span id="roll-availability-msg" style="display: none; font-size: 0.72rem; font-weight: 700;"></span>
+              </label>
+              <div class="form-input-wrap">
+                <span class="form-input-icon">🔢</span>
+                <input type="text" name="roll_number" id="reg-roll" class="form-input" placeholder="e.g. 220070099" maxlength="12" required oninput="this.value = this.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 12); checkCredentialAvailability('roll_number', this.value, 'roll-availability-msg', this)" value="{{ form_data.roll_number|default:'' }}">
+              </div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; margin-bottom: 0.85rem;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="reg-username" class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Student Login ID / Username *</span>
+                <span id="user-availability-msg" style="display: none; font-size: 0.72rem; font-weight: 700;"></span>
+              </label>
+              <div class="form-input-wrap">
+                <span class="form-input-icon">💻</span>
+                <input type="text" name="username" id="reg-username" class="form-input" placeholder="e.g. priya.patel" maxlength="30" required oninput="this.value = this.value.replace(/[^a-zA-Z0-9._-]/g, '').toLowerCase().slice(0, 30); checkCredentialAvailability('username', this.value, 'user-availability-msg', this)" value="{{ form_data.username|default:'' }}">
+              </div>
+              <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 0.2rem;">
+                Unique portal username used to log in.
+              </div>
+            </div>
+
+            <!-- Compact Inline Passport Photo Upload -->
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="reg-photo" class="form-label">Passport Photo <span style="font-size: 0.7rem; color: #64748b; font-weight: normal;">(Optional)</span></label>
+              <div style="display: flex; align-items: center; gap: 0.5rem; background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 0.35rem 0.55rem; min-height: 42px;">
+                <div style="width: 28px; height: 28px; border-radius: 6px; background: #eff6ff; border: 1px solid #bfdbfe; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; flex-shrink: 0;" id="reg-photo-preview-box">
+                  📸
+                </div>
+                <input type="file" name="profile_picture" id="reg-photo" accept="image/jpeg,image/png,image/webp" style="font-size: 0.72rem; width: 100%; border: none; padding: 0; background: transparent;" onchange="previewRegPhoto(this)">
+              </div>
+              <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 0.2rem;">
+                JPG / PNG (Can also be added later in profile).
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact Numbers Grid in Part 1 -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem; margin-bottom: 0.85rem;">
+            <!-- Primary Mobile Number -->
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="reg-phone" class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Primary Mobile Number (WhatsApp) *</span>
+                <span id="phone-badge" style="font-size: 0.7rem; font-weight: 700; color: #64748b;">0/10 digits</span>
+              </label>
+              <div class="form-input-wrap">
+                <span class="form-input-icon">📞</span>
+                <input type="tel" name="phone_number" id="reg-phone" class="form-input" placeholder="10-digit mobile (e.g. 9820154321)" maxlength="10" required oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10); updatePhoneBadge(this, 'phone-badge')" value="{{ form_data.phone_number|default:'' }}">
+              </div>
+              <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 0.2rem;">
+                For OTP verification & WhatsApp updates.
+              </div>
+            </div>
+
+            <!-- Alternate / Guardian Phone -->
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="reg-alt-phone" class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Alternate / Guardian Phone</span>
+                <span id="alt-phone-badge" style="font-size: 0.7rem; font-weight: 700; color: #64748b;">Optional</span>
+              </label>
+              <div class="form-input-wrap">
+                <span class="form-input-icon">📱</span>
+                <input type="tel" name="alternate_phone" id="reg-alt-phone" class="form-input" placeholder="10-digit mobile (e.g. 9123456789)" maxlength="10" oninput="this.value = this.value.replace(/\D/g, '').slice(0, 10); updatePhoneBadge(this, 'alt-phone-badge')" value="{{ form_data.alternate_phone|default:'' }}">
+              </div>
+              <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 0.2rem;">
+                Parent / Guardian contact number.
+              </div>
+            </div>
+          </div>
+
+          <!-- Email with 1-time unique & OTP verification -->
+          <div class="form-group" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 1rem;">
+            <label for="reg-email" class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
+              <span>Official Student Email Address * (1 Student = 1 Email)</span>
+              <span id="email-verified-badge" style="display: none; color: #059669; font-weight: 700; font-size: 0.75rem;">✓ Verified via OTP</span>
+            </label>
+            <div style="display: flex; gap: 0.5rem;">
+              <div class="form-input-wrap" style="flex: 1;">
+                <span class="form-input-icon">✉️</span>
+                <input type="email" name="email" id="reg-email" class="form-input" placeholder="e.g. priya.patel@a2z.edu.in" required oninput="checkEmailAvailability(this.value)" onblur="checkEmailAvailability(this.value)" value="{{ form_data.email|default:'' }}">
+              </div>
+              <button type="button" class="btn btn-primary btn-sm" id="btn-send-otp" onclick="sendEmailOTP()" style="white-space: nowrap;" title="Send OTP directly to Email">
+                <span>✉️</span> Send OTP
+              </button>
+            </div>
+
+            <!-- Email Duplicate Warning Alert Container -->
+            <div id="email-duplicate-alert" style="display: none; margin-top: 0.5rem; padding: 0.55rem 0.85rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; color: #b91c1c; font-size: 0.78rem; font-weight: 600;">
+              ⚠️ <span id="email-duplicate-text"></span>
+            </div>
+
+            <div id="email-help-text" style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.35rem;">
+              A 6-digit OTP code will be sent to confirm your email. Each student must have a unique email address.
+            </div>
+
+            <!-- OTP Input Section (Toggled on OTP dispatch) -->
+            <div id="otp-input-container" style="display: none; margin-top: 0.85rem; padding-top: 0.85rem; border-top: 1px dashed #cbd5e1;">
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <div class="form-input-wrap" style="width: 160px;">
+                  <span class="form-input-icon">🔑</span>
+                  <input type="text" id="otp-code-input" maxlength="6" class="form-input" placeholder="6-digit OTP" oninput="this.value = this.value.replace(/\D/g, '').slice(0, 6)" style="font-family: monospace; font-size: 1rem; letter-spacing: 0.15em; font-weight: 700;">
+                </div>
+                <button type="button" class="btn btn-outline-cyan btn-sm" onclick="verifyEmailOTP()">
+                  <span>✓</span> Verify OTP Code
+                </button>
+                <span id="otp-status-msg" style="font-size: 0.78rem; font-weight: 600; color: #2563eb;"></span>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+            <div class="form-group">
+              <label for="reg-password" class="form-label">Password (min 6 characters) *</label>
+              <div class="form-input-wrap">
+                <span class="form-input-icon">🔒</span>
+                <input type="password" name="password" id="reg-password" class="form-input" placeholder="••••••••" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="reg-confirm-password" class="form-label">Confirm Password *</label>
+              <div class="form-input-wrap">
+                <span class="form-input-icon">🔒</span>
+                <input type="password" name="confirm_password" id="reg-confirm-password" class="form-input" placeholder="••••••••" required>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 1 Controls -->
+          <div class="step-buttons-row">
+            <div></div>
+            <button type="button" class="btn btn-primary" onclick="nextStep(1)">
+              <span>Next: Address Details ➔</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- PART 2: Current & Permanent Address Details -->
+        <!-- ================================================================= -->
+        <div class="form-step-section" id="form-step-2">
+          <div class="step-section-heading">
+            <span class="step-badge-num">Part 2</span>
+            <h3>Residential & Communication Address Details</h3>
+          </div>
+
+          <!-- Section A: Current / Communication Address -->
+          <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 1rem; margin-bottom: 1.15rem;">
+            <h4 style="font-size: 0.9rem; font-weight: 800; color: #1e3a8a; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
+              <span>🏠</span> Section A: Current / Communication Address
+            </h4>
+
+            <div class="form-group">
+              <label for="reg-current-address" class="form-label">Current Residential Address *</label>
+              <textarea name="current_address" id="reg-current-address" class="form-input" rows="2" placeholder="Hostel No. / Flat No., Society, Landmark, Street" required style="resize: vertical; padding: 0.6rem 0.85rem; width: 100%;" oninput="copyCurrentAddressIfChecked()">{{ form_data.current_address|default:'' }}</textarea>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="reg-current-pincode" class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
+                  <span>PIN Code (6 digits) *</span>
+                  <span id="current-pincode-detect-badge" style="display: none; font-size: 0.7rem; font-weight: 700;"></span>
+                </label>
+                <div class="form-input-wrap">
+                  <span class="form-input-icon">📮</span>
+                  <input type="text" name="current_pincode" id="reg-current-pincode" class="form-input" placeholder="e.g. 411001" maxlength="6" required oninput="this.value = this.value.replace(/\D/g, '').slice(0, 6); handlePincodeLookup(this.value, 'reg-current-city', 'reg-current-state', 'current-pincode-detect-badge'); copyCurrentAddressIfChecked();" value="{{ form_data.current_pincode|default:'' }}">
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="reg-current-city" class="form-label">City *</label>
+                <div class="form-input-wrap">
+                  <span class="form-input-icon">🏙️</span>
+                  <input type="text" name="current_city" id="reg-current-city" class="form-input" placeholder="e.g. Pune" required oninput="copyCurrentAddressIfChecked()" value="{{ form_data.current_city|default:'' }}">
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="reg-current-state" class="form-label">State *</label>
+                <div class="form-input-wrap">
+                  <span class="form-input-icon">🗺️</span>
+                  <input type="text" name="current_state" id="reg-current-state" class="form-input" placeholder="e.g. Maharashtra" required oninput="copyCurrentAddressIfChecked()" value="{{ form_data.current_state|default:'' }}">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Checkbox: Same as Current Address -->
+          <div style="margin-bottom: 1.15rem; background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 8px; padding: 0.75rem 1rem;">
+            <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.84rem; font-weight: 700; color: #1e40af; cursor: pointer; user-select: none;">
+              <input type="checkbox" id="same-address-checkbox" name="same_as_current_address" onchange="toggleSameAddress(this.checked)" style="width: 18px; height: 18px; accent-color: #2563eb; cursor: pointer;" checked>
+              <span>Same as Current Address</span>
+            </label>
+          </div>
+
+          <!-- Section B: Permanent Residential Address -->
+          <div id="permanent-address-container" style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 1rem; margin-bottom: 1.25rem; transition: opacity 0.3s ease;">
+            <h4 style="font-size: 0.9rem; font-weight: 800; color: #334155; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
+              <span>📍</span> Section B: Permanent Residential Address
+            </h4>
+
+            <div class="form-group">
+              <label for="reg-address" class="form-label">Permanent Residential Address *</label>
+              <textarea name="permanent_address" id="reg-address" class="form-input" rows="2" placeholder="House / Flat No., Street, Landmark" required style="resize: vertical; padding: 0.6rem 0.85rem; width: 100%;">{{ form_data.permanent_address|default:'' }}</textarea>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="reg-pincode" class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
+                  <span>PIN Code (6 digits) *</span>
+                  <span id="pincode-detect-badge" style="display: none; font-size: 0.7rem; font-weight: 700;"></span>
+                </label>
+                <div class="form-input-wrap">
+                  <span class="form-input-icon">📮</span>
+                  <input type="text" name="pincode" id="reg-pincode" class="form-input" placeholder="e.g. 411001" maxlength="6" required oninput="this.value = this.value.replace(/\D/g, '').slice(0, 6); handlePincodeLookup(this.value, 'reg-city', 'reg-state', 'pincode-detect-badge')" value="{{ form_data.pincode|default:'' }}">
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="reg-city" class="form-label">City *</label>
+                <div class="form-input-wrap">
+                  <span class="form-input-icon">🏙️</span>
+                  <input type="text" name="city" id="reg-city" class="form-input" placeholder="e.g. Pune" required value="{{ form_data.city|default:'' }}">
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="reg-state" class="form-label">State *</label>
+                <div class="form-input-wrap">
+                  <span class="form-input-icon">🗺️</span>
+                  <input type="text" name="state" id="reg-state" class="form-input" placeholder="e.g. Maharashtra" required value="{{ form_data.state|default:'' }}">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2 Controls -->
+          <div class="step-buttons-row">
+            <button type="button" class="btn btn-secondary" onclick="prevStep(2)">
+              <span>← Back</span>
+            </button>
+            <button type="button" class="btn btn-primary" onclick="nextStep(2)">
+              <span>Next: 10th & 12th Academics ➔</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- PART 3: 10th & 12th / Diploma Academic Records -->
+        <!-- ================================================================= -->
+        <div class="form-step-section" id="form-step-3">
+          <div class="step-section-heading">
+            <span class="step-badge-num">Part 3</span>
+            <h3>10th & 12th / Diploma Academic Credentials</h3>
+          </div>
+
+          <!-- Admission / Entry Route Selector -->
+          <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: var(--radius-sm); padding: 0.85rem 1rem; margin-bottom: 1rem;">
+            <label class="form-label" style="font-weight: 700; color: #1e40af; margin-bottom: 0.5rem; display: block;">
+              Select Degree Admission / Entry Route *
+            </label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+              <label style="display: flex; align-items: center; gap: 0.5rem; background: #ffffff; border: 1.5px solid #2563eb; border-radius: 8px; padding: 0.6rem 0.85rem; cursor: pointer;" id="label-route-12th">
+                <input type="radio" name="entry_route" value="12TH_REGULAR" checked onchange="toggleEntryRoute(this.value)">
+                <div>
+                  <div style="font-size: 0.82rem; font-weight: 700; color: #0f172a;">🎓 12th Standard HSC Route</div>
+                  <div style="font-size: 0.68rem; color: #64748b;">4-Year Regular Degree (Sem 1 to Sem 8)</div>
+                </div>
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.5rem; background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 0.6rem 0.85rem; cursor: pointer;" id="label-route-diploma">
+                <input type="radio" name="entry_route" value="DIPLOMA_DSE" onchange="toggleEntryRoute(this.value)">
+                <div>
+                  <div style="font-size: 0.82rem; font-weight: 700; color: #0f172a;">⚙️ Diploma / DSE Route</div>
+                  <div style="font-size: 0.68rem; color: #64748b;">Direct Second Year (Sem 3 to Sem 8)</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- 10th Record -->
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 1rem;">
+            <div style="font-weight: 700; font-size: 0.88rem; color: #0f172a; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.4rem;">
+              <span>📘</span> 10th Standard / Matriculation Details
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="reg-10th-board" class="form-label">Education Board *</label>
+                <div class="form-input-wrap">
+                  <span class="form-input-icon">🏛️</span>
+                  <input type="text" name="tenth_board" id="reg-10th-board" class="form-input" placeholder="e.g. CBSE / ICSE / State" required value="{{ form_data.tenth_board|default:'CBSE' }}">
+                </div>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="reg-10th-pct" class="form-label">Percentage (0-100%) *</label>
+                <div class="form-input-wrap">
+                  <span class="form-input-icon">📊</span>
+                  <input type="number" step="0.01" min="0" max="100" name="tenth_percentage" id="reg-10th-pct" class="form-input" placeholder="e.g. 95.40" required oninput="if(parseFloat(this.value)>100) this.value=100; if(parseFloat(this.value)<0) this.value=0;" value="{{ form_data.tenth_percentage|default:'95.40' }}">
+                </div>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="reg-10th-year" class="form-label">Passing Year (4 digits) *</label>
+                <div class="form-input-wrap">
+                  <span class="form-input-icon">📅</span>
+                  <input type="text" name="tenth_year" id="reg-10th-year" class="form-input" placeholder="e.g. 2020" maxlength="4" required oninput="this.value = this.value.replace(/\D/g, '').slice(0, 4)" value="{{ form_data.tenth_year|default:'2020' }}">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0;">
+              <label for="reg-10th-school" class="form-label">School / Institution Name *</label>
+              <div class="form-input-wrap">
+                <span class="form-input-icon">🏫</span>
+                <input type="text" name="tenth_school" id="reg-10th-school" class="form-input" placeholder="e.g. Delhi Public School" required value="{{ form_data.tenth_school|default:'Delhi Public School' }}">
+              </div>
+            </div>
+          </div>
+
+          <!-- 12th HSC Record Container -->
+          <div id="container-12th-details" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 1rem;">
+            <div style="font-weight: 700; font-size: 0.88rem; color: #0f172a; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.4rem;">
+              <span>📙</span> 12th Standard / Higher Secondary Details & Subject Marks
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="reg-12th-board" class="form-label">Education Board *</label>
+                <div class="form-input-wrap">
+                  <span class="form-input-icon">🏛️</span>
+                  <input type="text" name="twelfth_board" id="reg-12th-board" class="form-input" placeholder="e.g. CBSE / State Board" value="{{ form_data.twelfth_board|default:'CBSE' }}">
+                </div>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="reg-12th-pct" class="form-label">Aggregate % (0-100%) *</label>
+                <div class="form-input-wrap">
+                  <span class="form-input-icon">📊</span>
+                  <input type="number" step="0.01" min="0" max="100" name="twelfth_percentage" id="reg-12th-pct" class="form-input" placeholder="e.g. 96.80" oninput="if(parseFloat(this.value)>100) this.value=100; if(parseFloat(this.value)<0) this.value=0;" value="{{ form_data.twelfth_percentage|default:'96.80' }}">
+                </div>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="reg-12th-year" class="form-label">Passing Year (4 digits) *</label>
+                <div class="form-input-wrap">
+                  <span class="form-input-icon">📅</span>
+                  <input type="text" name="twelfth_year" id="reg-12th-year" class="form-input" placeholder="e.g. 2022" maxlength="4" oninput="this.value = this.value.replace(/\D/g, '').slice(0, 4)" value="{{ form_data.twelfth_year|default:'2022' }}">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 0.85rem;">
+              <label for="reg-12th-school" class="form-label">Junior College / School Name *</label>
+              <div class="form-input-wrap">
+                <span class="form-input-icon">🏫</span>
+                <input type="text" name="twelfth_school" id="reg-12th-school" class="form-input" placeholder="e.g. National Junior College" value="{{ form_data.twelfth_school|default:'National Junior College' }}">
+              </div>
+            </div>
+
+            <!-- Subject-Wise Marks Interactive Builder -->
+            <div style="background: #ffffff; border: 1.5px solid #bfdbfe; border-radius: 10px; padding: 1rem; box-shadow: 0 2px 10px rgba(37, 99, 235, 0.05);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem;">
+                <div>
+                  <span style="font-size: 0.85rem; font-weight: 800; color: #1e40af;">📝 १२वीचे विषय आणि टक्केवारी (12th Subject Marks)</span>
+                  <div style="font-size: 0.7rem; color: #64748b;">खाली विषय व गुण टाकून <strong>"Include"</strong> बटण दाबा. जोडलेले सर्व विषय वर दिसतील.</div>
+                </div>
+                <span id="subject-count-badge" style="font-size: 0.7rem; font-weight: 700; background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; padding: 0.2rem 0.6rem; border-radius: 999px;">
+                  ✓ 5 Subjects Added
+                </span>
+              </div>
+
+              <!-- Top Active Subjects Grid (येथे सर्व जोडलेले विषय दिसतील) -->
+              <div id="active-12th-subjects-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.55rem; margin-bottom: 0.85rem;">
+                
+                <div class="subject-box-item" style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 0.45rem 0.55rem; box-shadow: 0 1px 2px rgba(0,0,0,0.03); transition: all 0.2s;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                    <label style="font-size: 0.72rem; font-weight: 700; color: #1e40af; margin: 0;">📐 Maths</label>
+                    <button type="button" onclick="removeSubjectCard(this)" title="हा विषय काढून टाका" style="border: none; background: #fee2e2; color: #dc2626; border-radius: 4px; width: 18px; height: 18px; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; cursor: pointer; line-height: 1; padding: 0; font-weight: bold;">✕</button>
+                  </div>
+                  <input type="hidden" name="custom_subject_name[]" value="Maths">
+                  <input type="number" step="0.01" min="0" max="100" name="custom_subject_marks[]" class="form-input" style="padding: 0.3rem 0.4rem; font-size: 0.85rem; font-weight: 700; text-align: center;" value="95.00" oninput="if(parseFloat(this.value)>100) this.value=100; if(parseFloat(this.value)<0) this.value=0;">
+                </div>
+
+                <div class="subject-box-item" style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 0.45rem 0.55rem; box-shadow: 0 1px 2px rgba(0,0,0,0.03); transition: all 0.2s;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                    <label style="font-size: 0.72rem; font-weight: 700; color: #1e40af; margin: 0;">⚡ Physics</label>
+                    <button type="button" onclick="removeSubjectCard(this)" title="हा विषय काढून टाका" style="border: none; background: #fee2e2; color: #dc2626; border-radius: 4px; width: 18px; height: 18px; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; cursor: pointer; line-height: 1; padding: 0; font-weight: bold;">✕</button>
+                  </div>
+                  <input type="hidden" name="custom_subject_name[]" value="Physics">
+                  <input type="number" step="0.01" min="0" max="100" name="custom_subject_marks[]" class="form-input" style="padding: 0.3rem 0.4rem; font-size: 0.85rem; font-weight: 700; text-align: center;" value="94.00" oninput="if(parseFloat(this.value)>100) this.value=100; if(parseFloat(this.value)<0) this.value=0;">
+                </div>
+
+                <div class="subject-box-item" style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 0.45rem 0.55rem; box-shadow: 0 1px 2px rgba(0,0,0,0.03); transition: all 0.2s;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                    <label style="font-size: 0.72rem; font-weight: 700; color: #1e40af; margin: 0;">🧪 Chemistry</label>
+                    <button type="button" onclick="removeSubjectCard(this)" title="हा विषय काढून टाका" style="border: none; background: #fee2e2; color: #dc2626; border-radius: 4px; width: 18px; height: 18px; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; cursor: pointer; line-height: 1; padding: 0; font-weight: bold;">✕</button>
+                  </div>
+                  <input type="hidden" name="custom_subject_name[]" value="Chemistry">
+                  <input type="number" step="0.01" min="0" max="100" name="custom_subject_marks[]" class="form-input" style="padding: 0.3rem 0.4rem; font-size: 0.85rem; font-weight: 700; text-align: center;" value="92.00" oninput="if(parseFloat(this.value)>100) this.value=100; if(parseFloat(this.value)<0) this.value=0;">
+                </div>
+
+                <div class="subject-box-item" style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 0.45rem 0.55rem; box-shadow: 0 1px 2px rgba(0,0,0,0.03); transition: all 0.2s;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                    <label style="font-size: 0.72rem; font-weight: 700; color: #1e40af; margin: 0;">🗣️ English</label>
+                    <button type="button" onclick="removeSubjectCard(this)" title="हा विषय काढून टाका" style="border: none; background: #fee2e2; color: #dc2626; border-radius: 4px; width: 18px; height: 18px; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; cursor: pointer; line-height: 1; padding: 0; font-weight: bold;">✕</button>
+                  </div>
+                  <input type="hidden" name="custom_subject_name[]" value="English">
+                  <input type="number" step="0.01" min="0" max="100" name="custom_subject_marks[]" class="form-input" style="padding: 0.3rem 0.4rem; font-size: 0.85rem; font-weight: 700; text-align: center;" value="90.00" oninput="if(parseFloat(this.value)>100) this.value=100; if(parseFloat(this.value)<0) this.value=0;">
+                </div>
+
+                <div class="subject-box-item" style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 0.45rem 0.55rem; box-shadow: 0 1px 2px rgba(0,0,0,0.03); transition: all 0.2s;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                    <label style="font-size: 0.72rem; font-weight: 700; color: #1e40af; margin: 0;">💻 Comp Sci</label>
+                    <button type="button" onclick="removeSubjectCard(this)" title="हा विषय काढून टाका" style="border: none; background: #fee2e2; color: #dc2626; border-radius: 4px; width: 18px; height: 18px; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; cursor: pointer; line-height: 1; padding: 0; font-weight: bold;">✕</button>
+                  </div>
+                  <input type="hidden" name="custom_subject_name[]" value="Computer Science">
+                  <input type="number" step="0.01" min="0" max="100" name="custom_subject_marks[]" class="form-input" style="padding: 0.3rem 0.4rem; font-size: 0.85rem; font-weight: 700; text-align: center;" value="98.00" oninput="if(parseFloat(this.value)>100) this.value=100; if(parseFloat(this.value)<0) this.value=0;">
+                </div>
+
+              </div>
+
+              <!-- Empty Subjects Fallback Message -->
+              <div id="empty-subjects-msg" style="display: none; text-align: center; padding: 1rem; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 8px; color: #64748b; font-size: 0.78rem; margin-bottom: 0.85rem;">
+                💡 सध्या कोणतेही विषय जोडलेले नाहीत. खाली विषय निवडून <strong>"Include"</strong> बटण दाबा.
+              </div>
+
+              <!-- Quick 1-Click Subject Presets -->
+              <div style="margin-bottom: 0.75rem;">
+                <div style="font-size: 0.7rem; font-weight: 700; color: #475569; margin-bottom: 0.35rem;">
+                  ⚡ Quick Add Presets (१-क्लिकने विषय निवडा):
+                </div>
+                <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+                  <button type="button" class="btn-preset-chip" onclick="quickFillSubject('Maths', '95.00')">+ Maths</button>
+                  <button type="button" class="btn-preset-chip" onclick="quickFillSubject('Physics', '94.00')">+ Physics</button>
+                  <button type="button" class="btn-preset-chip" onclick="quickFillSubject('Chemistry', '92.00')">+ Chemistry</button>
+                  <button type="button" class="btn-preset-chip" onclick="quickFillSubject('Biology', '91.00')">+ Biology</button>
+                  <button type="button" class="btn-preset-chip" onclick="quickFillSubject('English', '90.00')">+ English</button>
+                  <button type="button" class="btn-preset-chip" onclick="quickFillSubject('Computer Science', '98.00')">+ Comp Sci</button>
+                  <button type="button" class="btn-preset-chip" onclick="quickFillSubject('Electronics', '93.50')">+ Electronics</button>
+                  <button type="button" class="btn-preset-chip" onclick="quickFillSubject('Statistics', '89.00')">+ Statistics</button>
+                </div>
+              </div>
+
+              <!-- Dedicated "Include Subject" Input Row -->
+              <div style="background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0.65rem 0.85rem; display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                <div style="flex: 2; min-width: 160px;">
+                  <div class="form-input-wrap">
+                    <span class="form-input-icon">🏷️</span>
+                    <input type="text" id="new-subject-name-input" class="form-input" placeholder="Subject Name (e.g. Biology, Hindi)" style="padding: 0.45rem 0.6rem 0.45rem 2.2rem; font-size: 0.82rem; background: #ffffff;">
+                  </div>
+                </div>
+
+                <div style="flex: 1; min-width: 110px;">
+                  <div class="form-input-wrap">
+                    <span class="form-input-icon">🎯</span>
+                    <input type="number" step="0.01" min="0" max="100" id="new-subject-marks-input" class="form-input" placeholder="Marks %" style="padding: 0.45rem 0.6rem 0.45rem 2.2rem; font-size: 0.82rem; background: #ffffff;" oninput="if(parseFloat(this.value)>100) this.value=100; if(parseFloat(this.value)<0) this.value=0;" onkeydown="if(event.key==='Enter'){event.preventDefault(); include12thSubject();}">
+                  </div>
+                </div>
+
+                <button type="button" onclick="include12thSubject()" class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #1d4ed8, #2563eb); border: 1px solid #3b82f6; font-weight: 700; padding: 0.48rem 1.1rem; border-radius: 6px; box-shadow: 0 2px 8px rgba(37,99,235,0.3); white-space: nowrap;">
+                  <span>➕</span> Include Subject
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Diploma (DSE) Record Container -->
+          <div id="container-diploma-details" style="display: none; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 1rem;">
+            <div style="font-weight: 700; font-size: 0.88rem; color: #0f172a; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.4rem;">
+              <span>⚙️</span> Diploma / Polytechnic Credentials & Semester Marks (DSE Entry)
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="reg-diploma-board" class="form-label">Diploma Board *</label>
+                <div class="form-input-wrap">
+                  <span class="form-input-icon">🏛️</span>
+                  <input type="text" name="diploma_board" id="reg-diploma-board" class="form-input" placeholder="e.g. MSBTE / BTE" value="{{ form_data.diploma_board|default:'MSBTE' }}">
+                </div>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="reg-diploma-pct" class="form-label">Aggregate Percentage (0-100%) *</label>
+                <div class="form-input-wrap">
+                  <span class="form-input-icon">📊</span>
+                  <input type="number" step="0.01" min="0" max="100" name="diploma_percentage" id="reg-diploma-pct" class="form-input" placeholder="e.g. 88.50" oninput="if(parseFloat(this.value)>100) this.value=100; if(parseFloat(this.value)<0) this.value=0;" value="{{ form_data.diploma_percentage|default:'88.50' }}">
+                </div>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="reg-diploma-college" class="form-label">Polytechnic College Name *</label>
+                <div class="form-input-wrap">
+                  <span class="form-input-icon">🏫</span>
+                  <input type="text" name="diploma_college" id="reg-diploma-college" class="form-input" placeholder="e.g. Government Polytechnic" value="{{ form_data.diploma_college|default:'Government Polytechnic' }}">
+                </div>
+              </div>
+            </div>
+
+            <!-- Diploma Semester 1 to 6 Breakdown -->
+            <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0.85rem;">
+              <div style="font-size: 0.8rem; font-weight: 700; color: #1e40af; margin-bottom: 0.5rem;">
+                📊 Diploma Semester-Wise Marks Percentage (Sem 1 to Sem 6)
+              </div>
+              <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.45rem;">
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.35rem;">
+                  <label style="font-size: 0.68rem; font-weight: 700; color: #475569; display: block; margin-bottom: 0.15rem;">Sem 1 %</label>
+                  <input type="number" step="0.01" min="0" max="100" name="diploma_sem1_percentage" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.78rem;" value="85.00">
+                </div>
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.35rem;">
+                  <label style="font-size: 0.68rem; font-weight: 700; color: #475569; display: block; margin-bottom: 0.15rem;">Sem 2 %</label>
+                  <input type="number" step="0.01" min="0" max="100" name="diploma_sem2_percentage" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.78rem;" value="86.00">
+                </div>
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.35rem;">
+                  <label style="font-size: 0.68rem; font-weight: 700; color: #475569; display: block; margin-bottom: 0.15rem;">Sem 3 %</label>
+                  <input type="number" step="0.01" min="0" max="100" name="diploma_sem3_percentage" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.78rem;" value="88.00">
+                </div>
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.35rem;">
+                  <label style="font-size: 0.68rem; font-weight: 700; color: #475569; display: block; margin-bottom: 0.15rem;">Sem 4 %</label>
+                  <input type="number" step="0.01" min="0" max="100" name="diploma_sem4_percentage" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.78rem;" value="87.50">
+                </div>
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.35rem;">
+                  <label style="font-size: 0.68rem; font-weight: 700; color: #475569; display: block; margin-bottom: 0.15rem;">Sem 5 %</label>
+                  <input type="number" step="0.01" min="0" max="100" name="diploma_sem5_percentage" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.78rem;" value="89.00">
+                </div>
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.35rem;">
+                  <label style="font-size: 0.68rem; font-weight: 700; color: #475569; display: block; margin-bottom: 0.15rem;">Sem 6 %</label>
+                  <input type="number" step="0.01" min="0" max="100" name="diploma_sem6_percentage" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.78rem;" value="90.50">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3 Controls -->
+          <div class="step-buttons-row" style="margin-top: 1.25rem;">
+            <button type="button" class="btn btn-secondary" onclick="prevStep(3)">
+              <span>← Back</span>
+            </button>
+            <button type="button" class="btn btn-primary" onclick="nextStep(3)">
+              <span>Next: Degree, Semester SGPA & Resumes ➔</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ================================================================= -->
+        <!-- PART 4: College Degree Details & Semester-Wise SGPA Pointers -->
+        <!-- ================================================================= -->
+        <div class="form-step-section" id="form-step-4">
+          <div class="step-section-heading">
+            <span class="step-badge-num">Part 4</span>
+            <h3>Graduation Program, Semester SGPA Pointers & Master Resume</h3>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+            <div class="form-group">
+              <label for="reg-degree" class="form-label">Program / Degree *</label>
+              <div class="form-input-wrap">
+                <span class="form-input-icon">🎓</span>
+                <select name="degree" id="reg-degree" class="form-input" style="padding-left: 2.4rem;">
+                  {% for deg in available_degrees %}
+                  <option value="{{ deg }}" {% if form_data.degree == deg %}selected{% endif %}>{{ deg }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="reg-department" class="form-label">Department *</label>
+              <div class="form-input-wrap">
+                <span class="form-input-icon">🏛️</span>
+                <select name="department" id="reg-department" class="form-input" style="padding-left: 2.4rem;">
+                  {% for dept in available_departments %}
+                  <option value="{{ dept }}" {% if form_data.department == dept %}selected{% endif %}>{{ dept }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.85rem;">
+            <div class="form-group">
+              <label for="reg-cgpa" class="form-label">Overall CPI / CGPA (0.0 to 10.0) *</label>
+              <div class="form-input-wrap">
+                <span class="form-input-icon">⭐</span>
+                <input type="number" step="0.01" min="0" max="10" name="cgpa" id="reg-cgpa" class="form-input" placeholder="e.g. 9.15" required oninput="if(parseFloat(this.value)>10) this.value=10; if(parseFloat(this.value)<0) this.value=0;" value="{{ form_data.cgpa|default:'9.15' }}">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="reg-active-backlogs" class="form-label">Live Active Backlogs *</label>
+              <div class="form-input-wrap">
+                <span class="form-input-icon">⚠️</span>
+                <input type="number" min="0" max="20" name="active_backlogs" id="reg-active-backlogs" class="form-input" placeholder="0" value="{{ form_data.active_backlogs|default:'0' }}" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="reg-specialization" class="form-label">Specialization / Minor</label>
+              <div class="form-input-wrap">
+                <span class="form-input-icon">🏷️</span>
+                <input type="text" name="specialization" id="reg-specialization" class="form-input" placeholder="e.g. Minor in AI & Security" value="{{ form_data.specialization|default:'Minor in AI' }}">
+              </div>
+            </div>
+          </div>
+
+          <!-- Semester-Wise SGPA Pointers & Backlog Tracker Matrix -->
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+              <div style="font-weight: 700; font-size: 0.88rem; color: #0f172a; display: flex; align-items: center; gap: 0.4rem;">
+                <span>📊</span> Degree Semester Pointers (SGPA) & Backlogs (Sem 1 to 8)
+              </div>
+              <span style="font-size: 0.72rem; color: #2563eb; font-weight: 600;">Visible to Recruiters during Drive Selection</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.6rem;">
+              <!-- Sem 1 -->
+              <div class="sem-card-input" id="box-sem1" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.45rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem;">
+                  <label style="font-size: 0.68rem; font-weight: 700; color: #475569; margin: 0;">Sem 1 SGPA</label>
+                  <label style="font-size: 0.62rem; color: #dc2626; margin: 0;">Backlogs</label>
+                </div>
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 0.3rem;">
+                  <input type="number" step="0.01" min="0" max="10" name="sem1_sgpa" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.8rem;" placeholder="9.20" value="9.20">
+                  <input type="number" min="0" max="10" name="sem1_backlogs" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.8rem;" placeholder="0" value="0">
+                </div>
+              </div>
+              <!-- Sem 2 -->
+              <div class="sem-card-input" id="box-sem2" style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.45rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem;">
+                  <label style="font-size: 0.68rem; font-weight: 700; color: #475569; margin: 0;">Sem 2 SGPA</label>
+                  <label style="font-size: 0.62rem; color: #dc2626; margin: 0;">Backlogs</label>
+                </div>
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 0.3rem;">
+                  <input type="number" step="0.01" min="0" max="10" name="sem2_sgpa" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.8rem;" placeholder="9.40" value="9.40">
+                  <input type="number" min="0" max="10" name="sem2_backlogs" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.8rem;" placeholder="0" value="0">
+                </div>
+              </div>
+              <!-- Sem 3 -->
+              <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.45rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem;">
+                  <label style="font-size: 0.68rem; font-weight: 700; color: #475569; margin: 0;">Sem 3 SGPA</label>
+                  <label style="font-size: 0.62rem; color: #dc2626; margin: 0;">Backlogs</label>
+                </div>
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 0.3rem;">
+                  <input type="number" step="0.01" min="0" max="10" name="sem3_sgpa" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.8rem;" placeholder="9.10" value="9.10">
+                  <input type="number" min="0" max="10" name="sem3_backlogs" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.8rem;" placeholder="0" value="0">
+                </div>
+              </div>
+              <!-- Sem 4 -->
+              <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.45rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem;">
+                  <label style="font-size: 0.68rem; font-weight: 700; color: #475569; margin: 0;">Sem 4 SGPA</label>
+                  <label style="font-size: 0.62rem; color: #dc2626; margin: 0;">Backlogs</label>
+                </div>
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 0.3rem;">
+                  <input type="number" step="0.01" min="0" max="10" name="sem4_sgpa" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.8rem;" placeholder="9.50" value="9.50">
+                  <input type="number" min="0" max="10" name="sem4_backlogs" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.8rem;" placeholder="0" value="0">
+                </div>
+              </div>
+              <!-- Sem 5 -->
+              <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.45rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem;">
+                  <label style="font-size: 0.68rem; font-weight: 700; color: #475569; margin: 0;">Sem 5 SGPA</label>
+                  <label style="font-size: 0.62rem; color: #dc2626; margin: 0;">Backlogs</label>
+                </div>
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 0.3rem;">
+                  <input type="number" step="0.01" min="0" max="10" name="sem5_sgpa" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.8rem;" placeholder="9.60" value="9.60">
+                  <input type="number" min="0" max="10" name="sem5_backlogs" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.8rem;" placeholder="0" value="0">
+                </div>
+              </div>
+              <!-- Sem 6 -->
+              <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.45rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem;">
+                  <label style="font-size: 0.68rem; font-weight: 700; color: #475569; margin: 0;">Sem 6 SGPA</label>
+                  <label style="font-size: 0.62rem; color: #dc2626; margin: 0;">Backlogs</label>
+                </div>
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 0.3rem;">
+                  <input type="number" step="0.01" min="0" max="10" name="sem6_sgpa" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.8rem;" placeholder="9.40" value="9.40">
+                  <input type="number" min="0" max="10" name="sem6_backlogs" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.8rem;" placeholder="0" value="0">
+                </div>
+              </div>
+              <!-- Sem 7 -->
+              <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.45rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem;">
+                  <label style="font-size: 0.68rem; font-weight: 700; color: #475569; margin: 0;">Sem 7 SGPA</label>
+                  <label style="font-size: 0.62rem; color: #dc2626; margin: 0;">Backlogs</label>
+                </div>
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 0.3rem;">
+                  <input type="number" step="0.01" min="0" max="10" name="sem7_sgpa" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.8rem;" placeholder="9.50" value="9.50">
+                  <input type="number" min="0" max="10" name="sem7_backlogs" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.8rem;" placeholder="0" value="0">
+                </div>
+              </div>
+              <!-- Sem 8 -->
+              <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.45rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem;">
+                  <label style="font-size: 0.68rem; font-weight: 700; color: #475569; margin: 0;">Sem 8 SGPA</label>
+                  <label style="font-size: 0.62rem; color: #dc2626; margin: 0;">Backlogs</label>
+                </div>
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 0.3rem;">
+                  <input type="number" step="0.01" min="0" max="10" name="sem8_sgpa" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.8rem;" placeholder="9.60" value="9.60">
+                  <input type="number" min="0" max="10" name="sem8_backlogs" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.8rem;" placeholder="0" value="0">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Master PDF Resume Upload -->
+          <div class="form-group" style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: var(--radius-sm); padding: 1rem;">
+            <label for="reg-resume" class="form-label" style="display: flex; justify-content: space-between; align-items: center;">
+              <span>Master PDF Resume (SDE / Core) *</span>
+              <span id="resume-validation-badge" style="font-size: 0.74rem; font-weight: 700; color: #dc2626; background: #fef2f2; border: 1px solid #fecaca; padding: 0.15rem 0.55rem; border-radius: 6px;">PDF Required (Max 5MB)</span>
+            </label>
+            <div class="form-input-wrap">
+              <span class="form-input-icon">📄</span>
+              <input type="file" name="resume_sde_file" id="reg-resume" accept=".pdf" required class="form-input" style="padding: 0.45rem 0.45rem 0.45rem 2.4rem; font-size: 0.82rem;" onchange="validateResumeFileInput(this)">
+            </div>
+            <!-- Inline Error Banner (No Browser Alert Popup) -->
+            <div id="resume-inline-error" style="display: none; margin-top: 0.45rem; padding: 0.45rem 0.75rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; color: #b91c1c; font-size: 0.76rem; font-weight: 700;"></div>
+
+            <div id="resume-help-text" style="font-size: 0.72rem; color: var(--text-muted); margin-top: 0.35rem;">
+              Mandatory. Please upload your Department Placement Committee (DPC) verified Master Resume in PDF format only.
+            </div>
+          </div>
+
+          <!-- Placement Policy Declaration -->
+          <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--radius-sm); padding: 0.85rem; font-size: 0.75rem; color: #1e40af; line-height: 1.5;">
+            <label style="display: flex; align-items: flex-start; gap: 0.5rem; cursor: pointer; color: #1e3a8a;">
+              <input type="checkbox" name="terms" required checked style="margin-top: 0.15rem;">
+              <span>I hereby declare that all entered 10th, 12th, Address, and college CPI credentials match my official records. I agree to abide by the A2Z Placement Policy 2025-26.</span>
+            </label>
+          </div>
+
+          <!-- Step 4 Controls -->
+          <div class="step-buttons-row">
+            <button type="button" class="btn btn-secondary" onclick="prevStep(4)">
+              <span>← Back</span>
+            </button>
+            <button type="button" id="btn-pay-enrollment" onclick="initiatePaymentFlow(event)" class="btn-login-submit" style="flex: 2; margin-top: 0; background: linear-gradient(135deg, #1e40af, #2563eb); font-weight: 800; font-size: 0.95rem; box-shadow: 0 4px 14px rgba(37,99,235,0.35); cursor: pointer;">
+              <span>💳</span> Pay ₹{{ registration_fee|default:"99.00" }} Fee & Complete Enrollment ➔
+            </button>
+          </div>
+        </div>
+
+        <!-- Footer Links -->
+        <div class="login-footer-links" style="margin-top: 1.5rem;">
+          <span>Already have an account? <a href="{% url 'students:login' %}" style="font-weight: 600;">Log In via Portal</a></span>
+          <a href="{% url 'students:landing' %}">Return to Home</a>
+        </div>
+      </form>
+    </div>
+
+    <!-- Security Gateway Seal -->
+    <div class="security-badge">
+      <span>🔒</span>
+      <span>A2Z Placement Cell Secure TLS 1.3 Certified • Verified Student Enrollment</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- =========================================================================
+     MULTI-METHOD ₹99 PAYMENT GATEWAY MODAL (DASHBOARD MATCHED THEME)
+     ========================================================================= -->
+<div id="payment-modal-overlay" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(6px); z-index: 9999; align-items: center; justify-content: center; padding: 1rem;">
+  <div style="background: #ffffff; width: 100%; max-width: 540px; border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); border: 1.5px solid #bfdbfe; overflow: hidden; animation: fadeInStep 0.25s ease;">
+    
+    <!-- Modal Header -->
+    <div style="background: linear-gradient(135deg, #1e3a8a, #1e40af); color: #ffffff; padding: 1.2rem 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <div style="width: 40px; height: 40px; background: rgba(255,255,255,0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">💳</div>
+        <div>
+          <h3 style="font-size: 1.05rem; font-weight: 800; margin: 0; color: #ffffff; letter-spacing: -0.01em;">A2Z Placement Cell Gateway</h3>
+          <p style="font-size: 0.72rem; color: #bfdbfe; margin: 0;">Official Student Enrollment & Verification Fee</p>
+        </div>
+      </div>
+      <div style="text-align: right;">
+        <div style="font-size: 0.65rem; color: #bfdbfe; text-transform: uppercase; font-weight: 700;">Amount Due</div>
+        <div style="font-size: 1.35rem; font-weight: 900; color: #38bdf8; font-family: monospace;">₹{{ registration_fee|default:"99.00" }}</div>
+      </div>
+    </div>
+
+    <!-- Candidate Mini Info Banner -->
+    <div style="background: #eff6ff; border-bottom: 1px solid #dbeafe; padding: 0.5rem 1.5rem; display: flex; justify-content: space-between; font-size: 0.75rem; color: #1e40af; font-weight: 600;">
+      <span>Student: <strong id="modal-candidate-name">Priya Patel</strong> (<span id="modal-candidate-roll">220070099</span>)</span>
+      <span style="color: #059669;">✓ JWT Staged (Secure)</span>
+    </div>
+
+    <!-- Payment Method Navigation Tabs -->
+    <div style="display: flex; border-bottom: 1px solid #e2e8f0; background: #f8fafc;">
+      <button type="button" class="pay-tab-btn active" id="tab-btn-upi" onclick="switchPayTab('upi')" style="flex: 1; padding: 0.65rem 0.5rem; font-size: 0.75rem; font-weight: 700; border: none; background: transparent; cursor: pointer; color: #1e40af; border-bottom: 2px solid #2563eb; display: flex; align-items: center; justify-content: center; gap: 0.3rem;">
+        <span>📱</span> UPI & QR
+      </button>
+      <button type="button" class="pay-tab-btn" id="tab-btn-card" onclick="switchPayTab('card')" style="flex: 1; padding: 0.65rem 0.5rem; font-size: 0.75rem; font-weight: 700; border: none; background: transparent; cursor: pointer; color: #64748b; border-bottom: 2px solid transparent; display: flex; align-items: center; justify-content: center; gap: 0.3rem;">
+        <span>💳</span> Card
+      </button>
+      <button type="button" class="pay-tab-btn" id="tab-btn-nb" onclick="switchPayTab('nb')" style="flex: 1; padding: 0.65rem 0.5rem; font-size: 0.75rem; font-weight: 700; border: none; background: transparent; cursor: pointer; color: #64748b; border-bottom: 2px solid transparent; display: flex; align-items: center; justify-content: center; gap: 0.3rem;">
+        <span>🏛️</span> NetBanking
+      </button>
+      <button type="button" class="pay-tab-btn" id="tab-btn-wallet" onclick="switchPayTab('wallet')" style="flex: 1; padding: 0.65rem 0.5rem; font-size: 0.75rem; font-weight: 700; border: none; background: transparent; cursor: pointer; color: #64748b; border-bottom: 2px solid transparent; display: flex; align-items: center; justify-content: center; gap: 0.3rem;">
+        <span>👛</span> Wallets
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div style="padding: 1.25rem 1.5rem; max-height: 420px; overflow-y: auto;">
+      
+      <!-- TAB 1: UPI & QR CODE -->
+      <div id="pay-content-upi" class="pay-content-section" style="display: block; text-align: center;">
+        
+        <!-- Interactive QR Code Box -->
+        <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 1rem; margin-bottom: 1rem; display: flex; flex-direction: column; align-items: center; position: relative;">
+          
+          <div style="font-size: 0.75rem; font-weight: 800; color: #1e3a8a; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.35rem;">
+            <span>📷</span> Scan with Any UPI App to Pay ₹{{ registration_fee|default:"99.00" }}
+          </div>
+
+          <!-- Dynamic QR Image Canvas -->
+          <div id="qr-code-wrapper" style="width: 170px; height: 170px; background: #ffffff; border: 2px solid #3b82f6; border-radius: 10px; padding: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(37,99,235,0.12); cursor: pointer;" onclick="start10sTimer()" title="Click QR to start 10s test timer">
+            <img id="upi-qr-image" src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=upi://pay?pa=a2zplacementcell@icici&pn=A2Z%20Placement%20Cell&am={{ registration_fee|default:'99.00' }}&cu=INR" alt="UPI QR Code" style="width: 100%; height: 100%; object-fit: contain;">
+          </div>
+
+          <!-- Supported UPI Logos -->
+          <div style="display: flex; gap: 0.45rem; justify-content: center; margin-top: 0.65rem; font-size: 0.68rem; font-weight: 700; color: #475569; flex-wrap: wrap;">
+            <span style="background: #ffffff; border: 1px solid #e2e8f0; padding: 0.2rem 0.45rem; border-radius: 4px;">Google Pay</span>
+            <span style="background: #ffffff; border: 1px solid #e2e8f0; padding: 0.2rem 0.45rem; border-radius: 4px; color: #5f259f;">PhonePe</span>
+            <span style="background: #ffffff; border: 1px solid #e2e8f0; padding: 0.2rem 0.45rem; border-radius: 4px; color: #00b9f5;">Paytm</span>
+            <span style="background: #ffffff; border: 1px solid #e2e8f0; padding: 0.2rem 0.45rem; border-radius: 4px; color: #f97316;">BHIM UPI</span>
+          </div>
+
+          <!-- 10-Second Live Timer Badge -->
+          <div id="qr-timer-badge" style="margin-top: 0.65rem; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 6px; padding: 0.35rem 0.75rem; font-size: 0.75rem; color: #1e40af; font-weight: 700; display: flex; align-items: center; gap: 0.4rem;">
+            <span>⏱️</span> <span id="qr-timer-text">Click QR or button below to simulate instant test payment</span>
+          </div>
+
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+          
+          <button type="button" id="btn-confirm-upi-paid" onclick="completePaymentSimulation('UPI_QR')" class="btn-login-submit" style="margin-top: 0; background: linear-gradient(135deg, #059669, #10b981); border: 1.5px solid #059669; font-weight: 800; font-size: 0.88rem; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25); cursor: pointer;">
+            <span>✅</span> I Have Paid ₹{{ registration_fee|default:"99.00" }} / Payment Done
+          </button>
+
+          <button type="button" onclick="openOfficialRazorpayCheckout()" style="background: #ffffff; border: 1.5px solid #3b82f6; color: #1d4ed8; font-size: 0.78rem; font-weight: 700; padding: 0.45rem; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.35rem;">
+            <span>🚀</span> Pay via Official Razorpay Gateway (Cards / NetBanking)
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- TAB 2: DEBIT / CREDIT CARDS -->
+      <div id="pay-content-card" class="pay-content-section" style="display: none;">
+        <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Card Number</label>
+            <input type="text" class="form-input" placeholder="4532 •••• •••• 8892" value="4532 9901 2288 8892" style="font-family: monospace; font-size: 0.85rem;">
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;">
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label">Valid Thru (MM/YY)</label>
+              <input type="text" class="form-input" placeholder="12/28" value="12/28" style="font-family: monospace; font-size: 0.85rem; text-align: center;">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label">CVV / CVC</label>
+              <input type="password" maxlength="4" class="form-input" placeholder="•••" value="889" style="font-family: monospace; font-size: 0.85rem; text-align: center;">
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom: 0.5rem;">
+            <label class="form-label">Cardholder Name</label>
+            <input type="text" class="form-input" id="cardholder-name-input" placeholder="Name on card" value="Priya Patel">
+          </div>
+          <button type="button" onclick="completePaymentSimulation('CARD')" class="btn-login-submit" style="margin-top: 0; background: linear-gradient(135deg, #1e40af, #2563eb); font-weight: 800; font-size: 0.88rem; cursor: pointer;">
+            <span>💳</span> Pay ₹{{ registration_fee|default:"99.00" }} via Card
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB 3: NETBANKING -->
+      <div id="pay-content-nb" class="pay-content-section" style="display: none;">
+        <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+          <div style="font-size: 0.75rem; font-weight: 700; color: #475569; margin-bottom: 0.2rem;">Popular Indian Banks:</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; margin-bottom: 0.5rem;">
+            <label style="display: flex; align-items: center; gap: 0.4rem; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.78rem; font-weight: 600; cursor: pointer;">
+              <input type="radio" name="nb_bank" value="SBI" checked> State Bank of India
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.4rem; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.78rem; font-weight: 600; cursor: pointer;">
+              <input type="radio" name="nb_bank" value="HDFC"> HDFC Bank
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.4rem; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.78rem; font-weight: 600; cursor: pointer;">
+              <input type="radio" name="nb_bank" value="ICICI"> ICICI Bank
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.4rem; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.78rem; font-weight: 600; cursor: pointer;">
+              <input type="radio" name="nb_bank" value="AXIS"> Axis Bank
+            </label>
+          </div>
+          <button type="button" onclick="completePaymentSimulation('NETBANKING')" class="btn-login-submit" style="margin-top: 0; background: linear-gradient(135deg, #1e40af, #2563eb); font-weight: 800; font-size: 0.88rem; cursor: pointer;">
+            <span>🏛️</span> Proceed to NetBanking (₹{{ registration_fee|default:"99.00" }})
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB 4: WALLETS -->
+      <div id="pay-content-wallet" class="pay-content-section" style="display: none;">
+        <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; margin-bottom: 0.5rem;">
+            <label style="display: flex; align-items: center; gap: 0.4rem; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.78rem; font-weight: 600; cursor: pointer;">
+              <input type="radio" name="wallet_provider" value="PAYTM" checked> Paytm Wallet
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.4rem; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.78rem; font-weight: 600; cursor: pointer;">
+              <input type="radio" name="wallet_provider" value="PHONEPE"> PhonePe Wallet
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.4rem; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.78rem; font-weight: 600; cursor: pointer;">
+              <input type="radio" name="wallet_provider" value="AMAZON"> Amazon Pay
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.4rem; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.4rem 0.6rem; font-size: 0.78rem; font-weight: 600; cursor: pointer;">
+              <input type="radio" name="wallet_provider" value="MOBIKWIK"> Mobikwik
+            </label>
+          </div>
+          <button type="button" onclick="completePaymentSimulation('WALLET')" class="btn-login-submit" style="margin-top: 0; background: linear-gradient(135deg, #1e40af, #2563eb); font-weight: 800; font-size: 0.88rem; cursor: pointer;">
+            <span>👛</span> Pay ₹{{ registration_fee|default:"99.00" }} via Wallet
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Modal Footer -->
+    <div style="background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 0.75rem 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+      <button type="button" onclick="closePaymentModal()" style="border: none; background: transparent; color: #64748b; font-size: 0.78rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.25rem;">
+        <span>✕</span> Cancel Payment
+      </button>
+      <div style="font-size: 0.68rem; color: #64748b; display: flex; align-items: center; gap: 0.35rem;">
+        <span>🔒</span> 256-bit Encrypted • ISO 27001 Certified
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- =========================================================================
+     PAYMENT SUCCESS CELEBRATION MODAL
+     ========================================================================= -->
+<div id="payment-success-modal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); z-index: 10000; align-items: center; justify-content: center; padding: 1rem;">
+  <div style="background: #ffffff; width: 100%; max-width: 440px; border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3); border: 2px solid #86efac; overflow: hidden; text-align: center; padding: 2.25rem 2rem; animation: fadeInStep 0.3s ease;">
+    
+    <div style="width: 72px; height: 72px; background: #dcfce7; color: #16a34a; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.4rem; margin: 0 auto 1.25rem auto; border: 3px solid #86efac; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.25);">
+      ✓
+    </div>
+
+    <h2 style="font-size: 1.35rem; font-weight: 800; color: #0f172a; margin-bottom: 0.4rem;">Payment Verified & Enrolled!</h2>
+    <p style="font-size: 0.82rem; color: #059669; font-weight: 700; margin-bottom: 1rem;">₹{{ registration_fee|default:"99.00" }} Received • Official Profile Activated</p>
+
+    <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 0.85rem 1rem; margin-bottom: 1.5rem; text-align: left; font-size: 0.78rem;">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+        <span style="color: #64748b;">Receipt Number:</span>
+        <strong id="success-receipt-no" style="font-family: monospace; color: #1e40af;">A2Z-2026-FEE-98412</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-bottom: 0.35rem;">
+        <span style="color: #64748b;">Candidate Name:</span>
+        <strong id="success-student-name">Priya Patel</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <span style="color: #64748b;">Status:</span>
+        <strong style="color: #059669;">✓ ₹99 Paid & Profile Active</strong>
+      </div>
+    </div>
+
+    <div style="font-size: 0.78rem; color: #64748b; margin-bottom: 0.5rem;">
+      Redirecting to Login Page in <strong id="redirect-counter" style="color: #1e40af;">2s</strong>...
+    </div>
+    
+    <a href="{% url 'students:login' %}?payment_success=true" class="btn-login-submit" style="margin-top: 0.8rem; background: linear-gradient(135deg, #059669, #10b981); color: #ffffff; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; padding: 0.65rem 1rem; border-radius: 8px; font-weight: 800; font-size: 0.88rem; width: 100%;">
+      <span>🔐</span> Go to Login Page Now ➔
+    </a>
+
+    <button type="button" onclick="shareReceiptViaWhatsApp()" style="margin-top: 0.5rem; background: #25D366; color: #ffffff; border: none; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; padding: 0.6rem 1rem; border-radius: 8px; font-weight: 700; font-size: 0.82rem; width: 100%; cursor: pointer;">
+      <span>💬</span> WhatsApp वर फी पावती सेव्ह करा
+    </button>
+
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let currentStep = 1;
+let isEmailVerified = false;
+let credTimeout = null;
+
+function checkCredentialAvailability(field, value, msgId, inputEl) {
+  clearTimeout(credTimeout);
+  const msgBox = document.getElementById(msgId);
+  if (!value || value.trim().length < 3) {
+    if (msgBox) msgBox.style.display = 'none';
+    if (inputEl) { inputEl.style.borderColor = ''; inputEl.style.background = ''; }
+    return;
+  }
+
+  credTimeout = setTimeout(() => {
+    fetch(`/api/check-credentials/?field=${field}&value=${encodeURIComponent(value.trim())}`)
+      .then(r => r.json())
+      .then(data => {
+        if (msgBox) {
+          msgBox.style.display = 'block';
+          if (!data.available) {
+            msgBox.style.color = '#dc2626';
+            msgBox.innerHTML = `⚠️ <strong>${data.message}</strong>`;
+            if (inputEl) {
+              inputEl.style.borderColor = '#ef4444';
+              inputEl.style.background = '#fef2f2';
+              inputEl.style.animation = 'none';
+              inputEl.offsetHeight;
+              inputEl.style.animation = 'wobble-shake 0.4s ease';
+            }
+          } else {
+            msgBox.style.color = '#059669';
+            msgBox.innerHTML = `✓ ${data.message}`;
+            if (inputEl) {
+              inputEl.style.borderColor = '#10b981';
+              inputEl.style.background = '#f0fdf4';
+            }
+          }
+        }
+      })
+      .catch(e => console.warn(e));
+  }, 300);
+}
+
+function showFieldError(inputEl, errorMsg) {
+  if (!inputEl) return;
+  inputEl.style.borderColor = '#ef4444';
+  inputEl.style.background = '#fef2f2';
+  
+  let container = inputEl.closest('.form-group') || inputEl.parentNode;
+  let existing = container.querySelector('.field-error-msg');
+  if (!existing) {
+    existing = document.createElement('div');
+    existing.className = 'field-error-msg';
+    existing.style.cssText = 'color: #dc2626; font-size: 0.73rem; font-weight: 700; margin-top: 0.28rem; display: flex; align-items: center; gap: 0.25rem; animation: wobble-shake 0.3s ease;';
+    container.appendChild(existing);
+  }
+  existing.innerHTML = `<span>⚠️</span> <span>${errorMsg}</span>`;
+  
+  function onInputClear() {
+    clearFieldError(inputEl);
+    inputEl.removeEventListener('input', onInputClear);
+    inputEl.removeEventListener('change', onInputClear);
+  }
+  inputEl.addEventListener('input', onInputClear);
+  inputEl.addEventListener('change', onInputClear);
+}
+
+function clearFieldError(inputEl) {
+  if (!inputEl) return;
+  inputEl.style.borderColor = '';
+  inputEl.style.background = '';
+  let container = inputEl.closest('.form-group') || inputEl.parentNode;
+  let existing = container.querySelector('.field-error-msg');
+  if (existing) existing.remove();
+}
+
+function clearAllFieldErrors(stepNum) {
+  const section = document.getElementById(`form-step-${stepNum}`) || document;
+  section.querySelectorAll('.field-error-msg').forEach(el => el.remove());
+  section.querySelectorAll('.form-input').forEach(el => {
+    if (isEmailVerified && (el.id === 'reg-email' || el.id === 'otp-code-input')) {
+      return;
+    }
+    el.style.borderColor = '';
+    el.style.background = '';
+  });
+}
+
+function restoreVerifiedState() {
+  if (!isEmailVerified) return;
+  const verifiedBadge = document.getElementById('email-verified-badge');
+  if (verifiedBadge) {
+    verifiedBadge.style.display = "inline";
+    verifiedBadge.innerText = "✓ Verified via OTP";
+  }
+  const statusMsg = document.getElementById('otp-status-msg');
+  if (statusMsg) {
+    statusMsg.innerHTML = "<span style='color: #059669; font-weight: 800; font-size: 0.85rem;'>✓ OTP पडताळणी यशस्वी (Verified Successfully)!</span>";
+  }
+  const btnSendEmail = document.getElementById('btn-send-otp');
+  if (btnSendEmail) btnSendEmail.style.display = "none";
+  const emailInput = document.getElementById('reg-email');
+  if (emailInput) {
+    emailInput.readOnly = true;
+    emailInput.style.borderColor = "#10b981";
+    emailInput.style.background = "#f0fdf4";
+  }
+  const otpCodeInput = document.getElementById('otp-code-input');
+  if (otpCodeInput) {
+    otpCodeInput.disabled = true;
+    otpCodeInput.style.borderColor = "#10b981";
+    otpCodeInput.style.background = "#f0fdf4";
+  }
+  const otpContainer = document.getElementById('otp-input-container');
+  if (otpContainer) {
+    otpContainer.style.display = "block";
+    otpContainer.style.border = "1.5px solid #10b981";
+    otpContainer.style.background = "#f0fdf4";
+    otpContainer.style.borderRadius = "8px";
+    otpContainer.style.padding = "0.85rem";
+  }
+}
+
+function showStep(step) {
+  currentStep = step;
+  
+  // Update step sections with smooth fade-in
+  document.querySelectorAll('.form-step-section').forEach((el, index) => {
+    el.classList.toggle('active', index + 1 === step);
+  });
+
+  // Always preserve and restore green locked OTP verified state if verified
+  restoreVerifiedState();
+
+  // Update Stepper Tabs, Circles & Line Fill Animations
+  for (let i = 1; i <= 4; i++) {
+    const tab = document.getElementById(`step-tab-${i}`);
+    const line = document.getElementById(`step-line-${i}`);
+    
+    if (tab) {
+      tab.classList.toggle('active', i === step);
+      tab.classList.toggle('completed', i < step);
+      const circle = tab.querySelector('.step-circle');
+      if (circle) {
+        if (i < step) {
+          circle.innerHTML = "✓";
+          circle.setAttribute('title', `Step ${i} Completed`);
+        } else {
+          circle.innerHTML = i;
+          circle.setAttribute('title', `Step ${i}`);
+        }
+      }
+    }
+    if (line) {
+      line.classList.toggle('completed', i < step);
+    }
+  }
+
+  // Scroll to top of card smoothly
+  window.scrollTo({ top: 80, behavior: 'smooth' });
+}
+
+function nextStep(current) {
+  const alertBox = document.getElementById('client-error-alert');
+  if (alertBox) alertBox.style.display = "none";
+  clearAllFieldErrors(current);
+
+  // Validate Step 1
+  if (current === 1) {
+    const nameEl = document.getElementById('reg-name') || document.getElementById('reg-fullname');
+    const rollEl = document.getElementById('reg-roll');
+    const userEl = document.getElementById('reg-username');
+    const phoneEl = document.getElementById('reg-phone');
+    const altPhoneEl = document.getElementById('reg-alt-phone');
+    const emailEl = document.getElementById('reg-email');
+    const passEl = document.getElementById('reg-password');
+    const confirmEl = document.getElementById('reg-confirm-password');
+
+    const fullname = nameEl ? nameEl.value.trim() : '';
+    const roll = rollEl ? rollEl.value.trim() : '';
+    const username = userEl ? userEl.value.trim() : '';
+    const phone = phoneEl ? phoneEl.value.replace(/\D/g, '') : '';
+    const altPhone = altPhoneEl ? altPhoneEl.value.replace(/\D/g, '') : '';
+    const email = emailEl ? emailEl.value.trim() : '';
+    const pass = passEl ? passEl.value : '';
+    const confirmPass = confirmEl ? confirmEl.value : '';
+
+    let firstInvalid = null;
+
+    if (!fullname) {
+      showFieldError(nameEl, "Please enter your Full Name.");
+      if (!firstInvalid) firstInvalid = nameEl;
+    }
+    if (!roll) {
+      showFieldError(rollEl, "Please enter your Roll Number.");
+      if (!firstInvalid) firstInvalid = rollEl;
+    }
+    if (!username) {
+      showFieldError(userEl, "Please enter your Student Username.");
+      if (!firstInvalid) firstInvalid = userEl;
+    }
+    if (!phone || phone.length !== 10) {
+      showFieldError(phoneEl, "Please enter a valid 10-digit Mobile Number.");
+      if (!firstInvalid) firstInvalid = phoneEl;
+    }
+    if (!email || !email.includes('@')) {
+      showFieldError(emailEl, "Please enter your Official Email Address.");
+      if (!firstInvalid) firstInvalid = emailEl;
+    }
+    if (!pass) {
+      showFieldError(passEl, "Please set a Password.");
+      if (!firstInvalid) firstInvalid = passEl;
+    } else if (pass.length < 6) {
+      showFieldError(passEl, "Password must be at least 6 characters.");
+      if (!firstInvalid) firstInvalid = passEl;
+    }
+    if (!confirmPass || confirmPass !== pass) {
+      showFieldError(confirmEl, "Passwords do not match. Please re-enter.");
+      if (!firstInvalid) firstInvalid = confirmEl;
+    }
+
+    // STRICT OTP GATE: If OTP is NOT verified, generate instant inline red alert right under OTP input!
+    if (!isEmailVerified) {
+      const otpContainer = document.getElementById('otp-input-container');
+      if (otpContainer) {
+        otpContainer.style.display = "block";
+        otpContainer.style.border = "2px solid #ef4444";
+        otpContainer.style.background = "#fef2f2";
+        otpContainer.style.borderRadius = "8px";
+        otpContainer.style.padding = "0.85rem";
+      }
+      const otpInput = document.getElementById('otp-code-input');
+      if (otpInput) {
+        showFieldError(otpInput, "⚠️ Email OTP Verification Required! Please click 'Send OTP' and enter your 6-digit code.");
+        if (!firstInvalid) firstInvalid = otpInput;
+      }
+    }
+
+    if (firstInvalid) {
+      firstInvalid.focus();
+      firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    // Live pre-check credentials before moving to Part 2
+    fetch(`/api/check-credentials/?field=username&value=${encodeURIComponent(username)}`)
+      .then(r => r.json())
+      .then(d => {
+        if (!d.available) {
+          showFieldError(userEl, `⚠️ ${d.message}`);
+          if (userEl) userEl.focus();
+          return;
+        }
+        showStep(2);
+      })
+      .catch(() => showStep(2));
+    return;
+  }
+
+  // Validate Step 2 (Current & Permanent Address)
+  if (current === 2) {
+    const curAddrEl = document.getElementById('reg-current-address');
+    const curPinEl = document.getElementById('reg-current-pincode');
+    const curCityEl = document.getElementById('reg-current-city');
+    const curStateEl = document.getElementById('reg-current-state');
+
+    const permAddrEl = document.getElementById('reg-address');
+    const permPinEl = document.getElementById('reg-pincode');
+    const permCityEl = document.getElementById('reg-city');
+    const permStateEl = document.getElementById('reg-state');
+
+    const curAddr = curAddrEl ? curAddrEl.value.trim() : '';
+    const curPin = curPinEl ? curPinEl.value.replace(/\D/g, '') : '';
+    const curCity = curCityEl ? curCityEl.value.trim() : '';
+    const curState = curStateEl ? curStateEl.value.trim() : '';
+
+    const permAddr = permAddrEl ? permAddrEl.value.trim() : '';
+    const permPin = permPinEl ? permPinEl.value.replace(/\D/g, '') : '';
+    const permCity = permCityEl ? permCityEl.value.trim() : '';
+    const permState = permStateEl ? permStateEl.value.trim() : '';
+
+    let firstInvalid = null;
+
+    if (!curAddr) {
+      showFieldError(curAddrEl, "Please enter your Current Residential Address.");
+      if (!firstInvalid) firstInvalid = curAddrEl;
+    }
+    if (!curPin || curPin.length !== 6) {
+      showFieldError(curPinEl, "Please enter a valid 6-digit PIN Code.");
+      if (!firstInvalid) firstInvalid = curPinEl;
+    }
+    if (!curCity) {
+      showFieldError(curCityEl, "Please enter your City.");
+      if (!firstInvalid) firstInvalid = curCityEl;
+    }
+    if (!curState) {
+      showFieldError(curStateEl, "Please enter your State.");
+      if (!firstInvalid) firstInvalid = curStateEl;
+    }
+
+    if (!permAddr) {
+      showFieldError(permAddrEl, "Please enter your Permanent Residential Address.");
+      if (!firstInvalid) firstInvalid = permAddrEl;
+    }
+    if (!permPin || permPin.length !== 6) {
+      showFieldError(permPinEl, "Please enter a valid 6-digit PIN Code.");
+      if (!firstInvalid) firstInvalid = permPinEl;
+    }
+    if (!permCity) {
+      showFieldError(permCityEl, "Please enter your Permanent City.");
+      if (!firstInvalid) firstInvalid = permCityEl;
+    }
+    if (!permState) {
+      showFieldError(permStateEl, "Please enter your Permanent State.");
+      if (!firstInvalid) firstInvalid = permStateEl;
+    }
+
+    if (firstInvalid) {
+      firstInvalid.focus();
+      firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    showStep(3);
+    return;
+  }
+
+function toggleSameAddress(isSame) {
+  const permAddr = document.getElementById('reg-address');
+  const permPin = document.getElementById('reg-pincode');
+  const permCity = document.getElementById('reg-city');
+  const permState = document.getElementById('reg-state');
+  const permContainer = document.getElementById('permanent-address-container');
+
+  if (isSame) {
+    copyCurrentAddressIfChecked();
+    if (permAddr) permAddr.readOnly = true;
+    if (permPin) permPin.readOnly = true;
+    if (permCity) permCity.readOnly = true;
+    if (permState) permState.readOnly = true;
+    if (permContainer) permContainer.style.opacity = '0.7';
+  } else {
+    if (permAddr) permAddr.readOnly = false;
+    if (permPin) permPin.readOnly = false;
+    if (permCity) permCity.readOnly = false;
+    if (permState) permState.readOnly = false;
+    if (permContainer) permContainer.style.opacity = '1';
+  }
+}
+
+function copyCurrentAddressIfChecked() {
+  const chk = document.getElementById('same-address-checkbox');
+  if (chk && chk.checked) {
+    const curAddr = document.getElementById('reg-current-address');
+    const curPin = document.getElementById('reg-current-pincode');
+    const curCity = document.getElementById('reg-current-city');
+    const curState = document.getElementById('reg-current-state');
+
+    const permAddr = document.getElementById('reg-address');
+    const permPin = document.getElementById('reg-pincode');
+    const permCity = document.getElementById('reg-city');
+    const permState = document.getElementById('reg-state');
+
+    if (curAddr && permAddr) permAddr.value = curAddr.value;
+    if (curPin && permPin) permPin.value = curPin.value;
+    if (curCity && permCity) permCity.value = curCity.value;
+    if (curState && permState) permState.value = curState.value;
+
+    clearFieldError(permAddr);
+    clearFieldError(permPin);
+    clearFieldError(permCity);
+    clearFieldError(permState);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const chk = document.getElementById('same-address-checkbox');
+  if (chk) toggleSameAddress(chk.checked);
+});
+
+  // Validate Step 3
+  if (current === 3) {
+    const tenthSchool = document.getElementById('reg-10th-school').value.trim();
+    const tenthPctStr = document.getElementById('reg-10th-pct').value.trim();
+    const twelfthSchool = document.getElementById('reg-12th-school').value.trim();
+    const twelfthPctStr = document.getElementById('reg-12th-pct').value.trim();
+
+    if (!tenthSchool || !tenthPctStr || !twelfthSchool || !twelfthPctStr) {
+      alertText.innerText = "Please fill in all 10th and 12th school names and percentage scores.";
+      alertBox.style.display = "flex";
+      return;
+    }
+
+    const tenthPct = parseFloat(tenthPctStr);
+    if (isNaN(tenthPct) || tenthPct < 0 || tenthPct > 100) {
+      alertText.innerText = "10th Percentage score must be between 0.00% and 100.00%.";
+      alertBox.style.display = "flex";
+      return;
+    }
+
+    const twelfthPct = parseFloat(twelfthPctStr);
+    if (isNaN(twelfthPct) || twelfthPct < 0 || twelfthPct > 100) {
+      alertText.innerText = "12th Percentage score must be between 0.00% and 100.00%.";
+      alertBox.style.display = "flex";
+      return;
+    }
+  }
+
+  alertBox.style.display = "none";
+  showStep(current + 1);
+}
+
+function prevStep(current) {
+  document.getElementById('client-error-alert').style.display = "none";
+  showStep(current - 1);
+}
+
+function goToStep(step) {
+  if (step < currentStep) {
+    showStep(step);
+  }
+}
+
+// -------------------------------------------------------------
+// Auto PIN Code Location Lookup & Autofill Engine
+// -------------------------------------------------------------
+function handlePincodeLookup(pinValue, cityInputId, stateInputId, badgeId) {
+  const cleanPin = pinValue.replace(/\D/g, '');
+  const badge = document.getElementById(badgeId);
+  const cityInput = document.getElementById(cityInputId);
+  const stateInput = document.getElementById(stateInputId);
+
+  if (cleanPin.length === 6) {
+    if (badge) {
+      badge.style.display = 'inline-block';
+      badge.style.color = '#2563eb';
+      badge.innerHTML = '🔍 Locating region...';
+    }
+
+    fetch(`/api/pincode-lookup/${cleanPin}/`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          if (cityInput) {
+            cityInput.value = data.city;
+            cityInput.style.borderColor = '#10b981';
+            cityInput.style.background = '#f0fdf4';
+          }
+          if (stateInput) {
+            stateInput.value = data.state;
+            stateInput.style.borderColor = '#10b981';
+            stateInput.style.background = '#f0fdf4';
+          }
+          if (badge) {
+            badge.style.display = 'inline-block';
+            badge.style.color = '#059669';
+            badge.innerHTML = `✓ Auto-filled: ${data.city}, ${data.state}`;
+          }
+        } else {
+          if (badge) {
+            badge.style.display = 'inline-block';
+            badge.style.color = '#d97706';
+            badge.innerHTML = '⚠️ Please enter City & State';
+          }
+        }
+      })
+      .catch(() => {
+        if (badge) badge.style.display = 'none';
+      });
+  } else {
+    if (badge) badge.style.display = 'none';
+  }
+}
+// -------------------------------------------------------------
+// Interactive Address Copy & Sync Engine
+// -------------------------------------------------------------
+function toggleSameAddress(isSame) {
+  const permAddress = document.getElementById('reg-address');
+  const permPin = document.getElementById('reg-pincode');
+  const permCity = document.getElementById('reg-city');
+  const permState = document.getElementById('reg-state');
+
+  const currAddress = document.getElementById('reg-current-address');
+  const currPin = document.getElementById('reg-current-pincode');
+  const currCity = document.getElementById('reg-current-city');
+  const currState = document.getElementById('reg-current-state');
+
+  const permContainer = document.getElementById('permanent-address-container');
+
+  if (isSame) {
+    // 1. Copy values from Current Address to Permanent Address
+    if (currAddress && permAddress) permAddress.value = currAddress.value;
+    if (currPin && permPin) permPin.value = currPin.value;
+    if (currCity && permCity) permCity.value = currCity.value;
+    if (currState && permState) permState.value = currState.value;
+
+    // 2. Lock/dim permanent address section to show it is auto-synced
+    if (permContainer) {
+      permContainer.style.opacity = '0.75';
+      permContainer.style.background = '#f8fafc';
+    }
+  } else {
+    // 3. Unchecked: Clear permanent fields and make them editable
+    if (permAddress) permAddress.value = '';
+    if (permPin) permPin.value = '';
+    if (permCity) permCity.value = '';
+    if (permState) permState.value = '';
+
+    if (permContainer) {
+      permContainer.style.opacity = '1';
+      permContainer.style.background = '#ffffff';
+    }
+  }
+}
+
+function copyCurrentAddressIfChecked() {
+  const chk = document.getElementById('same-address-checkbox');
+  if (chk && chk.checked) {
+    toggleSameAddress(true);
+  }
+}
+
+function updatePhoneBadge(input, badgeId) {
+  const badge = document.getElementById(badgeId);
+  if (!badge) return;
+  const len = input.value.length;
+  if (len === 10) {
+    badge.innerText = "✓ 10/10 digits";
+    badge.style.color = "#059669";
+    input.style.borderColor = "#10b981";
+  } else if (len > 0) {
+    badge.innerText = `${len}/10 digits`;
+    badge.style.color = "#d97706";
+    input.style.borderColor = "#f59e0b";
+  } else {
+    badge.innerText = badgeId.includes('alt') ? "Optional" : "0/10 digits";
+    badge.style.color = "#64748b";
+    input.style.borderColor = "#cbd5e1";
+  }
+}
+
+// -------------------------------------------------------------
+// Interactive Credential (Roll Number, Username, Email) Duplicate Checker
+// -------------------------------------------------------------
+let credentialCheckTimeouts = {};
+
+function checkCredentialAvailability(field, val, msgElemId, inputElem) {
+  const cleanVal = (val || '').trim();
+  const msgElem = document.getElementById(msgElemId);
+  if (credentialCheckTimeouts[field]) clearTimeout(credentialCheckTimeouts[field]);
+
+  if (!cleanVal || cleanVal.length < 1) {
+    if (msgElem) msgElem.style.display = 'none';
+    if (inputElem) {
+      inputElem.style.borderColor = '#cbd5e1';
+      inputElem.style.background = '#ffffff';
+    }
+    return;
+  }
+
+  credentialCheckTimeouts[field] = setTimeout(() => {
+    fetch(`/api/check-credentials/?field=${encodeURIComponent(field)}&value=${encodeURIComponent(cleanVal)}`)
+      .then(r => r.json())
+      .then(data => {
+        if (!data.available) {
+          if (msgElem) {
+            msgElem.innerText = `⚠️ Already Taken!`;
+            msgElem.style.color = '#dc2626';
+            msgElem.style.display = 'inline';
+          }
+          if (inputElem) {
+            inputElem.style.borderColor = '#ef4444';
+            inputElem.style.background = '#fef2f2';
+          }
+          showFieldError(inputElem, data.message);
+        } else {
+          if (msgElem) {
+            msgElem.innerText = '✓ Available';
+            msgElem.style.color = '#059669';
+            msgElem.style.display = 'inline';
+          }
+          if (inputElem) {
+            inputElem.style.borderColor = '#10b981';
+            inputElem.style.background = '#f0fdf4';
+          }
+          clearFieldError(inputElem);
+        }
+      })
+      .catch(() => {});
+  }, 250);
+}
+
+// -------------------------------------------------------------
+// Interactive Email Duplicate Checker & OTP Engine
+// -------------------------------------------------------------
+let activeOtpCode = "";
+let emailCheckTimeout = null;
+
+function checkEmailAvailability(emailValue) {
+  if (isEmailVerified) return;
+  clearTimeout(emailCheckTimeout);
+  const email = (emailValue || '').trim().toLowerCase();
+  const alertDiv = document.getElementById('email-duplicate-alert');
+  const alertText = document.getElementById('email-duplicate-text');
+  const btn = document.getElementById('btn-send-otp');
+  const emailInput = document.getElementById('reg-email');
+  const otpContainer = document.getElementById('otp-input-container');
+
+  if (!email || !email.includes('@') || !email.includes('.')) {
+    if (alertDiv) alertDiv.style.display = "none";
+    if (btn) {
+      btn.disabled = false;
+      btn.style.opacity = "1";
+    }
+    emailInput.style.borderColor = "#cbd5e1";
+    emailInput.style.background = "#ffffff";
+    return;
+  }
+
+  emailCheckTimeout = setTimeout(() => {
+    fetch(`/api/check-email/?email=${encodeURIComponent(email)}`)
+      .then(res => res.json())
+      .then(data => {
+        if (!data.available) {
+          if (alertDiv && alertText) {
+            alertText.innerHTML = `Email <strong>'${email}'</strong> is already registered! Please <a href='/login/' style='text-decoration: underline; color: #1e40af; font-weight: 700;'>Log in here</a> or use a different email address.`;
+            alertDiv.style.display = "block";
+          }
+          if (btn) {
+            btn.disabled = true;
+            btn.style.opacity = "0.5";
+            btn.title = "Email already registered";
+          }
+          emailInput.style.borderColor = "#ef4444";
+          emailInput.style.background = "#fef2f2";
+          if (otpContainer) otpContainer.style.display = "none";
+          isEmailVerified = false;
+        } else {
+          if (alertDiv) alertDiv.style.display = "none";
+          if (btn) {
+            btn.disabled = false;
+            btn.style.opacity = "1";
+            btn.title = "";
+          }
+          emailInput.style.borderColor = "#10b981";
+          emailInput.style.background = "#f0fdf4";
+        }
+      })
+      .catch(() => {});
+  }, 250);
+}
+
+function sendEmailOTP() {
+  const emailInput = document.getElementById('reg-email');
+  const email = emailInput.value.trim().toLowerCase();
+  const alertBox = document.getElementById('client-error-alert');
+  const alertText = document.getElementById('client-error-text');
+  const alertDiv = document.getElementById('email-duplicate-alert');
+  const alertDupText = document.getElementById('email-duplicate-text');
+  const otpContainer = document.getElementById('otp-input-container');
+
+  if (isEmailVerified) {
+    if (alertText && alertBox) {
+      alertText.innerHTML = "✓ ई-मेल आयडी आधीच OTP द्वारे पडताळलेला (Verified) आहे! पुन्हा OTP पाठवण्याची गरज नाही.";
+      alertBox.style.display = "flex";
+    }
+    return;
+  }
+
+  if (!email || !email.includes('@')) {
+    alertText.innerText = "Please enter a valid student email address before requesting OTP.";
+    alertBox.style.display = "flex";
+    return;
+  }
+
+  const btn = document.getElementById('btn-send-otp');
+  btn.disabled = true;
+  btn.innerHTML = `<span>⏳</span> Checking...`;
+
+  fetch(`/api/send-otp/?email=${encodeURIComponent(email)}`)
+    .then(res => res.json().then(data => ({ ok: res.ok, data })))
+    .then(({ ok, data }) => {
+      btn.disabled = false;
+      btn.innerHTML = `<span>📲</span> Send OTP`;
+
+      if (ok && data.success) {
+        activeOtpCode = data.otp;
+        if (otpContainer) otpContainer.style.display = "block";
+        document.getElementById('otp-status-msg').innerText = "✓ OTP तुमच्या ईमेलवर पाठवला आहे. (Check Email Inbox)";
+        document.getElementById('otp-code-input').value = "";
+        document.getElementById('otp-code-input').focus();
+        if (alertDiv) alertDiv.style.display = "none";
+        alertBox.style.display = "none";
+        emailInput.style.borderColor = "#10b981";
+        emailInput.style.background = "#f0fdf4";
+      } else {
+        // Email already registered or invalid
+        if (otpContainer) otpContainer.style.display = "none";
+        isEmailVerified = false;
+        
+        if (alertDiv && alertDupText) {
+          alertDupText.innerHTML = `⚠️ <strong>${data.error || "This email is already registered!"}</strong> <a href='/login/' style='text-decoration: underline; color: #1e40af; margin-left: 0.5rem;'>Go to Login ➔</a>`;
+          alertDiv.style.display = "block";
+        }
+        alertText.innerText = data.error || "Email already registered. OTP dispatch blocked.";
+        alertBox.style.display = "flex";
+        emailInput.style.borderColor = "#ef4444";
+        emailInput.style.background = "#fef2f2";
+      }
+    })
+    .catch(err => {
+      btn.disabled = false;
+      btn.innerHTML = `<span>📲</span> Send OTP`;
+      if (otpContainer) otpContainer.style.display = "none";
+      isEmailVerified = false;
+      alertText.innerText = "Unable to verify email at this moment. Please check connection.";
+      alertBox.style.display = "flex";
+    });
+}
+
+function verifyEmailOTP() {
+  const email = document.getElementById('reg-email').value.trim().toLowerCase();
+  const otpCodeInput = document.getElementById('otp-code-input');
+  const otpInput = otpCodeInput ? otpCodeInput.value.trim() : '';
+  const alertBox = document.getElementById('client-error-alert');
+  const otpContainer = document.getElementById('otp-input-container');
+  const statusMsg = document.getElementById('otp-status-msg');
+
+  if (!otpInput) {
+    showFieldError(otpCodeInput, "कृपया ६-अंकी OTP कोड टाका.");
+    if (otpCodeInput) otpCodeInput.focus();
+    return;
+  }
+
+  fetch(`/api/verify-otp/?email=${encodeURIComponent(email)}&otp=${encodeURIComponent(otpInput)}`)
+    .then(res => res.json().then(data => ({ ok: res.ok, data })))
+    .then(({ ok, data }) => {
+      if (ok && data.success) {
+        isEmailVerified = true;
+        try {
+          const emailInput = document.getElementById('reg-email');
+          if (emailInput && emailInput.value) {
+            sessionStorage.setItem('verified_student_email', emailInput.value.trim().toLowerCase());
+          }
+        } catch(e) {}
+
+        clearFieldError(otpCodeInput);
+        const verifiedBadge = document.getElementById('email-verified-badge');
+        if (verifiedBadge) {
+          verifiedBadge.style.display = "inline";
+          verifiedBadge.innerText = "✓ Verified via OTP";
+        }
+        if (statusMsg) {
+          statusMsg.innerHTML = "<span style='color: #059669; font-weight: 800; font-size: 0.85rem;'>✓ OTP Verified Successfully!</span>";
+        }
+        const btnSendEmail = document.getElementById('btn-send-otp');
+        if (btnSendEmail) btnSendEmail.style.display = "none";
+        const emailInput = document.getElementById('reg-email');
+        if (emailInput) {
+          emailInput.readOnly = true;
+          emailInput.style.borderColor = "#10b981";
+          emailInput.style.background = "#f0fdf4";
+        }
+        if (otpCodeInput) {
+          otpCodeInput.disabled = true;
+          otpCodeInput.style.borderColor = "#10b981";
+          otpCodeInput.style.background = "#f0fdf4";
+        }
+        if (otpContainer) {
+          otpContainer.style.border = "1.5px solid #10b981";
+          otpContainer.style.background = "#f0fdf4";
+          otpContainer.style.borderRadius = "8px";
+          otpContainer.style.padding = "0.85rem";
+        }
+        if (alertBox) alertBox.style.display = "none";
+      } else {
+        isEmailVerified = false;
+        if (statusMsg) {
+          statusMsg.innerHTML = "<span style='color: #dc2626; font-weight: 800;'>❌ चुकीचा OTP!</span>";
+        }
+        if (otpContainer) {
+          otpContainer.style.border = "2px solid #ef4444";
+          otpContainer.style.background = "#fef2f2";
+          otpContainer.style.borderRadius = "8px";
+          otpContainer.style.padding = "0.85rem";
+        }
+        if (otpCodeInput) {
+          otpCodeInput.style.borderColor = "#ef4444";
+          otpCodeInput.style.background = "#fef2f2";
+          otpCodeInput.style.animation = "none";
+          otpCodeInput.offsetHeight;
+          otpCodeInput.style.animation = "wobble-shake 0.4s ease";
+          otpCodeInput.focus();
+          showFieldError(otpCodeInput, data.error || "❌ चुकीचा OTP कोड आहे! कृपया पुन्हा तपासा.");
+        }
+      }
+    })
+    .catch(() => {
+      isEmailVerified = false;
+      showFieldError(otpCodeInput, "OTP पडताळणी अयशस्वी. नेटवर्क तपासा.");
+    });
+}
+
+function previewRegPhoto(input) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const preview = document.getElementById('reg-photo-preview-box');
+      if (preview) {
+        preview.innerHTML = `<img src="${e.target.result}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 6px;">`;
+      }
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function updateSubjectCountBadge() {
+  const grid = document.getElementById('active-12th-subjects-grid');
+  const badge = document.getElementById('subject-count-badge');
+  const emptyMsg = document.getElementById('empty-subjects-msg');
+  if (!grid || !badge) return;
+  const count = grid.querySelectorAll('.subject-box-item').length;
+  badge.innerText = `✓ ${count} Subject${count === 1 ? '' : 's'} Added`;
+  if (count === 0) {
+    badge.style.background = '#fef2f2';
+    badge.style.color = '#dc2626';
+    badge.style.borderColor = '#fecaca';
+    if (emptyMsg) emptyMsg.style.display = 'block';
+  } else {
+    badge.style.background = '#ecfdf5';
+    badge.style.color = '#059669';
+    badge.style.borderColor = '#a7f3d0';
+    if (emptyMsg) emptyMsg.style.display = 'none';
+  }
+}
+
+function removeSubjectCard(btn) {
+  const item = btn.closest('.subject-box-item');
+  if (item) {
+    item.style.transform = 'scale(0.8)';
+    item.style.opacity = '0';
+    setTimeout(() => {
+      item.remove();
+      updateSubjectCountBadge();
+    }, 180);
+  }
+}
+
+function quickFillSubject(name, defaultMarks) {
+  const nameInput = document.getElementById('new-subject-name-input');
+  const marksInput = document.getElementById('new-subject-marks-input');
+  if (nameInput) nameInput.value = name;
+  if (marksInput) {
+    marksInput.value = defaultMarks || '90.00';
+    marksInput.focus();
+  }
+}
+
+function include12thSubject(directName, directMarks) {
+  const nameInput = document.getElementById('new-subject-name-input');
+  const marksInput = document.getElementById('new-subject-marks-input');
+  const subName = directName || (nameInput ? nameInput.value.trim() : '');
+  const subMarks = directMarks !== undefined ? directMarks : (marksInput ? marksInput.value.trim() : '');
+
+  if (!subName) {
+    alert("Please enter Subject Name!");
+    if (nameInput) nameInput.focus();
+    return;
+  }
+
+  const marksVal = parseFloat(subMarks);
+  if (isNaN(marksVal) || marksVal < 0 || marksVal > 100) {
+    alert("Please enter valid Marks % between 0 and 100!");
+    if (marksInput) marksInput.focus();
+    return;
+  }
+
+  const grid = document.getElementById('active-12th-subjects-grid');
+  if (!grid) return;
+
+  // Pick nice icon
+  let icon = "📚";
+  const lower = subName.toLowerCase();
+  if (lower.includes('math')) icon = "📐";
+  else if (lower.includes('phys')) icon = "⚡";
+  else if (lower.includes('chem')) icon = "🧪";
+  else if (lower.includes('bio')) icon = "🧬";
+  else if (lower.includes('eng')) icon = "🗣️";
+  else if (lower.includes('comp') || lower.includes('cs') || lower.includes('it')) icon = "💻";
+  else if (lower.includes('elect')) icon = "🔌";
+  else if (lower.includes('stat')) icon = "📊";
+  else if (lower.includes('marath') || lower.includes('hindi') || lower.includes('sans')) icon = "📖";
+
+  const itemDiv = document.createElement('div');
+  itemDiv.className = 'subject-box-item';
+  itemDiv.style.cssText = "background: #ffffff; border: 1.5px solid #3b82f6; border-radius: 8px; padding: 0.45rem 0.55rem; box-shadow: 0 3px 8px rgba(37, 99, 235, 0.12); transition: all 0.2s; animation: fadeInStep 0.3s ease;";
+  itemDiv.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+      <label style="font-size: 0.72rem; font-weight: 700; color: #1e40af; margin: 0;">${icon} ${subName}</label>
+      <button type="button" onclick="removeSubjectCard(this)" title="हा विषय काढून टाका" style="border: none; background: #fee2e2; color: #dc2626; border-radius: 4px; width: 18px; height: 18px; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; cursor: pointer; line-height: 1; padding: 0; font-weight: bold;" onmouseover="this.style.background='#fca5a5'" onmouseout="this.style.background='#fee2e2'">✕</button>
+    </div>
+    <input type="hidden" name="custom_subject_name[]" value="${subName}">
+    <input type="number" step="0.01" min="0" max="100" name="custom_subject_marks[]" class="form-input" style="padding: 0.3rem 0.4rem; font-size: 0.85rem; font-weight: 700; text-align: center; border-color: #93c5fd;" value="${marksVal.toFixed(2)}" oninput="if(parseFloat(this.value)>100) this.value=100; if(parseFloat(this.value)<0) this.value=0;">
+  `;
+
+  grid.appendChild(itemDiv);
+
+  // Clear inputs
+  if (nameInput) nameInput.value = '';
+  if (marksInput) marksInput.value = '';
+  updateSubjectCountBadge();
+}
+
+function toggleEntryRoute(route) {
+  const container12th = document.getElementById('container-12th-details');
+  const containerDiploma = document.getElementById('container-diploma-details');
+  const label12th = document.getElementById('label-route-12th');
+  const labelDiploma = document.getElementById('label-route-diploma');
+  const boxSem1 = document.getElementById('box-sem1');
+  const boxSem2 = document.getElementById('box-sem2');
+
+  if (route === 'DIPLOMA_DSE') {
+    if (container12th) container12th.style.display = 'none';
+    if (containerDiploma) containerDiploma.style.display = 'block';
+    if (label12th) { label12th.style.borderColor = '#cbd5e1'; label12th.style.background = '#ffffff'; }
+    if (labelDiploma) { labelDiploma.style.borderColor = '#2563eb'; labelDiploma.style.background = '#eff6ff'; }
+    if (boxSem1) {
+      boxSem1.style.opacity = '0.5';
+      boxSem1.innerHTML = `<label style="font-size: 0.7rem; font-weight: 700; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Sem 1</label><input type="text" value="Exempted (Diploma)" disabled class="form-input" style="padding: 0.3rem 0.45rem; font-size: 0.78rem; background: #f1f5f9; cursor: not-allowed; color: #64748b;">`;
+    }
+    if (boxSem2) {
+      boxSem2.style.opacity = '0.5';
+      boxSem2.innerHTML = `<label style="font-size: 0.7rem; font-weight: 700; color: #94a3b8; display: block; margin-bottom: 0.2rem;">Sem 2</label><input type="text" value="Exempted (Diploma)" disabled class="form-input" style="padding: 0.3rem 0.45rem; font-size: 0.78rem; background: #f1f5f9; cursor: not-allowed; color: #64748b;">`;
+    }
+  } else {
+    if (container12th) container12th.style.display = 'block';
+    if (containerDiploma) containerDiploma.style.display = 'none';
+    if (label12th) { label12th.style.borderColor = '#2563eb'; label12th.style.background = '#eff6ff'; }
+    if (labelDiploma) { labelDiploma.style.borderColor = '#cbd5e1'; labelDiploma.style.background = '#ffffff'; }
+    if (boxSem1) {
+      boxSem1.style.opacity = '1';
+      boxSem1.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem;">
+          <label style="font-size: 0.68rem; font-weight: 700; color: #475569; margin: 0;">Sem 1 SGPA</label>
+          <label style="font-size: 0.62rem; color: #dc2626; margin: 0;">Backlogs</label>
+        </div>
+        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 0.3rem;">
+          <input type="number" step="0.01" min="0" max="10" name="sem1_sgpa" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.8rem;" placeholder="9.20" value="9.20">
+          <input type="number" min="0" max="10" name="sem1_backlogs" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.8rem;" placeholder="0" value="0">
+        </div>
+      `;
+    }
+    if (boxSem2) {
+      boxSem2.style.opacity = '1';
+      boxSem2.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.2rem;">
+          <label style="font-size: 0.68rem; font-weight: 700; color: #475569; margin: 0;">Sem 2 SGPA</label>
+          <label style="font-size: 0.62rem; color: #dc2626; margin: 0;">Backlogs</label>
+        </div>
+        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 0.3rem;">
+          <input type="number" step="0.01" min="0" max="10" name="sem2_sgpa" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.8rem;" placeholder="9.40" value="9.40">
+          <input type="number" min="0" max="10" name="sem2_backlogs" class="form-input" style="padding: 0.25rem 0.35rem; font-size: 0.8rem;" placeholder="0" value="0">
+        </div>
+      `;
+    }
+  }
+}
+
+// -------------------------------------------------------------
+// 1-Click Pre-Fill Sample Student Profile (All 4 Parts)
+// -------------------------------------------------------------
+function fillNewStudentSample() {
+  const randomSuffix = Math.floor(100 + Math.random() * 900);
+  
+  // Part 1
+  document.getElementById('reg-fullname').value = "Priya V. Patel";
+  document.getElementById('reg-roll').value = `220070${randomSuffix}`;
+  document.getElementById('reg-username').value = `priya.patel${randomSuffix}`;
+  document.getElementById('reg-email').value = `priya.patel${randomSuffix}@a2z.edu.in`;
+  document.getElementById('reg-password').value = "password123";
+  document.getElementById('reg-confirm-password').value = "password123";
+  document.getElementById('email-verified-badge').style.display = "inline";
+  isEmailVerified = true;
+
+  // Part 2
+  document.getElementById('reg-phone').value = "+91 98201 54321";
+  document.getElementById('reg-alt-phone').value = "+91 98201 12345";
+  document.getElementById('reg-address').value = "A-402, Nilgiri Heights, Central Avenue Road";
+  document.getElementById('reg-city').value = "Mumbai";
+  document.getElementById('reg-state').value = "Maharashtra";
+  document.getElementById('reg-pincode').value = "400076";
+
+  // Part 3
+  document.getElementById('reg-10th-board').value = "CBSE";
+  document.getElementById('reg-10th-pct').value = "95.60";
+  document.getElementById('reg-10th-year').value = "2020";
+  document.getElementById('reg-10th-school').value = "Delhi Public School, Powai";
+
+  document.getElementById('reg-12th-board').value = "CBSE";
+  document.getElementById('reg-12th-pct').value = "96.80";
+  document.getElementById('reg-12th-year').value = "2022";
+  document.getElementById('reg-12th-school').value = "National Junior College of Science";
+
+  // Part 4
+  document.getElementById('reg-degree').value = "B.Tech in Electrical Engineering";
+  document.getElementById('reg-department').value = "Electrical Engineering";
+  document.getElementById('reg-cgpa').value = "9.15";
+  document.getElementById('reg-specialization').value = "Honours in Signal Processing • Minor in AI";
+
+  // Show Toast
+  const alertBox = document.getElementById('client-error-alert');
+  alertBox.style.background = "#ecfdf5";
+  alertBox.style.borderColor = "#a7f3d0";
+  alertBox.style.color = "#047857";
+  document.getElementById('client-error-text').innerText = "✓ All 4 parts pre-filled with sample student details!";
+  alertBox.style.display = "flex";
+}
+
+function previewRegPhoto(input) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const box = document.getElementById('reg-photo-preview-box');
+      if (box) {
+        box.innerHTML = `<img src="${e.target.result}" alt="Preview" style="width: 100%; height: 100%; object-fit: cover;">`;
+      }
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+/* =========================================================================
+   JWT-POWERED ₹99 PAYMENT GATEWAY & VERIFICATION CLIENT ENGINE
+   ========================================================================= */
+let currentRegistrationJwt = null;
+let currentOrderId = null;
+let activeTimerInterval = null;
+let currentOrderMeta = null;
+
+function highlightFieldError(inputEl, stepNum, message) {
+  if (!inputEl) return false;
+  
+  // 1. Switch to that exact step immediately
+  showStep(stepNum);
+  
+  // 2. Highlight input with red border and gentle wobble shake
+  inputEl.style.borderColor = '#ef4444';
+  inputEl.style.background = '#fef2f2';
+  inputEl.focus();
+  inputEl.style.animation = 'none';
+  inputEl.offsetHeight; /* trigger reflow */
+  inputEl.style.animation = 'wobble-shake 0.4s ease';
+
+  // 3. Display clear error alert on that step
+  const alertBox = document.getElementById('client-error-alert');
+  const alertText = document.getElementById('client-error-text');
+  if (alertBox && alertText) {
+    alertText.innerHTML = `⚠️ <strong>Part ${stepNum} मधील माहिती अपूर्ण:</strong> ${message}`;
+    alertBox.style.display = 'flex';
+    alertBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  // 4. Reset highlight on user input
+  inputEl.addEventListener('input', function onTyping() {
+    inputEl.style.borderColor = '';
+    inputEl.style.background = '';
+    if (alertBox) alertBox.style.display = 'none';
+    inputEl.removeEventListener('input', onTyping);
+  });
+
+  return false;
+}
+
+function restoreVerifiedEmailStatus() {
+  const emailInput = document.getElementById('reg-email');
+  if (!emailInput) return;
+  const currentEmail = emailInput.value.trim().toLowerCase();
+  const storedVerifiedEmail = sessionStorage.getItem('verified_student_email');
+
+  if (currentEmail && storedVerifiedEmail && currentEmail === storedVerifiedEmail) {
+    isEmailVerified = true;
+    const verifiedBadge = document.getElementById('email-verified-badge');
+    if (verifiedBadge) {
+      verifiedBadge.style.display = "inline";
+      verifiedBadge.innerText = "✓ Verified via OTP";
+    }
+    const btnSendEmail = document.getElementById('btn-send-otp');
+    if (btnSendEmail) btnSendEmail.style.display = "none";
+    emailInput.readOnly = true;
+    emailInput.style.borderColor = "#10b981";
+    emailInput.style.background = "#f0fdf4";
+    const otpContainer = document.getElementById('otp-input-container');
+    if (otpContainer) otpContainer.style.display = "none";
+  }
+}
+
+function validateFormBeforePayment() {
+  restoreVerifiedEmailStatus();
+  // --- PART 1 VALIDATION ---
+  const regName = document.getElementById('reg-name') || document.getElementById('reg-fullname');
+  const regRoll = document.getElementById('reg-roll');
+  const regUsername = document.getElementById('reg-username');
+  const regPhone = document.getElementById('reg-phone');
+  const regEmail = document.getElementById('reg-email');
+  const regPassword = document.getElementById('reg-password');
+  const regConfirm = document.getElementById('reg-confirm-password');
+
+  if (!regName || !regName.value.trim()) return highlightFieldError(regName, 1, "Please enter your Full Name!");
+  if (!regRoll || !regRoll.value.trim()) return highlightFieldError(regRoll, 1, "Please enter your Roll Number!");
+  if (!regUsername || !regUsername.value.trim()) return highlightFieldError(regUsername, 1, "Please enter your Student Username!");
+  if (!regPhone || !regPhone.value.trim() || regPhone.value.replace(/\D/g, '').length !== 10) return highlightFieldError(regPhone, 1, "Please enter a valid 10-digit Mobile Number!");
+  if (!regEmail || !regEmail.value.trim()) return highlightFieldError(regEmail, 1, "Please enter your Official Email Address!");
+  if (!regPassword || !regPassword.value) return highlightFieldError(regPassword, 1, "Please set a Password!");
+  if (regPassword.value.length < 6) return highlightFieldError(regPassword, 1, "Password must be at least 6 characters!");
+  if (regPassword.value !== (regConfirm ? regConfirm.value : '')) return highlightFieldError(regConfirm, 1, "Passwords do not match. Please re-enter!");
+
+  // --- PART 2 VALIDATION ---
+  const regCurAddr = document.getElementById('reg-current-address');
+  const regCurPin = document.getElementById('reg-current-pincode');
+  const regAddress = document.getElementById('reg-address');
+  const regPincode = document.getElementById('reg-pincode');
+
+  if (!regCurAddr || !regCurAddr.value.trim()) return highlightFieldError(regCurAddr, 2, "Please enter your Current Residential Address!");
+  if (!regCurPin || !regCurPin.value.trim() || regCurPin.value.replace(/\D/g, '').length < 6) return highlightFieldError(regCurPin, 2, "Please enter a valid 6-digit Current PIN Code!");
+  if (!regAddress || !regAddress.value.trim()) return highlightFieldError(regAddress, 2, "Please enter your Permanent Residential Address!");
+  if (!regPincode || !regPincode.value.trim() || regPincode.value.replace(/\D/g, '').length < 6) return highlightFieldError(regPincode, 2, "Please enter a valid 6-digit PIN Code!");
+
+  // --- PART 3 VALIDATION ---
+  const reg10thSchool = document.getElementById('reg-10th-school');
+  const reg10thPct = document.getElementById('reg-10th-pct');
+  const is12th = document.querySelector('input[name=entry_route]:checked') ? document.querySelector('input[name=entry_route]:checked').value === '12TH_REGULAR' : true;
+  const reg12thSchool = document.getElementById('reg-12th-school');
+  const reg12thPct = document.getElementById('reg-12th-pct');
+
+  if (!reg10thSchool || !reg10thSchool.value.trim()) return highlightFieldError(reg10thSchool, 3, "Please enter your 10th School Name!");
+  if (!reg10thPct || !reg10thPct.value.trim()) return highlightFieldError(reg10thPct, 3, "Please enter your 10th Percentage!");
+  
+  if (is12th) {
+    if (!reg12thSchool || !reg12thSchool.value.trim()) return highlightFieldError(reg12thSchool, 3, "Please enter your Junior College / School Name!");
+    if (!reg12thPct || !reg12thPct.value.trim()) return highlightFieldError(reg12thPct, 3, "Please enter your 12th Percentage!");
+  }
+
+  // --- PART 4 VALIDATION ---
+  const regCgpa = document.getElementById('reg-cgpa');
+  const regResume = document.getElementById('reg-resume');
+  const termsCheckbox = document.querySelector('input[name=terms]');
+
+  if (!regCgpa || !regCgpa.value.trim()) return highlightFieldError(regCgpa, 4, "Please enter your Overall CPI / CGPA!");
+  
+  // Master Resume PDF Mandatory Validation
+  if (regResume) {
+    const errorBox = document.getElementById('resume-inline-error');
+    if (!regResume.files || regResume.files.length === 0) {
+      if (errorBox) {
+        errorBox.innerHTML = `⚠️ <strong>Resume Required:</strong> Please select/upload your Master PDF Resume before proceeding to payment!`;
+        errorBox.style.display = 'block';
+      }
+      return highlightFieldError(regResume, 4, "Master PDF Resume is required! Please upload your resume.");
+    }
+    const file = regResume.files[0];
+    const fileExt = file.name.split('.').pop().toLowerCase();
+    if (fileExt !== 'pdf') {
+      if (errorBox) {
+        errorBox.innerHTML = `⚠️ <strong>Invalid Format:</strong> Only PDF documents (.pdf) are allowed for Master Resume!`;
+        errorBox.style.display = 'block';
+      }
+      return highlightFieldError(regResume, 4, "Only PDF documents (.pdf) are allowed for Master Resume!");
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      if (errorBox) {
+        errorBox.innerHTML = `⚠️ <strong>File Size Limit Exceeded:</strong> Master Resume PDF file size must be within 5 MB!`;
+        errorBox.style.display = 'block';
+      }
+      return highlightFieldError(regResume, 4, "Master Resume PDF file size must be within 5 MB!");
+    }
+    if (errorBox) errorBox.style.display = 'none';
+  }
+
+  if (termsCheckbox && !termsCheckbox.checked) return highlightFieldError(termsCheckbox, 4, "Please tick Terms Declaration Checkbox!");
+
+  return true;
+}
+
+const validateAllSteps = validateFormBeforePayment;
+
+// -------------------------------------------------------------
+// Interactive Live PDF Resume File Validator
+// -------------------------------------------------------------
+function validateResumeFileInput(input) {
+  const badge = document.getElementById('resume-validation-badge');
+  const errorBox = document.getElementById('resume-inline-error');
+
+  if (!input || !input.files || input.files.length === 0) {
+    if (badge) {
+      badge.innerText = "PDF Format Only (Max 5MB)";
+      badge.style.color = "#059669";
+      badge.style.background = "#ecfdf5";
+      badge.style.borderColor = "#a7f3d0";
+    }
+    if (errorBox) errorBox.style.display = "none";
+    input.style.borderColor = "#cbd5e1";
+    input.style.background = "#ffffff";
+    return false;
+  }
+
+  const file = input.files[0];
+  const fileName = file.name;
+  const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+  const fileExt = fileName.split('.').pop().toLowerCase();
+
+  if (fileExt !== 'pdf') {
+    if (badge) {
+      badge.innerText = "⚠️ Invalid File Format!";
+      badge.style.color = "#dc2626";
+      badge.style.background = "#fef2f2";
+      badge.style.borderColor = "#fecaca";
+    }
+    if (errorBox) {
+      errorBox.innerHTML = `⚠️ Invalid Format: "<strong>${fileName}</strong>" is not a PDF file. Please select a valid PDF (.pdf) document.`;
+      errorBox.style.display = "block";
+    }
+    input.style.borderColor = "#ef4444";
+    input.style.background = "#fef2f2";
+    input.value = ""; // Reset invalid file
+    return false;
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    if (badge) {
+      badge.innerText = `⚠️ Too Large (${fileSizeMB} MB > 5MB limit)`;
+      badge.style.color = "#dc2626";
+      badge.style.background = "#fef2f2";
+      badge.style.borderColor = "#fecaca";
+    }
+    if (errorBox) {
+      errorBox.innerHTML = `⚠️ File Size Exceeded: "<strong>${fileName}</strong>" is ${fileSizeMB} MB. Maximum allowed size is 5 MB.`;
+      errorBox.style.display = "block";
+    }
+    input.style.borderColor = "#ef4444";
+    input.style.background = "#fef2f2";
+    input.value = ""; // Reset oversized file
+    return false;
+  }
+
+  // Success State
+  if (errorBox) errorBox.style.display = "none";
+  if (badge) {
+    badge.innerText = `✓ Valid PDF (${fileName.slice(0, 18)}... • ${fileSizeMB} MB)`;
+    badge.style.color = "#059669";
+    badge.style.background = "#ecfdf5";
+    badge.style.borderColor = "#a7f3d0";
+  }
+  input.style.borderColor = "#10b981";
+  input.style.background = "#f0fdf4";
+  return true;
+}
+
+function openPaymentModalDirectly() {
+  const modal = document.getElementById('payment-modal-overlay');
+  if (modal) {
+    modal.style.display = 'flex';
+  }
+  const nameInput = document.getElementById('reg-name');
+  const rollInput = document.getElementById('reg-roll');
+  const modalName = document.getElementById('modal-candidate-name');
+  const modalRoll = document.getElementById('modal-candidate-roll');
+  if (modalName && nameInput && nameInput.value.trim()) modalName.innerText = nameInput.value.trim();
+  if (modalRoll && rollInput && rollInput.value.trim()) modalRoll.innerText = rollInput.value.trim();
+}
+
+function initiatePaymentFlow(evt) {
+  if (evt && evt.preventDefault) evt.preventDefault();
+
+  // Validate form first before opening payment modal
+  if (!validateFormBeforePayment()) {
+    return false;
+  }
+
+  // Open Modal
+  openPaymentModalDirectly();
+
+  const submitBtn = document.getElementById('btn-pay-enrollment') || (evt ? evt.currentTarget || evt.target : null);
+  const form = document.getElementById('multi-part-form') || document.querySelector('form');
+  const alertBox = document.getElementById('client-error-alert');
+  const alertText = document.getElementById('client-error-text');
+
+  const fullName = document.getElementById('reg-name') ? document.getElementById('reg-name').value.trim() : "Student";
+  const rollNo = document.getElementById('reg-roll') ? document.getElementById('reg-roll').value.trim() : "Candidate";
+
+  // Collect Form Data
+  const formData = new FormData(form);
+
+  const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]') ? document.querySelector('[name=csrfmiddlewaretoken]').value : '';
+
+  fetch('/api/payment/create-order/', {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'X-CSRFToken': csrfToken
+    }
+  })
+  .then(res => res.json().then(data => ({ ok: res.ok, data })))
+  .then(({ ok, data }) => {
+    if (ok && data.success) {
+      currentRegistrationJwt = data.registration_jwt;
+      currentOrderId = data.order.order_id;
+      currentOrderMeta = data.order;
+
+      // Update Modal QR & Data
+      const modalName = document.getElementById('modal-candidate-name');
+      const modalRoll = document.getElementById('modal-candidate-roll');
+      if (modalName) modalName.innerText = fullName;
+      if (modalRoll) modalRoll.innerText = rollNo;
+      
+      const qrImg = document.getElementById('upi-qr-image');
+      if (qrImg && data.order.upi_url) {
+        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=${encodeURIComponent(data.order.upi_url)}`;
+      }
+    } else {
+      console.warn("Order creation notice:", data.error);
+    }
+  })
+  .catch(err => {
+    console.warn("Background order sync notice:", err);
+  });
+}
+
+function switchPayTab(tab) {
+  // Update Tab Buttons
+  document.querySelectorAll('.pay-tab-btn').forEach(btn => {
+    btn.style.color = '#64748b';
+    btn.style.borderBottomColor = 'transparent';
+  });
+  const activeBtn = document.getElementById(`tab-btn-${tab}`);
+  if (activeBtn) {
+    activeBtn.style.color = '#1e40af';
+    activeBtn.style.borderBottomColor = '#2563eb';
+  }
+
+  // Update Tab Content
+  document.querySelectorAll('.pay-content-section').forEach(sec => {
+    sec.style.display = 'none';
+  });
+  const activeContent = document.getElementById(`pay-content-${tab}`);
+  if (activeContent) {
+    activeContent.style.display = 'block';
+  }
+}
+
+function start10sTimer() {
+  if (activeTimerInterval) clearInterval(activeTimerInterval);
+  let secondsLeft = 10;
+  const badge = document.getElementById('qr-timer-badge');
+  const text = document.getElementById('qr-timer-text');
+  badge.style.background = '#fef3c7';
+  badge.style.borderColor = '#fde68a';
+  badge.style.color = '#92400e';
+
+  activeTimerInterval = setInterval(() => {
+    secondsLeft--;
+    if (secondsLeft > 0) {
+      text.innerText = `⏱️ Live simulation: Auto-verifying in ${secondsLeft} seconds...`;
+    } else {
+      clearInterval(activeTimerInterval);
+      text.innerText = `✓ Payment detected! Verifying JWT signature...`;
+      completePaymentSimulation('UPI_QR');
+    }
+  }, 1000);
+}
+
+function completePaymentSimulation(method) {
+  if (activeTimerInterval) clearInterval(activeTimerInterval);
+
+  const btnConfirm = document.getElementById('btn-confirm-upi-paid');
+  if (btnConfirm) {
+    btnConfirm.disabled = true;
+    btnConfirm.innerHTML = `<span>⏳</span> Verifying ₹{{ registration_fee|default:"99.00" }} Payment & Activating Profile...`;
+  }
+
+  // If JWT & Order are already created:
+  if (currentRegistrationJwt && currentOrderId) {
+    doVerifyPayment(currentRegistrationJwt, currentOrderId, method);
+  } else {
+    // Generate JWT order on the fly, then immediately verify!
+    const form = document.getElementById('multi-part-form') || document.querySelector('form');
+    const formData = new FormData(form);
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]') ? document.querySelector('[name=csrfmiddlewaretoken]').value : '';
+
+    fetch('/api/payment/create-order/', {
+      method: 'POST',
+      body: formData,
+      headers: { 'X-CSRFToken': csrfToken }
+    })
+    .then(r => r.json())
+    .then(d => {
+      if (d.success) {
+        currentRegistrationJwt = d.registration_jwt;
+        currentOrderId = d.order.order_id;
+        doVerifyPayment(d.registration_jwt, d.order.order_id, method);
+      } else {
+        if (btnConfirm) {
+          btnConfirm.disabled = false;
+          btnConfirm.innerHTML = `<span>✅</span> I Have Paid ₹{{ registration_fee|default:"99.00" }} / Payment Done`;
+        }
+        alert(d.error || "An error occurred. Please verify your input details.");
+      }
+    })
+    .catch(e => {
+      if (btnConfirm) {
+        btnConfirm.disabled = false;
+        btnConfirm.innerHTML = `<span>✅</span> I Have Paid ₹{{ registration_fee|default:"99.00" }} / Payment Done`;
+      }
+      alert("Could not connect to the server. Please try again.");
+    });
+  }
+}
+
+function doVerifyPayment(jwtToken, orderId, method) {
+  const payload = {
+    registration_jwt: jwtToken,
+    order_id: orderId,
+    payment_id: `PAY_UPI_${Date.now()}`,
+    signature: 'simulated_test_signature',
+    payment_method: method || 'UPI_QR'
+  };
+
+  const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]') ? document.querySelector('[name=csrfmiddlewaretoken]').value : '';
+
+  fetch('/api/payment/verify/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': csrfToken
+    },
+    body: JSON.stringify(payload)
+  })
+  .then(res => res.json().then(data => ({ ok: res.ok, data })))
+  .then(({ ok, data }) => {
+    if (ok && data.success) {
+      // Clear auto-saved draft
+      clearRegistrationDraft();
+
+      // Hide Payment Modal
+      document.getElementById('payment-modal-overlay').style.display = 'none';
+
+      // Show Celebration Modal
+      const succModal = document.getElementById('payment-success-modal');
+      document.getElementById('success-receipt-no').innerText = data.receipt_number || "A2Z-2026-FEE-98412";
+      const nameInput = document.getElementById('reg-name');
+      document.getElementById('success-student-name').innerText = nameInput ? nameInput.value.trim() : "Student";
+      succModal.style.display = 'flex';
+
+      // Countdown Redirect to Login Page
+      let redirSec = 2;
+      const redirCounter = document.getElementById('redirect-counter');
+      const redirTimer = setInterval(() => {
+        redirSec--;
+        if (redirCounter) redirCounter.innerText = `${redirSec}s`;
+        if (redirSec <= 0) {
+          clearInterval(redirTimer);
+          window.location.href = data.redirect_url || '/login/?payment_success=true';
+        }
+      }, 1000);
+    } else {
+      const btnConfirm = document.getElementById('btn-confirm-upi-paid');
+      if (btnConfirm) {
+        btnConfirm.disabled = false;
+        btnConfirm.innerHTML = `<span>✅</span> I Have Paid ₹{{ registration_fee|default:"99.00" }} / Payment Done`;
+      }
+      alert(data.error || "Payment verification failed. Please try again.");
+    }
+  })
+  .catch(err => {
+    const btnConfirm = document.getElementById('btn-confirm-upi-paid');
+    if (btnConfirm) {
+      btnConfirm.disabled = false;
+      btnConfirm.innerHTML = `<span>✅</span> I Have Paid ₹{{ registration_fee|default:"99.00" }} / Payment Done`;
+    }
+    alert("Could not connect to the server. Please try again.");
+  });
+}
+
+function openOfficialRazorpayCheckout() {
+  if (!currentOrderMeta) {
+    alert("Please wait while payment order is being prepared.");
+    return;
+  }
+
+  if (typeof Razorpay === 'undefined') {
+    // If Razorpay SDK is not loaded, fallback to instant simulation
+    completePaymentSimulation('RAZORPAY_DIRECT');
+    return;
+  }
+
+  const options = {
+    key: currentOrderMeta.key_id,
+    amount: currentOrderMeta.amount_paise,
+    currency: currentOrderMeta.currency,
+    name: "A2Z Placement Cell",
+    description: "Official Student Placement Enrollment Fee (2026-27)",
+    image: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+    order_id: currentOrderMeta.order_id,
+    handler: function (response) {
+      // On Razorpay success
+      const payload = {
+        registration_jwt: currentRegistrationJwt,
+        order_id: response.razorpay_order_id,
+        payment_id: response.razorpay_payment_id,
+        signature: response.razorpay_signature,
+        payment_method: 'RAZORPAY_DIRECT'
+      };
+
+      fetch('/api/payment/verify/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          window.location.href = data.redirect_url || '/student-dashboard/';
+        } else {
+          alert(data.error || "Payment verification failed");
+        }
+      });
+    },
+    prefill: {
+      name: currentOrderMeta.student_name,
+      email: currentOrderMeta.student_email
+    },
+    theme: {
+      color: "#1e40af"
+    }
+  };
+
+  const rzp = new Razorpay(options);
+  rzp.open();
+}
+
+function closePaymentModal() {
+  if (activeTimerInterval) clearInterval(activeTimerInterval);
+  document.getElementById('payment-modal-overlay').style.display = 'none';
+}
+
+// =========================================================================
+// AUTO-SAVE DRAFT & RECOVERY SYSTEM (PREVENTS DATA LOSS ON ACCIDENTAL REFRESH)
+// =========================================================================
+const DRAFT_KEY = 'a2z_student_reg_draft';
+
+function saveRegistrationDraft() {
+  const form = document.getElementById('multi-part-form');
+  if (!form) return;
+  
+  const draft = {
+    currentStep: currentStep,
+    inputs: {},
+    custom12thSubjects: []
+  };
+
+  form.querySelectorAll('input, select, textarea').forEach(el => {
+    if (!el.name || el.type === 'password' || el.type === 'file') return;
+    
+    if (el.type === 'radio') {
+      if (el.checked) draft.inputs[el.name] = el.value;
+    } else if (el.type === 'checkbox') {
+      draft.inputs[el.name] = el.checked;
+    } else {
+      draft.inputs[el.name] = el.value;
+    }
+  });
+
+  const subjectCards = document.querySelectorAll('.custom-sub-card');
+  subjectCards.forEach(card => {
+    const subName = card.getAttribute('data-sub-name') || (card.querySelector('input[name="custom_subject_name[]"]') ? card.querySelector('input[name="custom_subject_name[]"]').value : '');
+    const subMarks = card.querySelector('input[name="custom_subject_marks[]"]') ? card.querySelector('input[name="custom_subject_marks[]"]').value : '';
+    if (subName) {
+      draft.custom12thSubjects.push({ name: subName, marks: subMarks });
+    }
+  });
+
+  try {
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+  } catch (e) {}
+}
+
+function restoreRegistrationDraft() {
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY);
+    if (!raw) return;
+    const draft = JSON.parse(raw);
+    if (!draft || !draft.inputs) return;
+
+    const form = document.getElementById('multi-part-form');
+    if (!form) return;
+
+    let hasRestoredData = false;
+
+    Object.keys(draft.inputs).forEach(key => {
+      const val = draft.inputs[key];
+      const el = form.querySelector(`[name="${key}"]`);
+      if (el && val !== undefined && val !== null && val !== '') {
+        if (el.type === 'radio') {
+          const radio = form.querySelector(`[name="${key}"][value="${val}"]`);
+          if (radio) {
+            radio.checked = true;
+            if (key === 'entry_route') toggleEntryRoute(val);
+          }
+        } else if (el.type === 'checkbox') {
+          el.checked = Boolean(val);
+        } else {
+          el.value = val;
+          hasRestoredData = true;
+        }
+      }
+    });
+
+    if (draft.custom12thSubjects && draft.custom12thSubjects.length > 0) {
+      draft.custom12thSubjects.forEach(sub => {
+        if (sub.name && !document.querySelector(`.custom-sub-card[data-sub-name="${sub.name}"]`)) {
+          appendSubjectToGrid(sub.name, sub.marks || '90.00');
+        }
+      });
+      updateSubjectCountBadge();
+    }
+
+    if (draft.currentStep && draft.currentStep > 1) {
+      showStep(draft.currentStep);
+    }
+
+    if (hasRestoredData) {
+      showDraftRestoredToast();
+    }
+  } catch (e) {
+    console.warn("Could not restore registration draft", e);
+  }
+}
+
+function clearRegistrationDraft() {
+  try {
+    localStorage.removeItem(DRAFT_KEY);
+  } catch (e) {}
+}
+
+function showDraftRestoredToast() {
+  const alertBox = document.getElementById('client-error-alert');
+  const alertText = document.getElementById('client-error-text');
+  if (alertBox && alertText) {
+    alertBox.style.background = '#ecfdf5';
+    alertBox.style.borderColor = '#6ee7b7';
+    alertBox.style.color = '#065f46';
+    alertText.innerHTML = `💾 <strong>ड्राफ्ट सुरक्षित:</strong> तुमची आधी भरलेली माहिती सुरक्षितपणे रिस्टोअर केली आहे! <button type="button" onclick="clearRegistrationDraft(); location.reload();" style="margin-left: 0.5rem; font-size: 0.72rem; padding: 0.15rem 0.45rem; border-radius: 4px; background: #ffffff; border: 1px solid #cbd5e1; cursor: pointer; color: #dc2626;">✕ रीसेट करा (Clear Draft)</button>`;
+    alertBox.style.display = 'flex';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  restoreRegistrationDraft();
+  
+  const form = document.getElementById('multi-part-form');
+  if (form) {
+    form.addEventListener('input', () => {
+      saveRegistrationDraft();
+    });
+    form.addEventListener('change', () => {
+      saveRegistrationDraft();
+    });
+  }
+});
+</script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+{% endblock %}
+

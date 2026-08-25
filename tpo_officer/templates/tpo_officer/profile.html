@@ -1,0 +1,616 @@
+{% extends 'tpo_officer/base_tpo.html' %}
+{% load static %}
+
+{% block title %}TPO Profile & Leadership Handover | Placement Cell{% endblock %}
+
+{% block content %}
+<div class="tpo-main-body">
+
+  <!-- 1. Luxury Header Banner -->
+  <div style="background: linear-gradient(135deg, #062b1e 0%, #0d4a34 50%, #091a14 100%); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 14px; padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; gap: 1.25rem; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); margin-bottom: 1.5rem; flex-wrap: wrap;">
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <div style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #059669, #10b981); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; box-shadow: 0 0 18px rgba(16, 185, 129, 0.5); border: 1px solid rgba(255, 255, 255, 0.2); flex-shrink: 0;">
+        🛡️
+      </div>
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem;">
+          <span style="background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4); font-size: 0.65rem; font-weight: 800; padding: 0.12rem 0.5rem; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.05em;">
+            INSTITUTIONAL GOVERNANCE & SUCCESSION HUB
+          </span>
+          <span style="color: rgba(255, 255, 255, 0.3); font-size: 0.75rem;">•</span>
+          <span style="color: #cbd5e1; font-size: 0.72rem; font-weight: 600;">Active Head: {{ active_tpo.full_name }}</span>
+        </div>
+        <h2 style="font-size: 1.25rem; color: #ffffff; font-weight: 800; margin: 0; letter-spacing: -0.01em; line-height: 1.2;">
+          Placement Head (TPO) Profile & Administrative Handover
+        </h2>
+        <p style="font-size: 0.78rem; color: #cbd5e1; margin: 0.25rem 0 0; font-weight: 500;">
+          Update officer credentials, manage institutional signing authority, or appoint new TPO for leadership succession
+        </p>
+      </div>
+    </div>
+    
+    <div style="display: flex; align-items: center; gap: 0.6rem;">
+      <a href="{% url 'tpo_officer:dashboard' %}" class="btn btn-secondary btn-sm" style="background: rgba(255, 255, 255, 0.1); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); padding: 0.45rem 0.85rem; border-radius: 8px; font-size: 0.78rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;">
+        <span>🏛️</span> Return to Dashboard
+      </a>
+    </div>
+  </div>
+
+  <!-- Alert Messages -->
+  {% if success_message %}
+  <div style="background: #ecfdf5; border: 1.5px solid #10b981; border-radius: 10px; padding: 0.85rem 1.15rem; margin-bottom: 1.25rem; color: #065f46; font-size: 0.82rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);">
+    <span style="font-size: 1.1rem;">🎉</span>
+    <span>{{ success_message }}</span>
+  </div>
+  {% endif %}
+
+  {% if error_message %}
+  <div style="background: #fef2f2; border: 1.5px solid #ef4444; border-radius: 10px; padding: 0.85rem 1.15rem; margin-bottom: 1.25rem; color: #991b1b; font-size: 0.82rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem;">
+    <span style="font-size: 1.1rem;">⚠️</span>
+    <span>{{ error_message }}</span>
+  </div>
+  {% endif %}
+
+  <!-- Active TPO Status Ribbon Card -->
+  <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
+    <div style="display: flex; align-items: center; gap: 1.15rem;">
+      <div style="width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #059669, #10b981); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; font-weight: 800; box-shadow: 0 0 16px rgba(16, 185, 129, 0.35); flex-shrink: 0; overflow: hidden; border: 2px solid #a7f3d0;">
+        {% if active_tpo.profile_picture_url %}
+          <img src="{{ active_tpo.profile_picture_url }}" alt="{{ active_tpo.full_name }}" style="width: 100%; height: 100%; object-fit: cover;">
+        {% else %}
+          🛡️
+        {% endif %}
+      </div>
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.2rem;">
+          <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 0;">{{ active_tpo.full_name }}</h3>
+          <span style="background: #dcfce7; color: #15803d; border: 1px solid #86efac; font-size: 0.68rem; font-weight: 800; padding: 0.15rem 0.5rem; border-radius: 9999px;">
+            ✓ CURRENT ACTIVE HEAD
+          </span>
+        </div>
+        <div style="font-size: 0.78rem; color: #64748b; line-height: 1.4;">
+          <strong>{{ active_tpo.designation }}</strong> &bull; {{ active_tpo.department }}<br>
+          <span>Official Email: <strong style="color: #059669;">{{ active_tpo.official_email }}</strong></span> &bull; 
+          <span>Login Username: <code style="background: #f1f5f9; padding: 0.1rem 0.35rem; border-radius: 4px; color: #0f172a;">{{ active_tpo.user.username }}</code></span> &bull;
+          <span>Phone: <strong>{{ active_tpo.phone }}</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.35rem;">
+      <span style="font-size: 0.7rem; color: #64748b; text-transform: uppercase; font-weight: 800;">Official Sign-Off Authority:</span>
+      <span style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; font-size: 0.75rem; font-weight: 700; padding: 0.3rem 0.75rem; border-radius: 6px;">
+        {{ active_tpo.signing_authority_title }}
+      </span>
+    </div>
+  </div>
+
+  <!-- ⚡ Placement Season Phase Control Desk (Phase 1 ↔ Phase 2) -->
+  <div style="background: linear-gradient(135deg, #0f172a, #1e293b); border-radius: 14px; padding: 1.4rem; color: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.15); margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <div style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, #2563eb, #3b82f6); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; box-shadow: 0 4px 14px rgba(37,99,235,0.35); flex-shrink: 0;">
+        ⚡
+      </div>
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
+          <h3 style="font-size: 1.1rem; font-weight: 800; color: #ffffff; margin: 0;">Placement Season Phase Control Desk</h3>
+          <span id="active-phase-badge" style="background: {% if active_tpo.active_phase == 'PHASE_2' %}rgba(168, 85, 247, 0.25){% else %}rgba(34, 197, 94, 0.25){% endif %}; color: {% if active_tpo.active_phase == 'PHASE_2' %}#c084fc{% else %}#4ade80{% endif %}; border: 1px solid {% if active_tpo.active_phase == 'PHASE_2' %}rgba(168, 85, 247, 0.4){% else %}rgba(34, 197, 94, 0.4){% endif %}; font-size: 0.72rem; font-weight: 800; padding: 0.15rem 0.6rem; border-radius: 9999px;">
+            {% if active_tpo.active_phase == 'PHASE_2' %}⚡ Phase 2 Active (Second Half Drives){% else %}🎯 Phase 1 Active (Day 1 High-CTC Drives){% endif %}
+          </span>
+        </div>
+        <p style="font-size: 0.78rem; color: #cbd5e1; margin: 0.25rem 0 0;">
+          Current Active Drive: <strong id="active-phase-text" style="color: #60a5fa;">{% if active_tpo.active_phase == 'PHASE_2' %}Phase 2 Active{% else %}Phase 1 Active{% endif %}</strong> &bull; TPO Officer 1-click season phase switcher for student & recruiter desks.
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <button type="button" onclick="togglePlacementPhase()" id="btn-toggle-phase" class="btn" style="background: {% if active_tpo.active_phase == 'PHASE_2' %}linear-gradient(135deg, #2563eb, #3b82f6){% else %}linear-gradient(135deg, #7c3aed, #9333ea){% endif %}; border: 1px solid rgba(255,255,255,0.3); color: #ffffff; font-weight: 800; font-size: 0.85rem; padding: 0.55rem 1.15rem; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.25); display: inline-flex; align-items: center; gap: 0.4rem;">
+        <span>🔄</span> <span id="btn-toggle-phase-text">{% if active_tpo.active_phase == 'PHASE_2' %}Switch to Phase 1 Active{% else %}Switch to Phase 2 Active{% endif %}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 👥 Placement Leadership Team Management Desk -->
+  <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 1.4rem; box-shadow: 0 4px 20px rgba(0,0,0,0.04); margin-bottom: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.85rem; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.75rem;">
+      <div style="display: flex; align-items: center; gap: 0.65rem;">
+        <div style="width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #2563eb, #3b82f6); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; box-shadow: 0 2px 8px rgba(37,99,235,0.25);">
+          👥
+        </div>
+        <div>
+          <h3 style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 0;">Manage Placement Cell Leadership Team</h3>
+          <p style="font-size: 0.75rem; color: #64748b; margin: 0.15rem 0 0;">Update member names, roles, emails/phone numbers, or avatar initials displayed on the Home Landing Page</p>
+        </div>
+      </div>
+      <button type="button" onclick="openAddLeadershipModal()" class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #059669, #10b981); border: none; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.45rem 0.85rem; border-radius: 8px;">
+        <span>➕</span> Add New Member
+      </button>
+    </div>
+
+    <!-- Live Grid of Leadership Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.1rem;">
+      {% for leader in leadership_members %}
+      <div id="leader-card-{{ leader.id }}" style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 1.1rem 1rem; position: relative;">
+        <div style="display: flex; align-items: center; gap: 0.85rem; margin-bottom: 0.75rem;">
+          <div style="width: 44px; height: 44px; border-radius: 50%; background: {% if leader.theme_color == 'green' %}linear-gradient(135deg, #059669, #10b981){% elif leader.theme_color == 'purple' %}linear-gradient(135deg, #7c3aed, #a855f7){% elif leader.theme_color == 'gold' %}linear-gradient(135deg, #d97706, #f59e0b){% else %}linear-gradient(135deg, #1e40af, #2563eb){% endif %}; color: #ffffff; font-weight: 800; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; border: 2px solid #ffffff; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+            {{ leader.initials }}
+          </div>
+          <div style="flex: 1; overflow: hidden;">
+            <div style="font-weight: 800; font-size: 0.92rem; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ leader.name }}</div>
+            <div style="font-size: 0.72rem; color: #2563eb; font-weight: 700;">{{ leader.role_title }}</div>
+          </div>
+        </div>
+        <div style="font-size: 0.73rem; color: #475569; background: #ffffff; padding: 0.35rem 0.6rem; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 0.85rem; word-break: break-all; font-weight: 600;">
+          {{ leader.contact_info }}
+        </div>
+        <div style="display: flex; gap: 0.4rem; justify-content: flex-end;">
+          <button type="button" onclick="editLeadershipMember('{{ leader.id }}', '{{ leader.initials|escapejs }}', '{{ leader.name|escapejs }}', '{{ leader.role_title|escapejs }}', '{{ leader.contact_info|escapejs }}', '{{ leader.theme_color|escapejs }}')" class="btn btn-secondary btn-sm" style="padding: 0.25rem 0.65rem; font-size: 0.72rem; font-weight: 700; background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe;">
+            ✏️ Edit
+          </button>
+          <button type="button" onclick="deleteLeadershipMember('{{ leader.id }}', '{{ leader.name|escapejs }}')" class="btn btn-secondary btn-sm" style="padding: 0.25rem 0.65rem; font-size: 0.72rem; font-weight: 700; background: #fff1f2; color: #dc2626; border-color: #fecaca;">
+            🗑️ Delete
+          </button>
+        </div>
+      </div>
+      {% empty %}
+      <div style="grid-column: 1 / -1; text-align: center; color: #64748b; font-size: 0.85rem; padding: 1rem;">No leadership members defined yet. Click "Add New Member" to add one.</div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- 2-Column Grid: 1. Edit Profile & Password | 2. Appoint New TPO -->
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+
+    <!-- COLUMN 1: Edit Profile & Password -->
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.4rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
+      <div style="display: flex; align-items: center; gap: 0.6rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.85rem; margin-bottom: 1.25rem;">
+        <span style="font-size: 1.2rem;">✏️</span>
+        <div>
+          <h3 style="font-size: 1rem; font-weight: 800; color: #0f172a; margin: 0;">Update Active TPO Profile</h3>
+          <p style="font-size: 0.72rem; color: #64748b; margin: 0.15rem 0 0;">Modify photo, contact info, office room, signing title & password</p>
+        </div>
+      </div>
+
+      <form method="POST" action="{% url 'tpo_officer:profile' %}" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 0.85rem; flex: 1;">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="update_profile">
+        <input type="hidden" name="tpo_id" value="{{ active_tpo.id }}">
+
+        <!-- TPO Photo Upload -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.85rem; display: flex; align-items: center; gap: 1rem;">
+          <div style="width: 52px; height: 52px; border-radius: 50%; background: #e2e8f0; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; border: 2px solid #cbd5e1;" id="tpo-edit-preview-box">
+            {% if active_tpo.profile_picture_url %}
+              <img src="{{ active_tpo.profile_picture_url }}" alt="{{ active_tpo.full_name }}" style="width: 100%; height: 100%; object-fit: cover;">
+            {% else %}
+              🛡️
+            {% endif %}
+          </div>
+          <div style="flex: 1;">
+            <label style="font-size: 0.72rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.25rem;">Upload TPO Official Photo (JPG / PNG)</label>
+            <input type="file" name="profile_picture" accept="image/jpeg,image/png,image/webp" style="font-size: 0.75rem; width: 100%;" onchange="previewTPOPhoto(this, 'tpo-edit-preview-box')">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+          <div>
+            <label style="font-size: 0.74rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.25rem;">Full Name *</label>
+            <input type="text" name="full_name" value="{{ active_tpo.full_name }}" required style="width: 100%; padding: 0.45rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.82rem; box-sizing: border-box;">
+          </div>
+          <div>
+            <label style="font-size: 0.74rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.25rem;">Designation *</label>
+            <input type="text" name="designation" value="{{ active_tpo.designation }}" required style="width: 100%; padding: 0.45rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.82rem; box-sizing: border-box;">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+          <div>
+            <label style="font-size: 0.74rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.25rem;">Department *</label>
+            <input type="text" name="department" value="{{ active_tpo.department }}" required style="width: 100%; padding: 0.45rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.82rem; box-sizing: border-box;">
+          </div>
+          <div>
+            <label style="font-size: 0.74rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.25rem;">Official Email ID *</label>
+            <input type="email" name="official_email" value="{{ active_tpo.official_email }}" required style="width: 100%; padding: 0.45rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.82rem; box-sizing: border-box;">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+          <div>
+            <label style="font-size: 0.74rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.25rem;">Contact Phone *</label>
+            <input type="text" name="phone" value="{{ active_tpo.phone }}" required style="width: 100%; padding: 0.45rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.82rem; box-sizing: border-box;">
+          </div>
+          <div>
+            <label style="font-size: 0.74rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.25rem;">Office Location / Room</label>
+            <input type="text" name="office_location" value="{{ active_tpo.office_location }}" style="width: 100%; padding: 0.45rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.82rem; box-sizing: border-box;">
+          </div>
+        </div>
+
+        <div>
+          <label style="font-size: 0.74rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.25rem;">Signing Authority Title</label>
+          <input type="text" name="signing_authority_title" value="{{ active_tpo.signing_authority_title }}" style="width: 100%; padding: 0.45rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.82rem; box-sizing: border-box;">
+        </div>
+
+        <!-- ⚙️ Quick Navigation Card to Dedicated Registration Setup -->
+        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 0.85rem 1rem; display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 0.6rem;">
+            <span style="font-size: 1.1rem;">⚙️</span>
+            <div>
+              <div style="font-size: 0.82rem; font-weight: 800; color: #1e40af;">Student Registration Setup & Controls</div>
+              <div style="font-size: 0.72rem; color: #3b82f6;">Registration fee (₹{{ active_tpo.registration_fee_amount }}), degree options, and department options are managed in the dedicated Registration Setup desk.</div>
+            </div>
+          </div>
+          <a href="{% url 'tpo_officer:registration_setup' %}" style="background: #2563eb; color: #ffffff; text-decoration: none; padding: 0.4rem 0.85rem; border-radius: 6px; font-size: 0.76rem; font-weight: 700; white-space: nowrap;">
+            Open Registration Setup ➔
+          </a>
+        </div>
+
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.85rem;">
+          <div style="font-size: 0.75rem; font-weight: 700; color: #0f172a; margin-bottom: 0.45rem;">🔒 Account Credentials & Password:</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+            <div>
+              <label style="font-size: 0.72rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Login Username</label>
+              <input type="text" name="username" value="{{ active_tpo.user.username }}" required style="width: 100%; padding: 0.4rem 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.8rem; box-sizing: border-box;">
+            </div>
+            <div>
+              <label style="font-size: 0.72rem; color: #64748b; display: block; margin-bottom: 0.2rem;">Change Password (optional)</label>
+              <input type="password" name="new_password" placeholder="Leave blank to keep" style="width: 100%; padding: 0.4rem 0.65rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.8rem; box-sizing: border-box;">
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 0.5rem;">
+          <button type="submit" class="btn btn-primary btn-sm" style="width: 100%; padding: 0.55rem; font-size: 0.82rem; font-weight: 700; background: linear-gradient(135deg, #059669, #10b981); border: 1px solid #059669; border-radius: 6px; cursor: pointer; color: #ffffff; box-shadow: 0 1px 3px rgba(5, 150, 105, 0.2);">
+            💾 Save & Update TPO Profile
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- COLUMN 2: Appoint New TPO (Leadership Succession) -->
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.4rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
+      <div style="display: flex; align-items: center; gap: 0.6rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.85rem; margin-bottom: 1.25rem;">
+        <span style="font-size: 1.2rem;">🏛️</span>
+        <div>
+          <h3 style="font-size: 1rem; font-weight: 800; color: #0f172a; margin: 0;">Appoint as New TPO (Leadership Handover)</h3>
+          <p style="font-size: 0.72rem; color: #64748b; margin: 0.15rem 0 0;">Assign new official email, login credentials & transfer placement authority</p>
+        </div>
+      </div>
+
+      <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 0.75rem; margin-bottom: 1rem; font-size: 0.74rem; color: #1e40af; line-height: 1.4;">
+        ℹ️ <strong>Leadership Succession Protocol:</strong><br>
+        Appointing a new TPO will automatically activate their account as the institutional Head of Placement Cell. The new officer can immediately log in and manage candidate verifications, company drives, and analytics.
+      </div>
+
+      <form method="POST" action="{% url 'tpo_officer:profile' %}" style="display: flex; flex-direction: column; gap: 0.85rem; flex: 1;">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="appoint_tpo">
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+          <div>
+            <label style="font-size: 0.74rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.25rem;">New TPO Full Name *</label>
+            <input type="text" name="new_full_name" placeholder="e.g. Prof. Rajesh K. Sharma" required style="width: 100%; padding: 0.45rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.82rem; box-sizing: border-box;">
+          </div>
+          <div>
+            <label style="font-size: 0.74rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.25rem;">New Official Email ID *</label>
+            <input type="email" name="new_email" placeholder="e.g. r.sharma@a2zplacement.edu" required style="width: 100%; padding: 0.45rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.82rem; box-sizing: border-box;">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+          <div>
+            <label style="font-size: 0.74rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.25rem;">New Login Username *</label>
+            <input type="text" name="new_username" placeholder="e.g. tpo_sharma" required style="width: 100%; padding: 0.45rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.82rem; box-sizing: border-box;">
+          </div>
+          <div>
+            <label style="font-size: 0.74rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.25rem;">Initial Password *</label>
+            <input type="password" name="new_password" placeholder="Create secure password" required style="width: 100%; padding: 0.45rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.82rem; box-sizing: border-box;">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+          <div>
+            <label style="font-size: 0.74rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.25rem;">Designation</label>
+            <input type="text" name="new_designation" value="Head, Training & Placement Cell" style="width: 100%; padding: 0.45rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.82rem; box-sizing: border-box;">
+          </div>
+          <div>
+            <label style="font-size: 0.74rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.25rem;">Department</label>
+            <input type="text" name="new_department" value="Computer Science & Engineering" style="width: 100%; padding: 0.45rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.82rem; box-sizing: border-box;">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+          <div>
+            <label style="font-size: 0.74rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.25rem;">Phone Number</label>
+            <input type="text" name="new_phone" placeholder="+91 98XXX XXXXX" style="width: 100%; padding: 0.45rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.82rem; box-sizing: border-box;">
+          </div>
+          <div>
+            <label style="font-size: 0.74rem; font-weight: 700; color: #334155; display: block; margin-bottom: 0.25rem;">Signing Title</label>
+            <input type="text" name="new_signing_title" value="Head, Placement Cell & DPC In-Charge" style="width: 100%; padding: 0.45rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 0.82rem; box-sizing: border-box;">
+          </div>
+        </div>
+
+        <div style="margin-top: auto; padding-top: 0.5rem;">
+          <button type="submit" class="btn btn-primary btn-sm" style="width: 100%; padding: 0.55rem; font-size: 0.82rem; font-weight: 700; background: linear-gradient(135deg, #1e3a8a, #2563eb); border: 1px solid #1e3a8a; border-radius: 6px; cursor: pointer; color: #ffffff; box-shadow: 0 1px 3px rgba(37, 99, 235, 0.2);">
+            🤝 Appoint & Transfer TPO Leadership →
+          </button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+
+  <!-- 3. TPO Succession Roster & Governance History -->
+  <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.4rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.85rem; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+      <div style="display: flex; align-items: center; gap: 0.6rem;">
+        <span style="font-size: 1.2rem;">📋</span>
+        <div>
+          <h3 style="font-size: 1rem; font-weight: 800; color: #0f172a; margin: 0;">Institutional TPO Governance Roster</h3>
+          <p style="font-size: 0.72rem; color: #64748b; margin: 0.15rem 0 0;">All appointed Training & Placement Officers in system</p>
+        </div>
+      </div>
+      <span style="font-size: 0.74rem; font-weight: 700; color: #059669; background: #ecfdf5; padding: 0.2rem 0.6rem; border-radius: 9999px; border: 1px solid #a7f3d0;">
+        {{ all_tpos|length }} Registered Officers
+      </span>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem;">
+      <thead>
+        <tr style="background: #f8fafc; border-bottom: 1.5px solid #e2e8f0; text-align: left;">
+          <th style="padding: 0.6rem 0.75rem; color: #475569; font-weight: 700;">Officer Name</th>
+          <th style="padding: 0.6rem 0.75rem; color: #475569; font-weight: 700;">Designation & Dept</th>
+          <th style="padding: 0.6rem 0.75rem; color: #475569; font-weight: 700;">Official Email & Username</th>
+          <th style="padding: 0.6rem 0.75rem; color: #475569; font-weight: 700;">Status</th>
+          <th style="padding: 0.6rem 0.75rem; color: #475569; font-weight: 700; text-align: right;">Governance Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for tpo in all_tpos %}
+        <tr style="border-bottom: 1px solid #f1f5f9;">
+          <td style="padding: 0.75rem; font-weight: 700; color: #0f172a;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span>🛡️</span>
+              <span>{{ tpo.full_name }}</span>
+            </div>
+          </td>
+          <td style="padding: 0.75rem; color: #334155;">
+            {{ tpo.designation }}<br>
+            <span style="font-size: 0.72rem; color: #64748b;">{{ tpo.department }}</span>
+          </td>
+          <td style="padding: 0.75rem; color: #334155;">
+            <a href="mailto:{{ tpo.official_email }}" style="color: #2563eb; text-decoration: none; font-weight: 600;">{{ tpo.official_email }}</a><br>
+            <span style="font-size: 0.72rem; color: #64748b;">Login: <code style="background: #f1f5f9; padding: 0.1rem 0.35rem; border-radius: 4px;">{{ tpo.user.username }}</code></span>
+          </td>
+          <td style="padding: 0.75rem;">
+            {% if tpo.is_active_head %}
+              <span style="background: #dcfce7; color: #15803d; border: 1px solid #86efac; font-size: 0.68rem; font-weight: 800; padding: 0.15rem 0.5rem; border-radius: 9999px;">
+                ✓ ACTIVE HEAD
+              </span>
+            {% else %}
+              <span style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; font-size: 0.68rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 9999px;">
+                Former / Delegate
+              </span>
+            {% endif %}
+          </td>
+          <td style="padding: 0.75rem; text-align: right;">
+            <div style="display: flex; align-items: center; justify-content: flex-end; gap: 0.4rem;">
+              {% if not tpo.is_active_head %}
+              <form method="POST" action="{% url 'tpo_officer:profile' %}" style="display: inline;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="activate_tpo">
+                <input type="hidden" name="tpo_id" value="{{ tpo.id }}">
+                <button type="submit" class="btn btn-primary btn-sm" style="font-size: 0.7rem; padding: 0.25rem 0.55rem; background: #059669; border-color: #059669; color: #fff; cursor: pointer; border-radius: 4px;">
+                  ⚡ Make Active Head
+                </button>
+              </form>
+
+              <form method="POST" action="{% url 'tpo_officer:profile' %}" style="display: inline;" onsubmit="return confirm('Are you sure you want to delete and decommission {{ tpo.full_name }}?');">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="delete_tpo">
+                <input type="hidden" name="tpo_id" value="{{ tpo.id }}">
+                <button type="submit" class="btn btn-secondary btn-sm" style="font-size: 0.7rem; padding: 0.25rem 0.55rem; background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; cursor: pointer; border-radius: 4px;">
+                  🗑️ Delete
+                </button>
+              </form>
+              {% else %}
+              <span style="font-size: 0.72rem; color: #059669; font-weight: 700;">Active Signing Head</span>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- Modal: Edit / Add Leadership Team Member -->
+<div id="leadership-modal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(6px); z-index: 99999; justify-content: center; align-items: center; padding: 1rem;">
+  <div style="background: #ffffff; border-radius: 16px; max-width: 480px; width: 100%; padding: 1.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.25); border: 1px solid #cbd5e1;">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.85rem; margin-bottom: 1.15rem;">
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <span style="font-size: 1.2rem;">👤</span>
+        <h3 id="leadership-modal-title" style="font-size: 1.1rem; font-weight: 800; color: #0f172a; margin: 0;">Edit Leadership Member</h3>
+      </div>
+      <button type="button" onclick="closeLeadershipModal()" style="background: transparent; border: none; font-size: 1.2rem; cursor: pointer; color: #64748b;">✕</button>
+    </div>
+
+    <form id="leadership-member-form" onsubmit="submitLeadershipForm(event)" style="display: flex; flex-direction: column; gap: 0.95rem;">
+      {% csrf_token %}
+      <input type="hidden" id="leader-form-id" name="id" value="">
+
+      <div>
+        <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 0.35rem;">Full Name *</label>
+        <input type="text" id="leader-form-name" name="name" required class="form-input" placeholder="e.g. Prof. S. Bhattacharya" style="width: 100%; box-sizing: border-box; padding: 0.6rem 0.75rem; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 700; font-size: 0.88rem;">
+      </div>
+
+      <div>
+        <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 0.35rem;">Role / Designation Title *</label>
+        <input type="text" id="leader-form-role" name="role_title" required class="form-input" placeholder="e.g. Faculty Placement In-Charge" style="width: 100%; box-sizing: border-box; padding: 0.6rem 0.75rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.85rem;">
+      </div>
+
+      <div>
+        <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 0.35rem;">Contact Info (Email or Phone) *</label>
+        <input type="text" id="leader-form-contact" name="contact_info" required class="form-input" placeholder="e.g. ✉️ dpc.incharge@a2z.edu.in" style="width: 100%; box-sizing: border-box; padding: 0.6rem 0.75rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.85rem;">
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+        <div>
+          <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 0.35rem;">Avatar Initials (2 letters)</label>
+          <input type="text" id="leader-form-initials" name="initials" maxlength="5" class="form-input" placeholder="SB" style="width: 100%; box-sizing: border-box; padding: 0.6rem 0.75rem; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 800; text-transform: uppercase; font-size: 0.9rem;">
+        </div>
+
+        <div>
+          <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 0.35rem;">Theme Color</label>
+          <select id="leader-form-theme" name="theme_color" class="form-input" style="width: 100%; box-sizing: border-box; padding: 0.6rem 0.75rem; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.85rem; font-weight: 700;">
+            <option value="blue">🔵 Royal Blue</option>
+            <option value="green">🟢 Emerald Green</option>
+            <option value="purple">🟣 Violet Purple</option>
+            <option value="gold">🟡 Amber Gold</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 0.6rem; margin-top: 0.5rem; justify-content: flex-end;">
+        <button type="button" onclick="closeLeadershipModal()" class="btn btn-secondary" style="padding: 0.55rem 1rem; font-size: 0.82rem; font-weight: 700;">Cancel</button>
+        <button type="submit" id="btn-save-leadership" class="btn btn-primary" style="padding: 0.55rem 1.2rem; font-size: 0.82rem; font-weight: 700; background: linear-gradient(135deg, #059669, #10b981); border: none;">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function previewTPOPhoto(input, boxId) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const box = document.getElementById(boxId);
+      if (box) {
+        box.innerHTML = `<img src="${e.target.result}" alt="Preview" style="width: 100%; height: 100%; object-fit: cover;">`;
+      }
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function openAddLeadershipModal() {
+  document.getElementById('leadership-modal-title').innerText = '➕ Add New Leadership Member';
+  document.getElementById('leader-form-id').value = '';
+  document.getElementById('leader-form-name').value = '';
+  document.getElementById('leader-form-role').value = '';
+  document.getElementById('leader-form-contact').value = '';
+  document.getElementById('leader-form-initials').value = '';
+  document.getElementById('leader-form-theme').value = 'blue';
+  document.getElementById('leadership-modal').style.display = 'flex';
+}
+
+function editLeadershipMember(id, initials, name, roleTitle, contactInfo, themeColor) {
+  document.getElementById('leadership-modal-title').innerText = '✏️ Edit Leadership Member';
+  document.getElementById('leader-form-id').value = id;
+  document.getElementById('leader-form-name').value = name;
+  document.getElementById('leader-form-role').value = roleTitle;
+  document.getElementById('leader-form-contact').value = contactInfo;
+  document.getElementById('leader-form-initials').value = initials;
+  document.getElementById('leader-form-theme').value = themeColor || 'blue';
+  document.getElementById('leadership-modal').style.display = 'flex';
+}
+
+function closeLeadershipModal() {
+  document.getElementById('leadership-modal').style.display = 'none';
+}
+
+function submitLeadershipForm(event) {
+  event.preventDefault();
+  const form = document.getElementById('leadership-member-form');
+  const formData = new FormData(form);
+  const btn = document.getElementById('btn-save-leadership');
+
+  if (btn) {
+    btn.disabled = true;
+    btn.innerText = 'Saving...';
+  }
+
+  fetch("{% url 'tpo_officer:api_save_leadership_member' %}", {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'X-CSRFToken': '{{ csrf_token }}'
+    }
+  })
+  .then(res => res.json().then(data => ({ ok: res.ok, data })))
+  .then(({ ok, data }) => {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerText = 'Save Changes';
+    }
+
+    if (ok && data.success) {
+      alert(data.message);
+      window.location.reload();
+    } else {
+      alert('Error: ' + (data.error || 'Failed to save member details.'));
+    }
+  })
+  .catch(err => {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerText = 'Save Changes';
+    }
+    alert('Error connecting to server. Please try again.');
+  });
+}
+
+function deleteLeadershipMember(id, name) {
+  if (!confirm(`Are you sure you want to delete '${name}' from the leadership team?`)) return;
+
+  const formData = new FormData();
+  formData.append('id', id);
+
+  fetch("{% url 'tpo_officer:api_delete_leadership_member' %}", {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'X-CSRFToken': '{{ csrf_token }}'
+    }
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      alert(data.message);
+      window.location.reload();
+    } else {
+      alert('Error: ' + (data.error || 'Failed to delete member.'));
+    }
+  })
+  .catch(err => alert('Failed to connect to server.'));
+}
+
+function togglePlacementPhase() {
+  const btnText = document.getElementById('btn-toggle-phase-text');
+  if (btnText) btnText.innerText = 'Switching Season Phase...';
+
+  fetch("{% url 'tpo_officer:api_toggle_phase' %}", {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': '{{ csrf_token }}',
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      alert('🎉 ' + data.message);
+      window.location.reload();
+    } else {
+      alert('⚠️ Error: ' + (data.error || 'Failed to switch phase'));
+      if (btnText) btnText.innerText = 'Switch Season Phase';
+    }
+  })
+  .catch(err => {
+    alert('⚠️ Server connection error');
+    if (btnText) btnText.innerText = 'Switch Season Phase';
+  });
+}
+</script>
+{% endblock %}

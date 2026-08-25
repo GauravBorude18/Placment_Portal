@@ -1,0 +1,10 @@
+/* TPO Control Room Custom Styles */
+.navbar-tpo {
+  border-bottom: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.tpo-badge {
+  background: rgba(16, 185, 129, 0.15);
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}

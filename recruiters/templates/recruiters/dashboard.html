@@ -1,0 +1,485 @@
+{% extends 'recruiters/base_recruiter.html' %}
+{% load static %}
+
+{% block title %}{{ current_company.name }} HR Hiring Desk | A2Z Placement Cell{% endblock %}
+
+{% block content %}
+<div class="recruiter-dashboard-wrap">
+
+  <!-- Recruiter Welcome Hero (Specific to THIS Company) -->
+  <section class="recruiter-hero-card">
+    <div class="recruiter-hero-main">
+      <div class="recruiter-avatar-crest">
+        {{ current_company.logo_fallback }}
+      </div>
+      <div class="recruiter-hero-text">
+        <div class="hero-title-row">
+          <h2>{{ current_company.name }} • Campus Talent Acquisition</h2>
+          <span class="badge-role-tag">Corporate HR Desk</span>
+        </div>
+        <p class="hero-subtext">
+          <span>Manage job announcements, monitor the real-time hiring road map, and advance candidates through tests, GDs, and technical interviews.</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="recruiter-hero-actions" style="display: flex; gap: 0.6rem; flex-wrap: wrap;">
+      <a href="{% url 'recruiters:roadmap_default' %}" class="btn btn-secondary btn-sm" style="background: rgba(255,255,255,0.1); border-color: rgba(6, 182, 212, 0.4); color: #22d3ee; white-space: nowrap;">
+        <span>🗺️</span> View Hiring Road Map
+      </a>
+      <a href="{% url 'recruiters:create_jaf' %}" class="btn btn-primary btn-sm" style="background: #0284c7; border-color: #0284c7; white-space: nowrap;">
+        <span>➕</span> Post New {{ current_company.name }} JAF
+      </a>
+    </div>
+  </section>
+
+  <!-- Expanded 6-Card Hiring Pipeline Metrics Ribbon -->
+  <section class="recruiter-stats-grid-6">
+    
+    <!-- 1. Active Openings -->
+    <div class="stat-compact-card">
+      <div class="stat-compact-header">
+        <span class="stat-compact-label">Openings</span>
+        <div class="stat-compact-icon icon-blue">📋</div>
+      </div>
+      <div class="stat-compact-number">{{ total_jafs }}</div>
+      <div class="stat-compact-footer">Active Roles</div>
+    </div>
+
+    <!-- 2. Total Applied -->
+    <div class="stat-compact-card">
+      <div class="stat-compact-header">
+        <span class="stat-compact-label">Applied</span>
+        <div class="stat-compact-icon icon-sky">👥</div>
+      </div>
+      <div class="stat-compact-number" style="color: #0284c7;">{{ total_applicants }}</div>
+      <div class="stat-compact-footer">Total Submissions</div>
+    </div>
+
+    <!-- 3. Shortlisted -->
+    <div class="stat-compact-card">
+      <div class="stat-compact-header">
+        <span class="stat-compact-label">Shortlisted</span>
+        <div class="stat-compact-icon icon-teal">📝</div>
+      </div>
+      <div class="stat-compact-number" style="color: #0d9488;">{{ total_shortlisted }}</div>
+      <div class="stat-compact-footer">Online Test Stage</div>
+    </div>
+
+    <!-- 4. Interview -->
+    <div class="stat-compact-card">
+      <div class="stat-compact-header">
+        <span class="stat-compact-label">Interviews</span>
+        <div class="stat-compact-icon icon-amber">🎙️</div>
+      </div>
+      <div class="stat-compact-number" style="color: #d97706;">{{ total_interviews }}</div>
+      <div class="stat-compact-footer">Technical Rounds</div>
+    </div>
+
+    <!-- 5. Offers Extended -->
+    <div class="stat-compact-card">
+      <div class="stat-compact-header">
+        <span class="stat-compact-label">Job Offers</span>
+        <div class="stat-compact-icon icon-emerald">🏆</div>
+      </div>
+      <div class="stat-compact-number" style="color: #059669;">{{ total_offers }}</div>
+      <div class="stat-compact-footer">Selected Offers</div>
+    </div>
+
+    <!-- 6. Ineligible / Rejected -->
+    <div class="stat-compact-card">
+      <div class="stat-compact-header">
+        <span class="stat-compact-label">Ineligible</span>
+        <div class="stat-compact-icon icon-rose">❌</div>
+      </div>
+      <div class="stat-compact-number" style="color: #e11d48;">{{ total_rejected }}</div>
+      <div class="stat-compact-footer">Below Cutoff</div>
+    </div>
+
+  </section>
+
+<style>
+  /* Fluid Responsive Media Queries for Mobile, Tablet & Laptops */
+  @media (max-width: 1150px) {
+    .analytics-grid-container {
+      grid-template-columns: 1fr !important;
+    }
+    .span-7-card, .span-5-card, .span-6-card {
+      grid-column: span 12 !important;
+    }
+  }
+  @media (max-width: 768px) {
+    .recruiter-stats-grid-6 {
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 0.75rem !important;
+    }
+    .recruiter-cards-grid {
+      grid-template-columns: 1fr !important;
+    }
+    .recruiter-hero-card {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      padding: 1.2rem !important;
+    }
+    .recruiter-hero-actions {
+      width: 100% !important;
+      margin-top: 0.75rem !important;
+    }
+    .recruiter-hero-actions a {
+      flex: 1 !important;
+      text-align: center !important;
+      justify-content: center !important;
+    }
+  }
+  @media (max-width: 480px) {
+    .recruiter-stats-grid-6 {
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>
+
+  <!-- 📊 VISUAL ANALYTICS & CHARTS DASHBOARD SECTION -->
+  <div style="margin-top: 1.5rem; margin-bottom: 1.5rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <span style="font-size: 1.3rem; background: linear-gradient(135deg, #0284c7, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">📊</span>
+        <h3 style="font-size: 1.18rem; font-weight: 900; color: #0f172a; margin: 0; letter-spacing: -0.02em;">{{ current_company.name }} Visual Analytics & Recruitment Funnel Charts</h3>
+      </div>
+      <span style="font-size: 0.76rem; background: linear-gradient(135deg, #ecfdf5, #d1fae5); color: #047857; border: 1.5px solid #6ee7b7; font-weight: 800; padding: 0.3rem 0.75rem; border-radius: 9999px; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);">
+        ● Real-time Live Metrics
+      </span>
+    </div>
+
+    <!-- Analytics Cards Grid (5 Visual Charts & Graphs) -->
+    <div class="analytics-grid-container" style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.25rem;">
+      
+      <!-- GRAPH 1: Hiring Funnel Conversion Flow (Span 7) -->
+      <div class="span-7-card" style="grid-column: span 7; background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 18px; padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); position: relative; overflow: hidden;">
+        <div style="position: absolute; top:0; left:0; right:0; height: 4px; background: linear-gradient(90deg, #2563eb, #0d9488, #d97706, #059669);"></div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 0.75rem;">
+          <div style="display: flex; align-items: center; gap: 0.45rem;">
+            <span style="font-size: 1.2rem;">📈</span>
+            <strong style="font-size: 0.98rem; color: #0f172a; font-weight: 800;">1. Hiring Funnel Conversion Flow</strong>
+          </div>
+          <span style="font-size: 0.74rem; background: #eff6ff; color: #1d4ed8; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 6px; border: 1px solid #bfdbfe;">Total Applicants: {{ total_applicants }}</span>
+        </div>
+
+        <!-- Funnel Conversion Meters -->
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          
+          <div style="background: #f8fafc; padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px solid #f1f5f9;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 800; margin-bottom: 0.35rem; color: #1e293b;">
+              <span>📝 Stage 1: Applications Received</span>
+              <span style="color: #2563eb; font-weight: 900;">{{ total_applicants }} Applicants (100%)</span>
+            </div>
+            <div style="height: 14px; background: #e2e8f0; border-radius: 9999px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);">
+              <div style="width: 100%; height: 100%; background: linear-gradient(90deg, #2563eb 0%, #3b82f6 50%, #60a5fa 100%); border-radius: 9999px; box-shadow: 0 2px 6px rgba(37, 99, 235, 0.4);"></div>
+            </div>
+          </div>
+
+          <div style="background: #f8fafc; padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px solid #f1f5f9;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 800; margin-bottom: 0.35rem; color: #1e293b;">
+              <span>📊 Stage 2: Shortlisted for Test/Evaluation</span>
+              <span style="color: #0d9488; font-weight: 900;">{{ total_shortlisted }} Candidates</span>
+            </div>
+            <div style="height: 14px; background: #e2e8f0; border-radius: 9999px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);">
+              <div style="width: {% if total_applicants > 0 %}{% widthratio total_shortlisted total_applicants 100 %}{% else %}60{% endif %}%; height: 100%; background: linear-gradient(90deg, #0d9488 0%, #14b8a6 50%, #2dd4bf 100%); border-radius: 9999px; box-shadow: 0 2px 6px rgba(13, 148, 136, 0.4);"></div>
+            </div>
+          </div>
+
+          <div style="background: #f8fafc; padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px solid #f1f5f9;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 800; margin-bottom: 0.35rem; color: #1e293b;">
+              <span>🎙️ Stage 3: Technical & HR Interviews</span>
+              <span style="color: #d97706; font-weight: 900;">{{ total_interviews }} Candidates</span>
+            </div>
+            <div style="height: 14px; background: #e2e8f0; border-radius: 9999px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);">
+              <div style="width: {% if total_applicants > 0 %}{% widthratio total_interviews total_applicants 100 %}{% else %}35{% endif %}%; height: 100%; background: linear-gradient(90deg, #d97706 0%, #f59e0b 50%, #fbbf24 100%); border-radius: 9999px; box-shadow: 0 2px 6px rgba(217, 119, 6, 0.4);"></div>
+            </div>
+          </div>
+
+          <div style="background: #f8fafc; padding: 0.65rem 0.85rem; border-radius: 10px; border: 1px solid #f1f5f9;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 800; margin-bottom: 0.35rem; color: #1e293b;">
+              <span>🏆 Stage 4: Final Job Offers Extended</span>
+              <span style="color: #059669; font-weight: 900;">{{ total_offers }} Selected Offers</span>
+            </div>
+            <div style="height: 14px; background: #e2e8f0; border-radius: 9999px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);">
+              <div style="width: {% if total_applicants > 0 %}{% widthratio total_offers total_applicants 100 %}{% else %}15{% endif %}%; height: 100%; background: linear-gradient(90deg, #059669 0%, #10b981 50%, #34d399 100%); border-radius: 9999px; box-shadow: 0 2px 6px rgba(5, 150, 105, 0.4);"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- GRAPH 2: Candidate Qualification & Cutoff Ratio (Span 5) -->
+      <div class="span-5-card" style="grid-column: span 5; background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 18px; padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden;">
+        <div style="position: absolute; top:0; left:0; right:0; height: 4px; background: linear-gradient(90deg, #10b981, #f43f5e);"></div>
+        <div>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 0.75rem;">
+            <div style="display: flex; align-items: center; gap: 0.45rem;">
+              <span style="font-size: 1.2rem;">🎯</span>
+              <strong style="font-size: 0.98rem; color: #0f172a; font-weight: 800;">2. Candidate Eligibility Cutoff Ratio</strong>
+            </div>
+          </div>
+
+          <!-- Circular Ring Doughnut Graphic -->
+          <div style="display: flex; align-items: center; gap: 1.25rem; margin-bottom: 1rem;">
+            <div style="position: relative; width: 105px; height: 105px; border-radius: 50%; background: conic-gradient(#10b981 0% {{ eligible_pct }}%, #f43f5e {{ eligible_pct }}% 100%); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3); flex-shrink: 0;">
+              <div style="width: 72px; height: 72px; background: #ffffff; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: inset 0 2px 6px rgba(0,0,0,0.1);">
+                <span style="font-size: 1.05rem; font-weight: 900; color: #059669;">{{ eligible_pct }}%</span>
+                <span style="font-size: 0.58rem; color: #64748b; font-weight: 800; letter-spacing: 0.05em;">PASSED</span>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 0.65rem; flex: 1;">
+              <div style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 1.5px solid #a7f3d0; padding: 0.6rem 0.85rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);">
+                <span style="font-size: 0.72rem; color: #047857; font-weight: 800; display: block; margin-bottom: 0.1rem;">✓ ELIGIBLE CANDIDATES</span>
+                <strong style="font-size: 0.95rem; color: #047857; font-weight: 900;">{{ eligible_apps_count }} Candidates ({{ eligible_pct }}%)</strong>
+              </div>
+              <div style="background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%); border: 1.5px solid #fecaca; padding: 0.6rem 0.85rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(225, 29, 72, 0.15);">
+                <span style="font-size: 0.72rem; color: #b91c1c; font-weight: 800; display: block; margin-bottom: 0.1rem;">❌ FILTERED OUT BELOW CUTOFF</span>
+                <strong style="font-size: 0.95rem; color: #b91c1c; font-weight: 900;">{{ ineligible_apps_count }} Candidates ({{ ineligible_pct }}%)</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="font-size: 0.72rem; color: #475569; background: #f8fafc; padding: 0.55rem 0.85rem; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 600;">
+          🛡️ Evaluates 10th %, 12th/Diploma %, CPI Cutoff & 0-Live Backlogs policy.
+        </div>
+      </div>
+
+      <!-- GRAPH 3: Role-wise CTC Package Benchmark Towers (Vertical Towers with Y-Axis Scale Grid) -->
+      <div class="span-6-card" style="grid-column: span 6; background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 18px; padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;">
+        <div style="position: absolute; top:0; left:0; right:0; height: 4px; background: linear-gradient(90deg, #e11d48, #0284c7, #7c3aed, #059669);"></div>
+        <div>
+          <!-- Header Row with Peak Package Badge -->
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.45rem;">
+              <span style="font-size: 1.2rem;">🗼</span>
+              <strong style="font-size: 0.98rem; color: #0f172a; font-weight: 800;">3. Role-wise CTC Package Benchmark Towers</strong>
+            </div>
+            <span style="font-size: 0.72rem; background: #fef2f2; color: #be123c; border: 1px solid #fecaca; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 9999px;">
+              ⭐ Peak: {{ ctc_graph_data.0.ctc|default:"₹1.2 Cr LPA" }}
+            </span>
+          </div>
+
+          <!-- Y-Axis Grid & Vertical Scrollable Towers -->
+          <div style="position: relative; display: flex; gap: 0.5rem; height: 210px; padding-top: 1.2rem; padding-bottom: 0.5rem;">
+            
+            <!-- Left Y-Axis Scale -->
+            <div style="display: flex; flex-direction: column; justify-content: space-between; font-size: 0.65rem; font-weight: 800; color: #64748b; padding-right: 0.4rem; border-right: 2px dashed #cbd5e1; height: 165px;">
+              <span>MAX</span>
+              <span>75%</span>
+              <span>50%</span>
+              <span>25%</span>
+              <span>0</span>
+            </div>
+
+            <!-- Scrollable Towers Container for Unlimited Future Companies/Roles -->
+            <div style="display: flex; align-items: flex-end; gap: 1.1rem; flex: 1; overflow-x: auto; padding-bottom: 0.25rem; scrollbar-width: thin;">
+              {% for item in ctc_graph_data %}
+              <div style="display: flex; flex-direction: column; align-items: center; min-width: 80px; height: 100%; justify-content: flex-end; flex-shrink: 0; position: relative;">
+                
+                <!-- Top CTC Value Badge -->
+                <span style="font-size: 0.68rem; font-weight: 900; color: #ffffff; background: {% if forloop.first %}#e11d48{% elif forloop.counter == 2 %}#0284c7{% elif forloop.counter == 3 %}#7c3aed{% else %}#059669{% endif %}; padding: 0.15rem 0.45rem; border-radius: 6px; margin-bottom: 0.4rem; white-space: nowrap; box-shadow: 0 2px 6px rgba(0,0,0,0.18);">
+                  {{ item.ctc }}
+                </span>
+
+                <!-- Vertical Pillar Tower Bar -->
+                <div style="width: 38px; height: {{ item.bar_pct }}%; max-height: 140px; background: {% if forloop.first %}linear-gradient(180deg, #f43f5e 0%, #be123c 100%){% elif forloop.counter == 2 %}linear-gradient(180deg, #38bdf8 0%, #0284c7 100%){% elif forloop.counter == 3 %}linear-gradient(180deg, #c084fc 0%, #6d28d9 100%){% else %}linear-gradient(180deg, #34d399 0%, #047857 100%){% endif %}; border-radius: 8px 8px 0 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.15); transition: height 0.4s ease;"></div>
+
+                <!-- Role Title Label Below Axis -->
+                <div style="text-align: center; margin-top: 0.4rem; width: 100%;">
+                  <span style="font-size: 0.72rem; font-weight: 800; color: #1e293b; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 80px;" title="{{ item.role }}">
+                    {{ item.role }}
+                  </span>
+                </div>
+
+              </div>
+              {% empty %}
+              <div style="font-size: 0.8rem; color: #94a3b8; font-style: italic;">No posted roles to benchmark</div>
+              {% endfor %}
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- GRAPH 4: Selection Stage Progress & Branch Distribution (Span 6) -->
+      <div class="span-6-card" style="grid-column: span 6; background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 18px; padding: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden;">
+        <div style="position: absolute; top:0; left:0; right:0; height: 4px; background: linear-gradient(90deg, #10b981, #6366f1);"></div>
+        <div>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; border-bottom: 1.5px solid #f1f5f9; padding-bottom: 0.75rem;">
+            <div style="display: flex; align-items: center; gap: 0.45rem;">
+              <span style="font-size: 1.2rem;">⚙️</span>
+              <strong style="font-size: 0.98rem; color: #0f172a; font-weight: 800;">4. Per-Role Roadmap Stage & Branch Distribution</strong>
+            </div>
+          </div>
+
+          <!-- PER-ROLE ROADMAP PROGRESS CARDS -->
+          <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.1rem; max-height: 190px; overflow-y: auto; padding-right: 0.25rem;">
+            {% for j in jafs %}
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 0.7rem 0.85rem; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+              
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; font-weight: 800; margin-bottom: 0.35rem;">
+                <div style="display: flex; align-items: center; gap: 0.4rem;">
+                  <span style="color: #0f172a;">💼 {{ j.role_title }}</span>
+                  <span style="font-size: 0.68rem; font-weight: 800; background: {% if j.app_count > 0 %}#eff6ff{% else %}#f1f5f9{% endif %}; color: {% if j.app_count > 0 %}#1d4ed8{% else %}#64748b{% endif %}; border: 1px solid {% if j.app_count > 0 %}#bfdbfe{% else %}#cbd5e1{% endif %}; padding: 0.05rem 0.45rem; border-radius: 4px;">
+                    👥 {{ j.app_count }} Applicant{% if j.app_count != 1 %}s{% endif %}
+                  </span>
+                </div>
+                <span style="color: #059669; font-weight: 900; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 0.1rem 0.5rem; border-radius: 6px; font-size: 0.72rem;">
+                  {{ j.completed_rounds_count }}/{{ j.total_rounds_count }} Rounds Completed ({{ j.progress_pct }}%)
+                </span>
+              </div>
+
+              <!-- Progress Bar -->
+              <div style="height: 8px; background: #e2e8f0; border-radius: 9999px; overflow: hidden; margin-bottom: 0.4rem;">
+                <div style="width: {{ j.progress_pct }}%; height: 100%; background: linear-gradient(90deg, #10b981, #059669); border-radius: 9999px;"></div>
+              </div>
+
+              <!-- Current & Next Stage Badges -->
+              <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.7rem; font-weight: 700; color: #475569; flex-wrap: wrap; gap: 0.25rem;">
+                <span>📍 <strong>Current Stage:</strong> <span style="color: #0284c7; font-weight: 800;">{{ j.active_round_title }}</span></span>
+                <span>⏭️ <strong>Next Up:</strong> <span style="color: #6366f1; font-weight: 800;">{{ j.next_round_title }}</span></span>
+              </div>
+
+            </div>
+            {% empty %}
+            <div style="font-size: 0.8rem; color: #94a3b8; font-style: italic;">No active roles posted</div>
+            {% endfor %}
+          </div>
+
+          <!-- Branch Distribution Badges -->
+          <div>
+            <span style="font-size: 0.74rem; color: #475569; font-weight: 800; display: block; margin-bottom: 0.5rem; letter-spacing: 0.03em;">DEPARTMENT & BRANCH DISTRIBUTION:</span>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;">
+              {% for b_name, b_cnt in branch_counts.items %}
+              <div style="background: {% if forloop.first %}#eff6ff{% elif forloop.counter == 2 %}#fffbeb{% elif forloop.counter == 3 %}#f5f3ff{% else %}#ecfdf5{% endif %}; border: 1.5px solid {% if forloop.first %}#bfdbfe{% elif forloop.counter == 2 %}#fde68a{% elif forloop.counter == 3 %}#ddd6fe{% else %}#a7f3d0{% endif %}; border-radius: 10px; padding: 0.55rem 0.75rem; display: flex; align-items: center; justify-content: space-between;">
+                <span style="font-size: 0.74rem; font-weight: 800; color: {% if forloop.first %}#1d4ed8{% elif forloop.counter == 2 %}#b45309{% elif forloop.counter == 3 %}#6d28d9{% else %}#047857{% endif %};">🎓 {{ b_name }}</span>
+                <span style="font-size: 0.76rem; font-weight: 900; color: #ffffff; background: {% if forloop.first %}#2563eb{% elif forloop.counter == 2 %}#d97706{% elif forloop.counter == 3 %}#7c3aed{% else %}#059669{% endif %}; padding: 0.15rem 0.5rem; border-radius: 6px;">{{ b_cnt }}</span>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Square-ish Modern JAF Cards Section -->
+  <section class="recruiter-jobs-section">
+    <div class="section-header-row">
+      <div>
+        <h3 class="section-title">Job Openings Posted by {{ current_company.name }} ({{ jafs|length }})</h3>
+        <p class="section-sub">Track active candidate funnels, inspect criteria, and manage the road map sequence.</p>
+      </div>
+      <span class="count-pill">{{ jafs|length }} Active Openings</span>
+    </div>
+
+    <!-- Responsive Square-ish JAF Cards Grid -->
+    <div class="recruiter-cards-grid">
+      {% for jaf in jafs %}
+      <div class="recruiter-jaf-square-card">
+        
+        <!-- 1. Header: Brand + Role Title + Status -->
+        <div class="square-card-header">
+          <div class="square-card-brand">
+            <div class="square-logo-box">{{ jaf.company.logo_fallback }}</div>
+            <div>
+              <h4 class="square-company-name">{{ jaf.company.name }}</h4>
+              <p class="square-role-title">{{ jaf.role_title }}</p>
+            </div>
+          </div>
+          <span class="square-status-pill">Phase 1 Active</span>
+        </div>
+
+        <!-- 2. Package Banner & Sector -->
+        <div class="square-package-bar">
+          <div>
+            <div style="font-size: 0.65rem; color: #64748b; font-weight: 700; text-transform: uppercase;">Annual CTC</div>
+            <div class="square-ctc-text">{{ jaf.ctc_display }}</div>
+          </div>
+          <span class="square-sector-pill">🏢 {{ jaf.sector }}</span>
+        </div>
+
+        <!-- 3. Active Criteria Badges Cluster -->
+        <div class="square-criteria-cluster">
+          {% if jaf.require_tenth_cutoff %}
+          <span class="criteria-mini-pill">📘 10th: <strong>≥{{ jaf.min_tenth_percentage }}%</strong></span>
+          {% endif %}
+
+          {% if jaf.require_twelfth_cutoff %}
+          <span class="criteria-mini-pill">📙 12th/Dip: <strong>≥{{ jaf.min_twelfth_diploma_percentage }}%</strong></span>
+          {% endif %}
+
+          {% if jaf.require_cgpa_cutoff %}
+          <span class="criteria-mini-pill cpi">🎯 CPI: <strong>≥{{ jaf.cgpa_cutoff }}</strong></span>
+          {% endif %}
+
+          {% if jaf.require_no_backlogs and jaf.max_active_backlogs < 99 %}
+          <span class="criteria-mini-pill backlog">🚫 <strong>0 Backlogs</strong></span>
+          {% else %}
+          <span class="criteria-mini-pill backlog">🚫 <strong>No Backlog Rule</strong></span>
+          {% endif %}
+        </div>
+
+        <!-- 4. Mini Live Candidate Funnel Tracker for THIS role -->
+        <div class="square-funnel-ribbon">
+          <div class="funnel-stage-item">
+            <span class="funnel-num" style="color: #0284c7;">{{ jaf.app_count }}</span>
+            <span class="funnel-tag">Applied</span>
+          </div>
+          <div class="funnel-stage-item">
+            <span class="funnel-num" style="color: #0d9488;">{{ jaf.shortlisted_count }}</span>
+            <span class="funnel-tag">Shortlisted</span>
+          </div>
+          <div class="funnel-stage-item">
+            <span class="funnel-num" style="color: #d97706;">{{ jaf.interview_count }}</span>
+            <span class="funnel-tag">Interview</span>
+          </div>
+          <div class="funnel-stage-item">
+            <span class="funnel-num" style="color: #059669;">{{ jaf.offer_count }}</span>
+            <span class="funnel-tag">Offers</span>
+          </div>
+        </div>
+
+        <!-- Per-Role Live Roadmap Progress Bar & Stage Status -->
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.55rem 0.75rem; margin-top: 0.65rem; margin-bottom: 0.65rem;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.72rem; font-weight: 800; color: #1e293b; margin-bottom: 0.3rem; flex-wrap: wrap; gap: 0.2rem;">
+            <span>📍 Stage: <strong style="color: #0284c7;">{{ jaf.active_round_title }}</strong></span>
+            <span style="color: #059669;">{{ jaf.completed_rounds_count }}/{{ jaf.total_rounds_count }} Rounds ({{ jaf.progress_pct }}%)</span>
+          </div>
+          <div style="height: 7px; background: #e2e8f0; border-radius: 9999px; overflow: hidden;">
+            <div style="width: {{ jaf.progress_pct }}%; height: 100%; background: linear-gradient(90deg, #10b981, #059669); border-radius: 9999px;"></div>
+          </div>
+        </div>
+
+        <!-- 5. Card Footer: Action Buttons -->
+        <div class="square-card-footer" style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap;">
+          <a href="{% url 'recruiters:roadmap' jaf.id %}" style="font-size: 0.75rem; color: #0284c7; font-weight: 800; text-decoration: none; display: flex; align-items: center; gap: 0.25rem;">
+            <span>🗺️</span> Hiring Road Map ({{ jaf.hiring_rounds.count }} Stages)
+          </a>
+          <a href="{% url 'recruiters:applicants' jaf.id %}" class="btn-inspect-candidates">
+            <span>👥</span> View {{ jaf.app_count }} Applicants →
+          </a>
+        </div>
+
+      </div>
+      {% empty %}
+      <div class="empty-jaf-notice" style="grid-column: 1 / -1; text-align: center; padding: 3.5rem; background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 16px;">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📋</div>
+        <h4 style="color: #0f172a; font-size: 1.1rem; margin-bottom: 0.35rem;">No Active Job Postings for {{ current_company.name }}</h4>
+        <p style="color: var(--text-muted); font-size: 0.82rem; margin-bottom: 1.25rem;">Submit a new Job Announcement Form (JAF) with customized criteria rules.</p>
+        <a href="{% url 'recruiters:create_jaf' %}" class="btn btn-primary btn-sm" style="background: #0284c7; border-color: #0284c7;">
+          <span>➕</span> Post New {{ current_company.name }} JAF
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+</div>
+{% endblock %}

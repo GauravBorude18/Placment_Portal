@@ -1,0 +1,144 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A2Z Placement Cell - Student Career & Recruitment Management Portal (Django Edition)">
+  <title>{% block title %}A2Z Placement Cell{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  {% if active_tab == 'home' %}
+    <!-- 1. PUBLIC LANDING NAVBAR (WITH DYNAMIC RETURN TO PORTAL BUTTON FOR LOGGED IN USERS) -->
+    <header class="navbar navbar-public-landing">
+      <div class="nav-container">
+        
+        <!-- Brand Logo -->
+        <a href="{% url 'students:landing' %}" class="nav-brand" title="A2Z Placement Cell">
+          <div class="brand-crest">A2Z</div>
+          <div class="brand-text">
+            <h1>A2Z</h1>
+            <p>Placement Cell</p>
+          </div>
+        </a>
+
+        <!-- Public Navigation Tabs -->
+        <nav class="nav-tabs public-nav-tabs" aria-label="Public Navigation">
+          <a href="/" class="nav-tab-link {% if request.path == '/' or active_tab == 'home' %}active{% endif %}">
+            <span>🏠</span>
+            <span>Home</span>
+          </a>
+          <a href="/#about" class="nav-tab-link">
+            <span>🏛️</span>
+            <span>About</span>
+          </a>
+          <a href="/#portals" class="nav-tab-link">
+            <span>👥</span>
+            <span>Portals & Roles</span>
+          </a>
+          <a href="/#partners" class="nav-tab-link">
+            <span>🏢</span>
+            <span>Hiring Partners</span>
+          </a>
+          <a href="/#roadmap" class="nav-tab-link">
+            <span>📈</span>
+            <span>Roadmap</span>
+          </a>
+          <a href="/#leadership" class="nav-tab-link">
+            <span>📞</span>
+            <span>Leadership</span>
+          </a>
+        </nav>
+
+        <!-- Public Right Action Buttons (Dynamic Return Button if logged in, otherwise Login/Register) -->
+        <div class="nav-actions">
+          {% if is_recruiter_logged_in and recruiter_company %}
+            <a href="{% url 'recruiters:dashboard' %}" class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #0284c7, #06b6d4); border: 1px solid #38bdf8; font-weight: 700; display: inline-flex; align-items: center; gap: 0.4rem; box-shadow: 0 0 12px rgba(6, 182, 212, 0.4); color: #ffffff;">
+              <span>🏢</span>
+              <span>Return to {{ recruiter_company.name }} HR Desk →</span>
+            </a>
+            <a href="{% url 'students:logout' %}" class="btn btn-secondary btn-sm" style="color: #dc2626; border-color: #fecaca; background: #fff1f2;" title="Sign Out">
+              <span>🚪</span> Logout
+            </a>
+
+          {% elif is_tpo_logged_in %}
+            <a href="{% url 'tpo_officer:dashboard' %}" class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #059669, #10b981); border: 1px solid #34d399; font-weight: 700; display: inline-flex; align-items: center; gap: 0.4rem; box-shadow: 0 0 12px rgba(5, 150, 105, 0.35); color: #ffffff;">
+              <span>🛡️</span>
+              <span>Return to TPO Portal →</span>
+            </a>
+            <a href="{% url 'students:logout' %}" class="btn btn-secondary btn-sm" style="color: #dc2626; border-color: #fecaca; background: #fff1f2;" title="Sign Out">
+              <span>🚪</span> Logout
+            </a>
+
+          {% elif is_student_logged_in and student %}
+            <a href="{% url 'students:student_dashboard' %}" class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #2563eb, #3b82f6); border: 1px solid #60a5fa; font-weight: 700; display: inline-flex; align-items: center; gap: 0.4rem; box-shadow: 0 0 12px rgba(37, 99, 235, 0.35); color: #ffffff;">
+              <span>🎓</span>
+              <span>Return to Student Portal ({{ student.full_name|slice:":15" }}) →</span>
+            </a>
+            <a href="{% url 'students:logout' %}" class="btn btn-secondary btn-sm" style="color: #dc2626; border-color: #fecaca; background: #fff1f2;" title="Sign Out">
+              <span>🚪</span> Logout
+            </a>
+
+          {% else %}
+            <a href="{% url 'students:login' %}" class="btn btn-secondary btn-sm nav-btn-login {% if '/login' in request.path %}active-nav-btn{% endif %}" title="A2Z SSO Login Gateway">
+              <span>🔐</span> Login
+            </a>
+            <a href="{% url 'students:register' %}" class="btn btn-primary btn-sm nav-btn-register {% if '/register' in request.path %}active-nav-btn{% endif %}" title="Register New Student Account">
+              <span>🎓</span> Register
+            </a>
+          {% endif %}
+        </div>
+
+      </div>
+    </header>
+
+  {% else %}
+    <!-- 2. CLEAN STANDALONE NAVBAR FOR REGISTRATION & LOGIN -->
+    <header class="navbar">
+      <div class="nav-container">
+        <a href="{% url 'students:landing' %}" class="nav-brand" title="A2Z Placement Cell">
+          <div class="brand-crest">A2Z</div>
+          <div class="brand-text">
+            <h1>A2Z</h1>
+            <p>Placement Cell</p>
+          </div>
+        </a>
+
+        <nav class="nav-tabs public-nav-tabs" aria-label="Auth Navigation">
+          <a href="{% url 'students:landing' %}" class="nav-tab-link {% if request.path == '/' %}active{% endif %}">
+            <span>🏠</span>
+            <span>Home</span>
+          </a>
+          <a href="{% url 'students:register' %}" class="nav-tab-link {% if '/register' in request.path or active_tab == 'register' %}active{% endif %}">
+            <span>🎓</span>
+            <span>Register</span>
+          </a>
+          <a href="{% url 'students:login' %}" class="nav-tab-link {% if '/login' in request.path or active_tab == 'login' %}active{% endif %}">
+            <span>🔐</span>
+            <span>Login</span>
+          </a>
+        </nav>
+
+        <div class="nav-actions">
+          <div class="badge-live-season">
+            <span class="pulse-dot"></span>
+            <span>{% if active_tpo.active_phase == 'PHASE_2' %}Phase 2 Portal Active{% else %}Phase 1 Portal Active{% endif %}</span>
+          </div>
+        </div>
+      </div>
+    </header>
+  {% endif %}
+
+  <!-- Main Container -->
+  <main class="app-container" {% if active_tab == 'home' %}style="max-width: 100%; padding: 0;"{% endif %}>
+    {% block content %}{% endblock %}
+  </main>
+
+  <script src="{% static 'js/student_portal.js' %}"></script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

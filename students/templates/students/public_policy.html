@@ -1,0 +1,112 @@
+﻿{% extends 'students/base.html' %}
+{% load static %}
+
+{% block title %}Official Placement Policy & Guidelines | A2Z Placement Cell{% endblock %}
+
+{% block content %}
+<div style="max-width: 1080px; margin: 2rem auto; padding: 0 1.25rem;">
+  
+  <!-- Grand Public Header Banner -->
+  <div style="background: linear-gradient(135deg, #091e3a 0%, #1e3a8a 50%, #0f172a 100%); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 16px; padding: 2rem 2.25rem; color: #ffffff; margin-bottom: 2rem; box-shadow: 0 10px 30px rgba(0,0,0,0.15); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+    <div style="display: flex; align-items: center; gap: 1.25rem;">
+      <div style="width: 54px; height: 54px; border-radius: 14px; background: linear-gradient(135deg, #2563eb, #3b82f6); display: flex; align-items: center; justify-content: center; font-size: 1.75rem; box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); flex-shrink: 0;">
+        📜
+      </div>
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+          <span style="background: rgba(59, 130, 246, 0.25); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.4); font-size: 0.68rem; font-weight: 800; padding: 0.15rem 0.55rem; border-radius: 9999px; text-transform: uppercase;">
+            OFFICIAL PLACEMENT CODE OF CONDUCT
+          </span>
+          <span style="color: rgba(255, 255, 255, 0.4);">•</span>
+          <span style="color: #cbd5e1; font-size: 0.75rem; font-weight: 600;">Phase 1 & Phase 2 Recruitment Season</span>
+        </div>
+        <h1 style="font-size: 1.6rem; font-weight: 800; color: #ffffff; margin: 0; line-height: 1.2;">
+          Campus Placement Policy & Student Guidelines
+        </h1>
+        <p style="font-size: 0.85rem; color: #94a3b8; margin: 0.35rem 0 0;">
+          Governing regulations for students, corporate recruiters, and placement coordinators (A2Z Placement Cell)
+        </p>
+      </div>
+    </div>
+
+    <!-- Quick Back to Login / Home CTA -->
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <a href="{% url 'students:login' %}" class="btn btn-secondary btn-sm" style="background: rgba(255, 255, 255, 0.12); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); padding: 0.55rem 1.15rem; border-radius: 8px; font-size: 0.82rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; backdrop-filter: blur(8px);">
+        <span>←</span> Back to Login (SSO)
+      </a>
+      <a href="{% url 'students:register' %}" class="btn btn-primary btn-sm" style="background: #2563eb; color: #ffffff; border-color: #2563eb; padding: 0.55rem 1.15rem; border-radius: 8px; font-size: 0.82rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;">
+        <span>🎓</span> Register Account
+      </a>
+    </div>
+  </div>
+
+  <!-- Policy Articles Grid -->
+  <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+    
+    <!-- Rule 1: One Student One Job (Dream Offer Clause) -->
+    <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border-left: 5px solid #2563eb;">
+      <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.6rem;">
+        <span style="background: #eff6ff; color: #1d4ed8; font-weight: 800; font-size: 0.82rem; padding: 0.25rem 0.65rem; border-radius: 6px; border: 1px solid #bfdbfe;">RULE 1</span>
+        <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 0;">One Job Policy & Dream Company Upgrade</h3>
+      </div>
+      <p style="font-size: 0.88rem; color: #475569; line-height: 1.65; margin: 0;">
+        Once a student secures an official campus placement offer, they are marked as <strong>Placed</strong> and deregistered from standard open drives. A student may apply for an upgrade only if the subsequent opening is designated as a <em>Super Dream Category (Package &ge; 1.5x of current offer)</em> or an International Placement Slot.
+      </p>
+    </div>
+
+    <!-- Rule 2: Eligibility & Verification -->
+    <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border-left: 5px solid #059669;">
+      <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.6rem;">
+        <span style="background: #ecfdf5; color: #047857; font-weight: 800; font-size: 0.82rem; padding: 0.25rem 0.65rem; border-radius: 6px; border: 1px solid #a7f3d0;">RULE 2</span>
+        <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 0;">Verified Academic Credentials & DPC Sign-off</h3>
+      </div>
+      <p style="font-size: 0.88rem; color: #475569; line-height: 1.65; margin: 0;">
+        All 10th marks, 12th/Diploma percentages, subject breakdowns, semester SGPA pointers, and backlog status must be verified and signed off by the <strong>Department Placement Coordinator (DPC) and TPO Head</strong>. Any discrepancy or falsification of data leads to immediate cancellation of registration.
+      </p>
+    </div>
+
+    <!-- Rule 3: Slot Attendance & Interview Punctuality -->
+    <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border-left: 5px solid #d97706;">
+      <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.6rem;">
+        <span style="background: #fefce8; color: #ca8a04; font-weight: 800; font-size: 0.82rem; padding: 0.25rem 0.65rem; border-radius: 6px; border: 1px solid #fef08a;">RULE 3</span>
+        <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 0;">Interview Punctuality & Anti-Ghosting Policy</h3>
+      </div>
+      <p style="font-size: 0.88rem; color: #475569; line-height: 1.65; margin: 0;">
+        Shortlisted candidates must appear for designated interview slots at least <strong>15 minutes prior</strong> to the scheduled time. Unexcused absence from an allocated slot or non-appearance results in a 14-day temporary recruitment suspension.
+      </p>
+    </div>
+
+    <!-- Rule 4: Code of Conduct & Integrity -->
+    <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border-left: 5px solid #7c3aed;">
+      <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.6rem;">
+        <span style="background: #f5f3ff; color: #6d28d9; font-weight: 800; font-size: 0.82rem; padding: 0.25rem 0.65rem; border-radius: 6px; border: 1px solid #ddd6fe;">RULE 4</span>
+        <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 0;">Professionalism, Fair Practice & Ethics</h3>
+      </div>
+      <p style="font-size: 0.88rem; color: #475569; line-height: 1.65; margin: 0;">
+        Students must maintain professional conduct during company interactions, online tests, and executive interview panels. Direct off-campus negotiation or bypassing the Placement Cell during active season is strictly prohibited.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- Footer Helpdesk Banner -->
+  <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 1.25rem 1.5rem; margin-top: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <span style="font-size: 1.5rem;">🏢</span>
+      <div>
+        <strong style="color: #0f172a; font-size: 0.95rem;">Training & Placement Cell Support</strong>
+        <p style="font-size: 0.78rem; color: #64748b; margin: 0.15rem 0 0;">For queries regarding dream category rules or recruitment slots, reach out to your coordinator.</p>
+      </div>
+    </div>
+    <div style="display: flex; gap: 0.5rem;">
+      <a href="mailto:tpo@a2zplacement.edu" class="btn btn-secondary btn-sm" style="font-size: 0.78rem; font-weight: 700; text-decoration: none;">
+        <span>✉️</span> Email TPO Helpdesk
+      </a>
+      <a href="{% url 'students:login' %}" class="btn btn-primary btn-sm" style="font-size: 0.78rem; font-weight: 700; text-decoration: none; background: #2563eb; color: #ffffff;">
+        <span>🔐</span> Go to Login
+      </a>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

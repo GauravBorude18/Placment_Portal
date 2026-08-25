@@ -1,0 +1,197 @@
+{% extends 'students/base_student.html' %}
+{% load static %}
+
+{% block title %}My Submitted Applications | A2Z Placement Cell{% endblock %}
+
+{% block content %}
+<div class="student-main-body">
+
+  <!-- 1. Luxury Highlighted Header Banner -->
+  <div style="background: linear-gradient(135deg, #091e3a 0%, #1e3a8a 45%, #0f172a 100%); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 14px; padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; gap: 1.25rem; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.1); margin-bottom: 1.25rem; flex-wrap: wrap;">
+    <div style="display: flex; align-items: center; gap: 0.9rem;">
+      <div style="width: 46px; height: 46px; border-radius: 12px; background: linear-gradient(135deg, #2563eb, #3b82f6); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; box-shadow: 0 0 18px rgba(59, 130, 246, 0.45); border: 1px solid rgba(255, 255, 255, 0.2); flex-shrink: 0;">
+        📑
+      </div>
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem;">
+          <span style="background: rgba(59, 130, 246, 0.2); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.4); font-size: 0.65rem; font-weight: 800; padding: 0.12rem 0.5rem; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.05em;">
+            STUDENT RECRUITMENT PIPELINE
+          </span>
+          <span style="color: rgba(255, 255, 255, 0.3); font-size: 0.75rem;">•</span>
+          <span style="color: #34d399; font-size: 0.72rem; font-weight: 700;">Phase 1 Live Tracking</span>
+        </div>
+        <h2 style="font-size: 1.25rem; color: #ffffff; font-weight: 800; margin: 0; letter-spacing: -0.01em; line-height: 1.2;">
+          My Submitted Applications & Recruitment Pipeline
+        </h2>
+        <p style="font-size: 0.8rem; color: #cbd5e1; margin: 0.25rem 0 0; font-weight: 500;">
+          Real-time hiring status across applied corporate drives, test shortlists, live interview slots, and offer letters.
+        </p>
+      </div>
+    </div>
+    
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <a href="{% url 'students:student_dashboard' %}" class="btn btn-secondary btn-sm" style="background: rgba(255, 255, 255, 0.12); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.82rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; text-decoration: none; box-shadow: 0 2px 8px rgba(0,0,0,0.15); backdrop-filter: blur(8px);">
+        <span>←</span> Back to Job Openings
+      </a>
+    </div>
+  </div>
+
+  <!-- 2. Application Pipeline KPI Metrics Summary -->
+  <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.85rem; margin-bottom: 1.25rem;">
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 0.85rem 1.1rem; border-left: 4px solid #2563eb; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+      <div style="font-size: 0.68rem; color: #64748b; font-weight: 800; text-transform: uppercase;">Total Submissions</div>
+      <div style="font-size: 1.45rem; font-weight: 800; color: #0f172a; margin-top: 0.15rem;">{{ applications.count }}</div>
+      <div style="font-size: 0.7rem; color: #2563eb; font-weight: 600;">Verified Master Resumes Linked</div>
+    </div>
+
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 0.85rem 1.1rem; border-left: 4px solid #d97706; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+      <div style="font-size: 0.68rem; color: #64748b; font-weight: 800; text-transform: uppercase;">Test Shortlists</div>
+      <div style="font-size: 1.45rem; font-weight: 800; color: #d97706; margin-top: 0.15rem;">{{ student.shortlisted_count|default:"0" }}</div>
+      <div style="font-size: 0.7rem; color: #d97706; font-weight: 600;">Online Assessments Cleared</div>
+    </div>
+
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 0.85rem 1.1rem; border-left: 4px solid #7c3aed; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+      <div style="font-size: 0.68rem; color: #64748b; font-weight: 800; text-transform: uppercase;">Interview Rounds</div>
+      <div style="font-size: 1.45rem; font-weight: 800; color: #7c3aed; margin-top: 0.15rem;">{{ student.interviews_count|default:"0" }}</div>
+      <div style="font-size: 0.7rem; color: #7c3aed; font-weight: 600;">Day 1 / Day 2 Live Slots</div>
+    </div>
+
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 0.85rem 1.1rem; border-left: 4px solid #059669; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+      <div style="font-size: 0.68rem; color: #64748b; font-weight: 800; text-transform: uppercase;">Final Placement Offers</div>
+      <div style="font-size: 1.45rem; font-weight: 800; color: #059669; margin-top: 0.15rem;">{{ student.offers_count|default:"0" }}</div>
+      <div style="font-size: 0.7rem; color: #059669; font-weight: 600;">Official Offer Letters</div>
+    </div>
+  </div>
+
+  <!-- 3. Main Applications Table in Premium Card Container -->
+  <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 1.25rem 1.5rem; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);">
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; gap: 0.75rem;">
+      <div>
+        <h3 style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 0; display: flex; align-items: center; gap: 0.45rem;">
+          <span>📋</span> Active Application Records
+        </h3>
+        <span style="font-size: 0.76rem; color: #64748b;">Showing all job openings applied with your DPC certified master resume</span>
+      </div>
+      
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <span style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 0.72rem; font-weight: 700; padding: 0.25rem 0.65rem; border-radius: 9999px;">
+          {{ applications.count }} Applications Active
+        </span>
+      </div>
+    </div>
+
+    <!-- Structured Clean Bordered Table -->
+    <div style="overflow-x: auto; border: 1.5px solid #cbd5e1; border-radius: 10px; background: #ffffff;">
+      <table class="applications-table" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.82rem;">
+        <thead>
+          <tr style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
+            <th style="padding: 0.75rem 0.85rem; text-align: center; width: 45px; font-weight: 800; color: #1e293b; border-right: 1px solid #cbd5e1; font-size: 0.74rem; text-transform: uppercase;">#</th>
+            <th style="padding: 0.75rem 1rem; font-weight: 800; color: #1e293b; border-right: 1px solid #cbd5e1; font-size: 0.74rem; text-transform: uppercase;">Company & Sector</th>
+            <th style="padding: 0.75rem 1rem; font-weight: 800; color: #1e293b; border-right: 1px solid #cbd5e1; font-size: 0.74rem; text-transform: uppercase;">Role & CTC Package</th>
+            <th style="padding: 0.75rem 1rem; text-align: center; font-weight: 800; color: #1e293b; border-right: 1px solid #cbd5e1; font-size: 0.74rem; text-transform: uppercase;">Hiring Slot</th>
+            <th style="padding: 0.75rem 1rem; text-align: center; font-weight: 800; color: #1e293b; border-right: 1px solid #cbd5e1; font-size: 0.74rem; text-transform: uppercase;">Applied Date</th>
+            <th style="padding: 0.75rem 1rem; text-align: center; font-weight: 800; color: #1e293b; border-right: 1px solid #cbd5e1; font-size: 0.74rem; text-transform: uppercase;">Current Pipeline Stage</th>
+            <th style="padding: 0.75rem 1rem; text-align: center; font-weight: 800; color: #1e293b; font-size: 0.74rem; text-transform: uppercase;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for app in applications %}
+          <tr style="border-bottom: 1px solid #e2e8f0; {% if forloop.counter|divisibleby:2 %}background: #f8fafc;{% else %}background: #ffffff;{% endif %} transition: background 0.15s ease;">
+            
+            <!-- Sr. No. -->
+            <td style="padding: 0.85rem 0.5rem; text-align: center; font-weight: 700; color: #64748b; border-right: 1px solid #e2e8f0; vertical-align: middle;">
+              {{ forloop.counter }}
+            </td>
+
+            <!-- Company & Sector -->
+            <td style="padding: 0.85rem 1rem; vertical-align: middle; border-right: 1px solid #e2e8f0;">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <div class="company-logo-wrap" style="width: 36px; height: 36px; border-radius: 8px; background: #ffffff; border: 1px solid #cbd5e1; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 3px; flex-shrink: 0; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                  <img src="{{ app.jaf.company.logo_url }}" alt="{{ app.jaf.company.name }}" class="company-logo-img" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\'font-weight:800; color:#1e40af; font-size:0.8rem;\'>{{ app.jaf.company.logo_fallback }}</div>';">
+                </div>
+                <div>
+                  <div style="font-weight: 800; color: #0f172a; font-size: 0.92rem; line-height: 1.2;">{{ app.jaf.company.name }}</div>
+                  <div style="font-size: 0.72rem; color: #64748b; margin-top: 0.15rem;">
+                    📍 {{ app.jaf.location }} • <span style="color: #2563eb; font-weight: 700;">{{ app.jaf.sector }}</span>
+                  </div>
+                </div>
+              </div>
+            </td>
+
+            <!-- Role & CTC -->
+            <td style="padding: 0.85rem 1rem; vertical-align: middle; border-right: 1px solid #e2e8f0;">
+              <div style="font-weight: 700; color: #0f172a; font-size: 0.88rem; line-height: 1.25;">{{ app.jaf.role_title }}</div>
+              <div style="font-size: 0.78rem; color: #059669; font-weight: 800; font-family: 'Outfit', sans-serif; margin-top: 0.15rem;">
+                💰 {{ app.jaf.ctc_display }}
+              </div>
+            </td>
+
+            <!-- Hiring Slot -->
+            <td style="padding: 0.85rem 1rem; text-align: center; vertical-align: middle; border-right: 1px solid #e2e8f0;">
+              <span style="font-size: 0.74rem; color: #6d28d9; background: #f5f3ff; border: 1px solid #ddd6fe; padding: 0.25rem 0.55rem; border-radius: 6px; font-weight: 700; display: inline-flex; align-items: center; gap: 0.25rem; white-space: nowrap;">
+                ⚡ {{ app.jaf.hiring_slot }}
+              </span>
+            </td>
+
+            <!-- Applied Date -->
+            <td style="padding: 0.85rem 1rem; text-align: center; vertical-align: middle; border-right: 1px solid #e2e8f0; white-space: nowrap;">
+              <span style="font-size: 0.76rem; color: #475569; font-weight: 600; font-family: 'JetBrains Mono', monospace; display: inline-flex; align-items: center; gap: 0.3rem;">
+                📅 {{ app.applied_at|date:"M d, Y" }}
+              </span>
+            </td>
+
+            <!-- Current Stage Status -->
+            <td style="padding: 0.85rem 1rem; text-align: center; vertical-align: middle; border-right: 1px solid #e2e8f0; white-space: nowrap;">
+              {% if app.status == 'OFFERED' %}
+                <span style="background: #ecfdf5; color: #047857; border: 1.5px solid #6ee7b7; padding: 0.3rem 0.75rem; border-radius: 9999px; font-size: 0.74rem; font-weight: 800; display: inline-flex; align-items: center; gap: 0.3rem;">
+                  🏆 Offer Extended
+                </span>
+              {% elif app.status == 'INTERVIEW' %}
+                <span style="background: #fffbeb; color: #b45309; border: 1.5px solid #fcd34d; padding: 0.3rem 0.75rem; border-radius: 9999px; font-size: 0.74rem; font-weight: 800; display: inline-flex; align-items: center; gap: 0.3rem;">
+                  ⚡ Interview Call Active
+                </span>
+              {% elif app.status == 'SHORTLISTED' %}
+                <span style="background: #eff6ff; color: #1d4ed8; border: 1.5px solid #93c5fd; padding: 0.3rem 0.75rem; border-radius: 9999px; font-size: 0.74rem; font-weight: 800; display: inline-flex; align-items: center; gap: 0.3rem;">
+                  ✓ Test Shortlist Cleared
+                </span>
+              {% else %}
+                <span style="background: #f1f5f9; color: #334155; border: 1.5px solid #cbd5e1; padding: 0.3rem 0.75rem; border-radius: 9999px; font-size: 0.74rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.3rem;">
+                  📝 Application Submitted
+                </span>
+              {% endif %}
+            </td>
+
+            <!-- Actions -->
+            <td style="padding: 0.85rem 1rem; text-align: center; vertical-align: middle; white-space: nowrap;">
+              <div style="display: inline-flex; gap: 0.4rem; align-items: center;">
+                <button type="button" class="btn btn-primary btn-sm" onclick="openHiringTrackerModal({{ app.jaf.id }})" style="background: linear-gradient(135deg, #1e40af, #2563eb); color: #ffffff; padding: 0.35rem 0.75rem; font-size: 0.75rem; font-weight: 700; border-radius: 6px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.3rem; box-shadow: 0 2px 6px rgba(30,64,175,0.25);">
+                  <span>📊</span> View More (Hiring Flow) →
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="openJAFDetailsModal({{ app.jaf.id }})" style="padding: 0.35rem 0.65rem; font-size: 0.75rem; font-weight: 700; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #475569; cursor: pointer; display: inline-flex; align-items: center; gap: 0.25rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                  <span>🔍</span> JAF Details
+                </button>
+              </div>
+            </td>
+
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" style="text-align: center; color: #64748b; padding: 3.5rem 1.5rem; background: #f8fafc;">
+              <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">📭</div>
+              <h4 style="font-size: 1rem; color: #0f172a; font-weight: 700; margin-bottom: 0.25rem;">No Applications Submitted Yet</h4>
+              <p style="font-size: 0.82rem; margin-bottom: 1rem;">Explore open company JAFs on the dashboard and apply with your verified master resume.</p>
+              <a href="{% url 'students:student_dashboard' %}" class="btn btn-primary btn-sm" style="background: #2563eb; color: #ffffff; text-decoration: none; font-weight: 700; padding: 0.45rem 1rem; border-radius: 6px;">
+                <span>🚀</span> Explore Live JAF Openings
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,265 @@
+{% extends 'students/base_student.html' %}
+{% load static %}
+
+{% block title %}Notification Center | Student Desk{% endblock %}
+
+{% block extra_head %}
+<style>
+  .notif-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.85rem;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    position: relative;
+  }
+  .notif-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  .notif-card.unread {
+    background: #f0fdf4;
+    border-color: #86efac;
+  }
+  .notif-filter-pill {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 9999px;
+    padding: 0.35rem 0.85rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #475569;
+  }
+  .notif-filter-pill.active {
+    background: #2563eb;
+    color: #ffffff;
+    border-color: #2563eb;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="student-main-body">
+
+  <!-- 1. Luxury Highlighted Header Banner -->
+  <div style="background: linear-gradient(135deg, #091e3a 0%, #1e3a8a 45%, #0f172a 100%); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 14px; padding: 1.15rem 1.4rem; display: flex; justify-content: space-between; align-items: center; gap: 1.25rem; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.1); margin-bottom: 1.25rem; flex-wrap: wrap;">
+    <div style="display: flex; align-items: center; gap: 0.9rem;">
+      <div style="width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #2563eb, #3b82f6); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.35rem; box-shadow: 0 0 18px rgba(59, 130, 246, 0.45); border: 1px solid rgba(255, 255, 255, 0.2); flex-shrink: 0;">
+        🔔
+      </div>
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.15rem;">
+          <span style="background: rgba(59, 130, 246, 0.2); color: #93c5fd; border: 1px solid rgba(59, 130, 246, 0.4); font-size: 0.65rem; font-weight: 800; padding: 0.12rem 0.5rem; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.05em;">
+            STUDENT ACTION & NOTIFICATION HUB
+          </span>
+          <span style="color: rgba(255, 255, 255, 0.3); font-size: 0.75rem;">•</span>
+          <span style="color: #cbd5e1; font-size: 0.72rem; font-weight: 600;">Phase 1 Live Dispatch</span>
+        </div>
+        <h2 style="font-size: 1.2rem; color: #ffffff; font-weight: 800; margin: 0; letter-spacing: -0.01em; line-height: 1.2;">
+          Official Placement Notifications & Alerts
+        </h2>
+        <p style="font-size: 0.78rem; color: #cbd5e1; margin: 0.25rem 0 0; font-weight: 500;">
+          Real-time updates on Job Offers, Interview Calls, Assessment Shortlists & DPC Verification Notices
+        </p>
+      </div>
+    </div>
+    
+    <div style="display: flex; align-items: center; gap: 0.6rem;">
+      <button type="button" onclick="markAllAsRead()" class="btn btn-secondary btn-sm" style="background: rgba(255, 255, 255, 0.1); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25); padding: 0.45rem 0.85rem; border-radius: 8px; font-size: 0.78rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem;">
+        <span>✓</span> Mark All as Read
+      </button>
+    </div>
+  </div>
+
+  <!-- 2. Notification Metric Summary Grid -->
+  <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.85rem; margin-bottom: 1.25rem;">
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.75rem 1rem; border-left: 3px solid #2563eb;">
+      <div style="font-size: 0.68rem; color: #64748b; font-weight: 800; text-transform: uppercase;">Total Alerts</div>
+      <div style="font-size: 1.35rem; font-weight: 800; color: #0f172a; margin-top: 0.15rem;">{{ notifications|length }}</div>
+      <div style="font-size: 0.68rem; color: #64748b;">All Dispatched Notices</div>
+    </div>
+
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.75rem 1rem; border-left: 3px solid #059669;">
+      <div style="font-size: 0.68rem; color: #64748b; font-weight: 800; text-transform: uppercase;">Placement Offers</div>
+      <div style="font-size: 1.35rem; font-weight: 800; color: #059669; margin-top: 0.15rem;">{{ offer_count }}</div>
+      <div style="font-size: 0.68rem; color: #059669; font-weight: 600;">Job Letters Released</div>
+    </div>
+
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.75rem 1rem; border-left: 3px solid #7c3aed;">
+      <div style="font-size: 0.68rem; color: #64748b; font-weight: 800; text-transform: uppercase;">Interview Calls</div>
+      <div style="font-size: 1.35rem; font-weight: 800; color: #7c3aed; margin-top: 0.15rem;">{{ interview_count }}</div>
+      <div style="font-size: 0.68rem; color: #64748b;">Tech & HR Rounds</div>
+    </div>
+
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.75rem 1rem; border-left: 3px solid #d97706;">
+      <div style="font-size: 0.68rem; color: #64748b; font-weight: 800; text-transform: uppercase;">Test Shortlists</div>
+      <div style="font-size: 1.35rem; font-weight: 800; color: #d97706; margin-top: 0.15rem;">{{ shortlist_count }}</div>
+      <div style="font-size: 0.68rem; color: #64748b;">HackerRank / Coding</div>
+    </div>
+
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.75rem 1rem; border-left: 3px solid #ef4444;">
+      <div style="font-size: 0.68rem; color: #64748b; font-weight: 800; text-transform: uppercase;">Unread Notices</div>
+      <div id="metric-unread-count" style="font-size: 1.35rem; font-weight: 800; color: #ef4444; margin-top: 0.15rem;">{{ unread_count }}</div>
+      <div style="font-size: 0.68rem; color: #ef4444; font-weight: 600;">Requires Attention</div>
+    </div>
+  </div>
+
+  <!-- 3. Filter Pills -->
+  <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 0.75rem 1rem; margin-bottom: 1.25rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+    <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+      <span style="font-size: 0.72rem; font-weight: 800; color: #64748b; margin-right: 0.3rem;">FILTER NOTIFICATIONS:</span>
+      <button type="button" class="notif-filter-pill active" onclick="filterNotifs('ALL', this)">All Alerts ({{ notifications|length }})</button>
+      <button type="button" class="notif-filter-pill" onclick="filterNotifs('OFFER', this)">🎉 Offers ({{ offer_count }})</button>
+      <button type="button" class="notif-filter-pill" onclick="filterNotifs('INTERVIEW', this)">🎙️ Interviews ({{ interview_count }})</button>
+      <button type="button" class="notif-filter-pill" onclick="filterNotifs('SHORTLIST', this)">📝 Shortlists ({{ shortlist_count }})</button>
+      <button type="button" class="notif-filter-pill" onclick="filterNotifs('OTP', this)">🛡️ DPC & System</button>
+      <button type="button" class="notif-filter-pill" onclick="filterNotifs('UNREAD', this)">🔴 Unread Only ({{ unread_count }})</button>
+    </div>
+
+    <div style="font-size: 0.72rem; color: #64748b;">
+      Logged in as: <strong>{{ student.full_name }}</strong> ({{ student.roll_number }})
+    </div>
+  </div>
+
+  <!-- 4. Notifications Feed List -->
+  <div id="notifications-container">
+    {% for notif in notifications %}
+    <div class="notif-card {% if not notif.is_read %}unread{% endif %}" 
+         id="notif-card-{{ notif.id }}"
+         data-type="{{ notif.notification_type }}"
+         data-read="{% if notif.is_read %}READ{% else %}UNREAD{% endif %}"
+         style="border-left: 4px solid {% if notif.notification_type == 'OFFER' %}#059669{% elif notif.notification_type == 'INTERVIEW' %}#7c3aed{% elif notif.notification_type == 'SHORTLIST' %}#d97706{% else %}#2563eb{% endif %};">
+      
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+        
+        <div style="display: flex; align-items: flex-start; gap: 0.85rem; flex: 1;">
+          <!-- Icon crest -->
+          <div style="width: 36px; height: 36px; border-radius: 10px; background: {% if notif.notification_type == 'OFFER' %}#ecfdf5; color:#047857;{% elif notif.notification_type == 'INTERVIEW' %}#f5f3ff; color:#6d28d9;{% elif notif.notification_type == 'SHORTLIST' %}#fffbeb; color:#b45309;{% else %}#eff6ff; color:#1d4ed8;{% endif %} display: flex; align-items: center; justify-content: center; font-size: 1.15rem; flex-shrink: 0; border: 1px solid rgba(0,0,0,0.06);">
+            {% if notif.notification_type == 'OFFER' %}🎉
+            {% elif notif.notification_type == 'INTERVIEW' %}🎙️
+            {% elif notif.notification_type == 'SHORTLIST' %}📝
+            {% else %}🛡️{% endif %}
+          </div>
+
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem; flex-wrap: wrap;">
+              <span style="font-size: 0.65rem; font-weight: 800; padding: 0.12rem 0.45rem; border-radius: 4px; text-transform: uppercase; background: {% if notif.notification_type == 'OFFER' %}#dcfce7; color:#15803d;{% elif notif.notification_type == 'INTERVIEW' %}#ede9fe; color:#5b21b6;{% elif notif.notification_type == 'SHORTLIST' %}#fef3c7; color:#92400e;{% else %}#dbeafe; color:#1e40af;{% endif %}">
+                {% if notif.notification_type == 'OFFER' %}Job Offer Extended
+                {% elif notif.notification_type == 'INTERVIEW' %}Interview Scheduled
+                {% elif notif.notification_type == 'SHORTLIST' %}Online Test Shortlist
+                {% else %}Official Notice{% endif %}
+              </span>
+
+              {% if not notif.is_read %}
+              <span id="unread-dot-{{ notif.id }}" style="background: #ef4444; color: #ffffff; font-size: 0.6rem; font-weight: 800; padding: 0.08rem 0.35rem; border-radius: 9999px;">
+                NEW UNREAD
+              </span>
+              {% endif %}
+
+              <span style="font-size: 0.7rem; color: #94a3b8;">&bull; {{ notif.created_at|date:"M d, Y • h:i A" }}</span>
+            </div>
+
+            <h3 style="font-size: 0.95rem; font-weight: 800; color: #0f172a; margin: 0 0 0.25rem 0;">
+              {{ notif.subject }}
+            </h3>
+
+            <p style="font-size: 0.78rem; color: #475569; margin: 0 0 0.65rem 0; line-height: 1.45;">
+              {{ notif.body_content }}
+            </p>
+
+            <!-- Actions Row -->
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+              {% if notif.action_url %}
+              <a href="{{ notif.action_url }}" {% if 'http' in notif.action_url %}target="_blank" rel="noopener noreferrer"{% endif %} class="btn btn-primary btn-sm" style="font-size: 0.72rem; padding: 0.3rem 0.75rem; border-radius: 6px; text-decoration: none; font-weight: 700; background: #2563eb; color: #ffffff;">
+                {{ notif.action_label|default:"View Details →" }}
+              </a>
+              {% endif %}
+
+              {% if not notif.is_read %}
+              <button type="button" onclick="markOneRead({{ notif.id }})" id="btn-read-{{ notif.id }}" class="btn btn-secondary btn-sm" style="font-size: 0.7rem; padding: 0.3rem 0.65rem; border-radius: 6px; background: #ffffff; border: 1px solid #cbd5e1; cursor: pointer;">
+                ✓ Mark as Read
+              </button>
+              {% endif %}
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+    {% empty %}
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 2.5rem; text-align: center; color: #64748b;">
+      <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📭</div>
+      <h3 style="font-size: 1rem; font-weight: 800; color: #0f172a; margin: 0 0 0.25rem 0;">No Placement Notifications</h3>
+      <p style="font-size: 0.78rem; color: #94a3b8; margin: 0;">You're all caught up! New job offers, interview invites, and test shortlists will appear here in real time.</p>
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+
+<!-- Client-side filtering and Mark as read script -->
+<script>
+function filterNotifs(type, btnElem) {
+  document.querySelectorAll('.notif-filter-pill').forEach(b => b.classList.remove('active'));
+  btnElem.classList.add('active');
+
+  const cards = document.querySelectorAll('.notif-card');
+  cards.forEach(card => {
+    const cardType = card.getAttribute('data-type');
+    const cardRead = card.getAttribute('data-read');
+
+    if (type === 'ALL') {
+      card.style.display = '';
+    } else if (type === 'UNREAD') {
+      card.style.display = (cardRead === 'UNREAD') ? '' : 'none';
+    } else {
+      card.style.display = (cardType === type) ? '' : 'none';
+    }
+  });
+}
+
+function markOneRead(notifId) {
+  fetch(`/api/notifications/mark-read/${notifId}/`, { credentials: 'same-origin' })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        const card = document.getElementById(`notif-card-${notifId}`);
+        if (card) {
+          card.classList.remove('unread');
+          card.setAttribute('data-read', 'READ');
+        }
+        const dot = document.getElementById(`unread-dot-${notifId}`);
+        if (dot) dot.remove();
+        const btn = document.getElementById(`btn-read-${notifId}`);
+        if (btn) btn.remove();
+        
+        // Update metric
+        const metric = document.getElementById('metric-unread-count');
+        if (metric) metric.textContent = data.unread_count;
+      }
+    });
+}
+
+function markAllAsRead() {
+  fetch('/api/notifications/mark-all-read/', { credentials: 'same-origin' })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        document.querySelectorAll('.notif-card').forEach(card => {
+          card.classList.remove('unread');
+          card.setAttribute('data-read', 'READ');
+        });
+        document.querySelectorAll('[id^="unread-dot-"]').forEach(el => el.remove());
+        document.querySelectorAll('[id^="btn-read-"]').forEach(el => el.remove());
+        
+        const metric = document.getElementById('metric-unread-count');
+        if (metric) metric.textContent = '0';
+      }
+    });
+}
+</script>
+{% endblock %}

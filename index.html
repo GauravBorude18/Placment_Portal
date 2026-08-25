@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A2Z Placement Cell - Student Career & Recruitment Management Portal">
+  <title>Student Portal | A2Z Placement Cell</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+</head>
+<body>
+
+  <!-- Top Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="#" class="nav-brand">
+        <div class="brand-crest">A2Z</div>
+        <div class="brand-text">
+          <h1>A2Z</h1>
+          <p>Placement Cell</p>
+        </div>
+      </a>
+
+      <!-- Main Navigation Tabs -->
+      <nav class="nav-tabs" aria-label="Portal Navigation">
+        <button class="nav-tab-btn active" data-tab="explore">
+          <span>💼</span>
+          <span>Job Openings (JAFs)</span>
+        </button>
+        <button class="nav-tab-btn" data-tab="applications">
+          <span>📋</span>
+          <span>My Applications</span>
+        </button>
+        <button class="nav-tab-btn" data-tab="schedule">
+          <span>📅</span>
+          <span>Interview Schedule</span>
+        </button>
+      </nav>
+
+      <!-- Right Side Actions & Profile -->
+      <div class="nav-actions">
+        <div class="badge-live-season">
+          <span class="pulse-dot"></span>
+          <span>Phase 1 Hiring Active</span>
+        </div>
+
+        <div class="user-profile-badge" onclick="viewResumeModal('Aarav_Sharma_SDE_Master.pdf')">
+          <div class="user-avatar">AS</div>
+          <div class="user-name-role">
+            <span class="user-name" id="header-user-name">Aarav Sharma</span>
+            <span class="user-roll" id="header-user-roll">220050042</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Application Container -->
+  <main class="app-container">
+
+    <!-- Student Hero Profile & Verification Bar -->
+    <section class="student-hero">
+      <div class="student-hero-content">
+        <div class="student-identity">
+          <div class="profile-avatar-large">AS</div>
+          <div class="identity-meta">
+            <h2>
+              <span id="student-name-display">Aarav Sharma</span>
+              <span class="verified-pill">
+                <span>✓</span> Verified by DPC
+              </span>
+            </h2>
+            <div class="identity-sub">
+              <span class="dept-badge" id="student-meta-display">B.Tech in Computer Science & Engineering</span>
+              <span>•</span>
+              <span style="color: var(--text-secondary);">Batch of 2026</span>
+            </div>
+            <div class="academic-pills">
+              <span class="meta-pill cpi-pill">CPI / CGPA: <strong id="student-cpi-val">9.48</strong> / 10.0</span>
+              <span class="meta-pill">Department Rank: <strong>#4</strong></span>
+              <span class="meta-pill">Discipline: <strong>CSE (Honours in AI)</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Resume Actions -->
+        <div class="student-quick-actions">
+          <button class="btn btn-outline-cyan btn-sm" onclick="viewResumeModal('Aarav_Sharma_SDE_Master.pdf')">
+            <span>📄</span> Master Resume (SDE)
+          </button>
+          <button class="btn btn-secondary btn-sm" onclick="viewResumeModal('Aarav_Sharma_Quant_Finance.pdf')">
+            <span>📊</span> Quant Resume
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Placement Season Live Metrics -->
+    <section class="stats-grid" aria-label="Placement Statistics">
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <span class="stat-label">Applications</span>
+          <div class="stat-icon-wrap stat-icon-blue">📝</div>
+        </div>
+        <div class="stat-number" id="stat-applied-count">6</div>
+        <div class="stat-footer">
+          <span style="color: #60a5fa;">Active JAFs</span> submitted
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <span class="stat-label">Shortlisted</span>
+          <div class="stat-icon-wrap stat-icon-emerald">🎯</div>
+        </div>
+        <div class="stat-number" id="stat-shortlisted-count" style="color: #34d399;">3</div>
+        <div class="stat-footer">
+          <span>Shortlist cleared for Day 1</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <span class="stat-label">Interviews</span>
+          <div class="stat-icon-wrap stat-icon-amber">⚡</div>
+        </div>
+        <div class="stat-number" id="stat-interviews-count" style="color: #fbbf24;">2</div>
+        <div class="stat-footer">
+          <span>Slot 1 & Slot 2 scheduled</span>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <span class="stat-label">Final Offers</span>
+          <div class="stat-icon-wrap stat-icon-purple">🏆</div>
+        </div>
+        <div class="stat-number" id="stat-offers-count">0</div>
+        <div class="stat-footer">
+          <span style="color: var(--text-muted);">Results release on Dec 1 midnight</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 1: JOB OPENINGS & JAF EXPLORER -->
+    <div class="tab-panel active" id="panel-explore">
+      <div class="dashboard-layout">
+        
+        <!-- Left: Open JAFs Stream -->
+        <section class="content-section">
+          <div class="section-header">
+            <div class="section-title">
+              <h2>Active Job Announcement Forms (JAFs)</h2>
+              <span class="section-badge-count" id="jaf-count-badge">8 Openings</span>
+            </div>
+          </div>
+
+          <!-- Sector Filter Bar -->
+          <div class="sector-pills-bar">
+            <button class="sector-btn active" data-sector="all">All Sectors</button>
+            <button class="sector-btn" data-sector="Software & AI">💻 Software & AI</button>
+            <button class="sector-btn" data-sector="Quant & Finance">📈 Quant & Finance</button>
+            <button class="sector-btn" data-sector="Core Engineering">⚙️ Core Engineering</button>
+            <button class="sector-btn" data-sector="Management Consulting">📊 Consulting</button>
+          </div>
+
+          <!-- Search & Filter Controls -->
+          <div class="filter-bar">
+            <div class="search-box-wrapper">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="job-search-input" class="search-input" placeholder="Search by company, role, technology or skill...">
+            </div>
+
+            <div class="filter-group">
+              <select id="cgpa-filter-select" class="filter-select" aria-label="Filter by Eligibility">
+                <option value="all">All Cutoffs</option>
+                <option value="eligible">Eligible for My CGPA (>= 9.48)</option>
+                <option value="8.0">Max Cutoff <= 8.0</option>
+                <option value="8.5">Max Cutoff <= 8.5</option>
+                <option value="9.0">Max Cutoff <= 9.0</option>
+              </select>
+
+              <select id="sort-filter-select" class="filter-select" aria-label="Sort Openings">
+                <option value="recommended">Sort: Recommended</option>
+                <option value="ctc_desc">Sort: Highest Package (CTC)</option>
+                <option value="deadline">Sort: Application Deadline</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Dynamic JAF Card List -->
+          <div class="jaf-list" id="jaf-list-container">
+            <!-- Rendered by js/student.js -->
+          </div>
+        </section>
+
+        <!-- Right Column: Sidebar (Schedule, Announcements, Resumes) -->
+        <aside class="sidebar-column">
+          
+          <!-- Upcoming Interview Slots -->
+          <div class="sidebar-card">
+            <div class="sidebar-card-header">
+              <div class="sidebar-card-title">
+                <span>⚡</span>
+                <span>My Interview Slots</span>
+              </div>
+              <span style="font-size: 0.72rem; color: #fbbf24; font-weight: 600;">Day 1 (Dec 1)</span>
+            </div>
+            <div class="timeline-list" id="upcoming-interviews-list">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Urgent Announcements Notice Board -->
+          <div class="sidebar-card">
+            <div class="sidebar-card-header">
+              <div class="sidebar-card-title">
+                <span>📢</span>
+                <span>Placement Notice Board</span>
+              </div>
+              <span class="pulse-dot"></span>
+            </div>
+            <div class="announcements-list" id="announcements-list-container">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Verified Master Resumes -->
+          <div class="sidebar-card">
+            <div class="sidebar-card-header">
+              <div class="sidebar-card-title">
+                <span>📁</span>
+                <span>Verified Master Resumes</span>
+              </div>
+              <span style="font-size: 0.72rem; color: #34d399; font-weight: 600;">2 Verified</span>
+            </div>
+            <div id="resume-list-container">
+              <!-- Rendered via JS -->
+            </div>
+            <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 0.75rem; line-height: 1.4;">
+              🔒 Resumes are locked for Phase 1. For any corrections, contact your Department Placement Coordinator (DPC).
+            </p>
+          </div>
+
+        </aside>
+      </div>
+    </div>
+
+    <!-- TAB 2: MY APPLICATIONS -->
+    <div class="tab-panel" id="panel-applications">
+      <section class="content-section">
+        <div class="section-header">
+          <div class="section-title">
+            <h2>My Submitted Applications & Status Tracker</h2>
+          </div>
+        </div>
+
+        <table class="applications-table">
+          <thead>
+            <tr>
+              <th>Company & Location</th>
+              <th>Role & CTC</th>
+              <th>Placement Slot</th>
+              <th>Current Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="applications-table-body">
+            <!-- Rendered by js/student.js -->
+          </tbody>
+        </table>
+      </section>
+    </div>
+
+    <!-- TAB 3: INTERVIEW SCHEDULE -->
+    <div class="tab-panel" id="panel-schedule">
+      <section class="content-section">
+        <div class="section-header">
+          <div class="section-title">
+            <h2>Phase 1 Interview Timeline & Slot Allocation</h2>
+          </div>
+        </div>
+
+        <div style="background: var(--bg-card); border: 1px solid var(--border-card); border-radius: var(--radius-md); padding: 1.5rem;">
+          <h3 style="color: var(--accent-cyan); font-size: 1.1rem; margin-bottom: 1rem;">Day 1 • December 1, 2026</h3>
+          <div class="timeline-list" style="gap: 1.25rem;">
+            <div class="timeline-item">
+              <div class="timeline-company">Microsoft — Round 1 Technical Systems</div>
+              <div class="timeline-round">08:30 AM - 09:30 AM IST • Room MB-204 (Gulmohar Building)</div>
+              <a href="https://teams.microsoft.com/l/meetup-join/iitb-slot1-msft" target="_blank" class="timeline-link">🔗 Join Teams Video Room</a>
+            </div>
+            <div class="timeline-item superday">
+              <div class="timeline-company">Jane Street — Round 2 Probability & Market Making Superday</div>
+              <div class="timeline-round">11:00 AM - 12:15 PM IST • Computer Center Lab 1 (CC-102)</div>
+              <a href="https://janestreet.zoom.us/j/iitb-day1-superday" target="_blank" class="timeline-link">🔗 Join Jane Street Superday Portal</a>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-company">Google — Round 1 Distributed Algorithms</div>
+              <div class="timeline-round">03:00 PM - 04:00 PM IST • Room MB-301</div>
+              <a href="https://meet.google.com/iitb-goog-day1" target="_blank" class="timeline-link">🔗 Join Google Meet Session</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  </main>
+
+  <!-- JAF Details Modal -->
+  <div class="modal-overlay" id="jaf-modal" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div id="modal-jaf-title"></div>
+        <button class="modal-close-btn modal-close-trigger" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body" id="modal-jaf-body">
+        <!-- Rendered dynamically -->
+      </div>
+      <div class="modal-footer" id="modal-jaf-footer">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Resume Preview Modal -->
+  <div class="modal-overlay" id="resume-modal" role="dialog" aria-modal="true">
+    <div class="modal-content" style="max-width: 650px;">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-size: 1.25rem;">📄</span>
+          <div>
+            <h3 id="resume-modal-filename" style="font-size: 1rem; color: #fff;">Aarav_Sharma_SDE_Master.pdf</h3>
+            <span style="font-size: 0.72rem; color: #34d399;">✓ Officially Verified by DPC</span>
+          </div>
+        </div>
+        <button class="modal-close-btn" onclick="document.getElementById('resume-modal').classList.remove('active')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="background: rgba(0,0,0,0.4); border: 1px dashed var(--border-active); border-radius: var(--radius-md); padding: 2rem; text-align: center;">
+          <div style="font-size: 3rem; margin-bottom: 0.5rem;">📑</div>
+          <h4 style="color: #fff; margin-bottom: 0.35rem;">Master Verified Resume Preview</h4>
+          <p style="font-size: 0.82rem; color: var(--text-secondary); max-width: 400px; margin: 0 auto 1.25rem auto;">
+            This master document has been cryptographically signed and verified by the Computer Science Department Placement Committee for IIT Bombay Phase 1 Recruitment.
+          </p>
+          <div style="display: inline-flex; gap: 0.75rem;">
+            <button class="btn btn-primary btn-sm" onclick="showToast('📥 Downloading verified copy...');">Download PDF</button>
+            <button class="btn btn-secondary btn-sm" onclick="document.getElementById('resume-modal').classList.remove('active')">Done</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/student.js"></script>
+</body>
+</html>

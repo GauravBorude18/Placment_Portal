@@ -1,0 +1,872 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A2Z Placement Cell - Student Career & Recruitment Management Portal">
+  <title>{% block title %}Student Desk | A2Z Placement Cell{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}?v=3.0">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎓</text></svg>">
+  
+  <style>
+    /* Complete Luxury Student Workspace Theme & Layout with Fixed Sidebar & Sticky Topbar */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; background: #f8fafc; color: #0f172a; margin: 0; padding: 0; }
+    
+    .student-app-layout {
+      display: flex;
+      min-height: 100vh;
+      background: #f8fafc;
+      width: 100%;
+    }
+
+    /* 1. Left Sidebar - PERMANENTLY FIXED & STABLE */
+    .student-sidebar {
+      width: 260px;
+      min-width: 260px;
+      background: linear-gradient(180deg, #090d16 0%, #0f172a 55%, #1e293b 100%);
+      border-right: 1px solid rgba(59, 130, 246, 0.22);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      height: 100vh;
+      padding: 1.35rem 1rem;
+      color: #ffffff;
+      z-index: 300;
+      box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+      flex-shrink: 0;
+      overflow-y: auto;
+    }
+
+    .student-sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      padding-bottom: 1.15rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .student-sidebar-crest {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 16px rgba(59, 130, 246, 0.4);
+      flex-shrink: 0;
+    }
+
+    .student-sidebar-brand-text h1 {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+
+    .student-sidebar-brand-text p {
+      font-size: 0.68rem;
+      color: #60a5fa;
+      margin: 0.1rem 0 0;
+      font-weight: 600;
+    }
+
+    .student-sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin-top: 1.25rem;
+      flex: 1;
+    }
+
+    .student-nav-group-title {
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0 0.5rem 0.35rem;
+    }
+
+    .student-menu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .student-menu-link {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.6rem 0.75rem;
+      border-radius: 8px;
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 600;
+      transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+      cursor: pointer;
+    }
+
+    .student-menu-link .menu-icon {
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+    }
+
+    .student-menu-link:hover {
+      background: rgba(255, 255, 255, 0.06);
+      color: #ffffff;
+      transform: translateX(3px);
+    }
+
+    .student-menu-link.active {
+      background: linear-gradient(90deg, rgba(37, 99, 235, 0.3) 0%, rgba(59, 130, 246, 0.15) 100%);
+      color: #ffffff;
+      border-left: 3px solid #60a5fa;
+      font-weight: 700;
+    }
+
+    .student-menu-link.active .menu-icon {
+      filter: drop-shadow(0 0 6px rgba(96, 165, 250, 0.6));
+    }
+
+    .student-sidebar-footer {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      margin-top: 1rem;
+    }
+
+    /* 2. Content Area - Shifted Right for Fixed Sidebar */
+    .student-content-wrapper {
+      margin-left: 260px;
+      width: calc(100% - 260px);
+      max-width: calc(100% - 260px);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: #f8fafc;
+    }
+
+    /* 3. Topbar - PERMANENTLY STICKY & STABLE AT TOP */
+    .student-topbar {
+      height: 64px;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid #e2e8f0;
+      padding: 0 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 250;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+      width: 100%;
+    }
+
+    .student-search-box {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 0.45rem 0.85rem;
+      width: 320px;
+      max-width: 100%;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    .student-search-box:focus-within {
+      background: #ffffff;
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    .student-search-box input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 0.82rem;
+      color: #0f172a;
+      width: 100%;
+      font-family: inherit;
+    }
+
+    .student-search-box input::placeholder {
+      color: #94a3b8;
+    }
+
+    .student-main-body {
+      padding: 1.25rem 1.5rem;
+      flex: 1;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    /* Fluid Responsive Dashboard 2-Column Grid (JAF Stream + Interview Slots) */
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 1.25rem;
+      align-items: start;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .sidebar-column {
+      width: 300px;
+      max-width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .content-section {
+      min-width: 0;
+      width: 100%;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.85rem;
+      width: 100%;
+      margin-bottom: 1.25rem;
+    }
+
+    @media (max-width: 1300px) {
+      .dashboard-layout {
+        grid-template-columns: minmax(0, 1fr) 280px;
+        gap: 1rem;
+      }
+      .sidebar-column {
+        width: 280px;
+      }
+    }
+
+    @media (max-width: 1100px) {
+      .dashboard-layout {
+        grid-template-columns: 1fr;
+      }
+      .sidebar-column {
+        width: 100%;
+      }
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .student-sidebar {
+        display: none;
+      }
+      .student-content-wrapper {
+        margin-left: 0;
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+  </style>
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body style="background: #f8fafc; margin: 0; padding: 0;">
+
+  <div class="student-app-layout">
+    
+    <!-- 1. LEFT SIDEBAR (PERMANENTLY FIXED) -->
+    <aside class="student-sidebar">
+      <div>
+        <!-- Brand Logo Header -->
+        <a href="{% url 'students:student_dashboard' %}" class="student-sidebar-brand">
+          <div class="student-sidebar-crest">A2Z</div>
+          <div class="student-sidebar-brand-text">
+            <h1>Student Desk</h1>
+            <p>Placement & Career Portal</p>
+          </div>
+        </a>
+
+        <!-- Navigation Groups -->
+        <div class="student-sidebar-nav">
+          
+          <!-- Group 1: MAIN NAVIGATION -->
+          <div>
+            <div class="student-nav-group-title">MAIN NAVIGATION</div>
+            <ul class="student-menu-list">
+              <li>
+                <a href="{% url 'students:student_dashboard' %}" class="student-menu-link {% if active_tab == 'explore' or active_tab == 'dashboard' %}active{% endif %}">
+                  <span class="menu-icon">💼</span>
+                  <span>Job Openings / JAFs</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'students:applications' %}" class="student-menu-link {% if active_tab == 'applications' %}active{% endif %}">
+                  <span class="menu-icon">📋</span>
+                  <span>My Applications</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'students:schedule' %}" class="student-menu-link {% if active_tab == 'schedule' %}active{% endif %}">
+                  <span class="menu-icon">📅</span>
+                  <span>Interview Schedule</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'students:notifications' %}" class="student-menu-link {% if active_tab == 'notifications' %}active{% endif %}">
+                  <span class="menu-icon">🔔</span>
+                  <span>Notification Center</span>
+                  {% if unread_count %}
+                  <span style="background: #ef4444; color: #ffffff; font-size: 0.65rem; font-weight: 800; padding: 0.1rem 0.45rem; border-radius: 9999px; margin-left: auto;">
+                    {{ unread_count }}
+                  </span>
+                  {% endif %}
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Group 2: CAREER & POLICY -->
+          <div>
+            <div class="student-nav-group-title">CAREER & PROFILE</div>
+            <ul class="student-menu-list">
+              <li>
+                <a href="{% url 'students:view_profile' %}" class="student-menu-link {% if active_tab == 'view_profile' or active_tab == 'edit_profile' %}active{% endif %}">
+                  <span class="menu-icon">👤</span>
+                  <span>My Profile & Records</span>
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'students:policy' %}" class="student-menu-link {% if active_tab == 'policy' %}active{% endif %}">
+                  <span class="menu-icon">📜</span>
+                  <span>Placement Policy</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Group 3: GENERAL -->
+          <div>
+            <div class="student-nav-group-title">GENERAL PORTAL</div>
+            <ul class="student-menu-list">
+              <li>
+                <a href="{% url 'students:landing' %}" class="student-menu-link">
+                  <span class="menu-icon">🌐</span>
+                  <span>Public Home</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Sidebar Footer Badge -->
+      <div class="student-sidebar-footer">
+        <div style="font-size: 0.72rem; font-weight: 700; color: #60a5fa; display: flex; align-items: center; gap: 0.35rem;">
+          <span style="display:inline-block; width:6px; height:6px; background:#60a5fa; border-radius:50%;"></span>
+          <span>Phase 1 • Day 1 Slot 1</span>
+        </div>
+        {% if student %}
+        <div style="font-size: 0.7rem; color: #94a3b8; line-height: 1.35;">
+          <strong>{{ student.full_name }}</strong><br>
+          {{ student.roll_number }} • CPI: <span style="color: #38bdf8; font-weight: 700;">{{ student.cgpa }}</span>
+        </div>
+        {% else %}
+        <p style="font-size: 0.7rem; color: #94a3b8; margin: 0;">Verified Campus Placement Account</p>
+        {% endif %}
+      </div>
+
+    </aside>
+
+    <!-- 2. CONTENT WRAPPER & TOPBAR -->
+    <div class="student-content-wrapper">
+      
+      <!-- Clean Student Topbar (PERMANENTLY STICKY) -->
+      <header class="student-topbar">
+        
+        <!-- Live Global Search Input -->
+        <div class="student-search-box">
+          <span style="font-size: 0.95rem; color: #64748b;">🔍</span>
+          <input type="text" id="student-global-search" placeholder="Search companies, job roles, packages, criteria..." onkeyup="filterStudentWorkspaceSearch(this.value)">
+        </div>
+
+        <!-- Topbar Actions Row -->
+        <div style="display: flex; align-items: center; gap: 0.85rem;">
+          
+          <!-- Live Season Badge -->
+          <div class="badge-live-season" style="background: {% if active_tpo.active_phase == 'PHASE_2' %}rgba(124, 58, 237, 0.12){% else %}rgba(37, 99, 235, 0.12){% endif %}; color: {% if active_tpo.active_phase == 'PHASE_2' %}#7c3aed{% else %}#2563eb{% endif %}; border: 1px solid {% if active_tpo.active_phase == 'PHASE_2' %}rgba(124, 58, 237, 0.3){% else %}rgba(37, 99, 235, 0.3){% endif %}; padding: 0.25rem 0.65rem; border-radius: 9999px; font-size: 0.72rem; font-weight: 700; display: inline-flex; align-items: center; gap: 0.4rem;">
+            <span class="pulse-dot" style="background: {% if active_tpo.active_phase == 'PHASE_2' %}#7c3aed{% else %}#2563eb{% endif %}; box-shadow: 0 0 8px {% if active_tpo.active_phase == 'PHASE_2' %}#7c3aed{% else %}#2563eb{% endif %}; width: 8px; height: 8px; border-radius: 50%; display: inline-block;"></span>
+            <span>{% if active_tpo.active_phase == 'PHASE_2' %}Phase 2 Active{% else %}Phase 1 Active{% endif %}</span>
+          </div>
+
+          <!-- Notifications Icon Button (Icon Only with Counter Badge) -->
+          <a href="{% url 'students:notifications' %}" class="topbar-icon-btn" style="width: 38px; height: 38px; border-radius: 50%; background: #ffffff; border: 1px solid #cbd5e1; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: all 0.15s ease; color: #1e293b;" title="Notification Center">
+            <span style="font-size: 1.15rem;">🔔</span>
+            {% if unread_count %}
+            <span style="position: absolute; top: -3px; right: -3px; background: #ef4444; color: #ffffff; font-size: 0.62rem; font-weight: 800; min-width: 18px; height: 18px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; padding: 0 0.25rem; box-shadow: 0 0 8px rgba(239, 68, 68, 0.6); border: 2px solid #ffffff;">
+              {{ unread_count }}
+            </span>
+            {% endif %}
+          </a>
+
+          <!-- Official Mailbox Icon Button (Icon Only with Counter Badge) -->
+          <button type="button" onclick="openStudentEmailTray()" class="topbar-icon-btn" style="width: 38px; height: 38px; border-radius: 50%; background: #ffffff; border: 1px solid #cbd5e1; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: all 0.15s ease; color: #1e293b;" title="Official Recruitment Mailbox">
+            <span style="font-size: 1.15rem;">📬</span>
+            {% if unread_notifications_count %}
+            <span style="position: absolute; top: -3px; right: -3px; background: #ef4444; color: #ffffff; font-size: 0.62rem; font-weight: 800; min-width: 18px; height: 18px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; padding: 0 0.25rem; box-shadow: 0 0 8px rgba(239, 68, 68, 0.6); border: 2px solid #ffffff;">
+              {{ unread_notifications_count }}
+            </span>
+            {% endif %}
+          </button>
+
+          <!-- Student Profile Badge -->
+          {% if student %}
+          <a href="{% url 'students:view_profile' %}" class="user-profile-badge" style="text-decoration: none; display: flex; align-items: center; gap: 0.55rem; padding: 0.3rem 0.65rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 9999px; transition: background 0.15s ease;" title="View Official Student Academic Profile">
+            <div class="user-avatar" style="width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #1d4ed8, #3b82f6); color: #ffffff; font-weight: 800; font-size: 0.78rem; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 1.5px solid #cbd5e1; flex-shrink: 0;">
+              {% if student.profile_picture_url %}
+                <img src="{{ student.profile_picture_url }}" alt="{{ student.full_name }}" style="width: 100%; height: 100%; object-fit: cover;">
+              {% else %}
+                {{ student.full_name|slice:":2"|upper }}
+              {% endif %}
+            </div>
+            <div class="user-name-role" style="display: flex; flex-direction: column; text-align: left;">
+              <span class="user-name" style="font-weight: 700; font-size: 0.8rem; color: #0f172a; line-height: 1.1;">{{ student.full_name }}</span>
+              <span class="user-roll" style="font-size: 0.68rem; color: #64748b; font-family: monospace;">{{ student.roll_number }}</span>
+            </div>
+          </a>
+          {% endif %}
+
+          <!-- Logout Button -->
+          <a href="{% url 'students:logout' %}" class="btn btn-secondary btn-sm" style="color: #dc2626; border: 1px solid #fecaca; background: #fff1f2; font-weight: 700; text-decoration: none; padding: 0.4rem 0.75rem; border-radius: 8px; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 0.3rem;" title="Sign out of Student Portal">
+            <span>🚪</span> Logout
+          </a>
+
+        </div>
+      </header>
+
+      <!-- Main Body -->
+      <main class="student-main-body">
+        {% block content %}{% endblock %}
+      </main>
+
+    </div>
+
+  </div>
+
+  <!-- Student Profile Full Details Modal -->
+  {% if student %}
+  <div class="modal-overlay" id="student-profile-modal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+    <div class="modal-content" style="background: #ffffff; border-radius: 16px; width: 680px; max-width: 92%; padding: 1.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.25); max-height: 90vh; overflow-y: auto;">
+      <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem; margin-bottom: 1rem;">
+        <div style="display: flex; align-items: center; gap: 0.6rem;">
+          <span style="font-size: 1.25rem;">🎓</span>
+          <div>
+            <h3 style="font-size: 1.1rem; color: #0f172a; font-weight: 800; margin: 0;">Official Student Academic Credentials</h3>
+            <span style="font-size: 0.72rem; color: #059669; font-weight: 600;">✓ DPC & Placement Head Certified</span>
+          </div>
+        </div>
+        <button type="button" onclick="closeStudentProfileModal()" style="border: none; background: #f1f5f9; border-radius: 50%; width: 32px; height: 32px; font-size: 1.1rem; cursor: pointer; color: #64748b;">&times;</button>
+      </div>
+
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 1.25rem;">
+        
+        <!-- Profile Banner -->
+        <div style="background: linear-gradient(135deg, #090d16, #1e293b); padding: 1.25rem; border-radius: 12px; display: flex; align-items: center; gap: 1rem; color: #fff;">
+          <div style="width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #1d4ed8, #3b82f6); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; overflow: hidden; border: 2px solid rgba(255,255,255,0.3); flex-shrink: 0;">
+            {% if student.profile_picture_url %}
+              <img src="{{ student.profile_picture_url }}" alt="{{ student.full_name }}" style="width: 100%; height: 100%; object-fit: cover;">
+            {% else %}
+              {{ student.full_name|slice:":2"|upper }}
+            {% endif %}
+          </div>
+          <div>
+            <h3 style="margin: 0; font-size: 1.15rem; color: #fff; display: flex; align-items: center; gap: 0.5rem;">
+              <span>{{ student.full_name }}</span>
+              <span style="background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); font-size: 0.68rem; padding: 0.1rem 0.4rem; border-radius: 4px;">✓ Verified</span>
+            </h3>
+            <div style="font-size: 0.8rem; color: #cbd5e1; margin-top: 0.2rem;">
+              <span>Roll No: <strong>{{ student.roll_number }}</strong></span> &bull; 
+              <span>{{ student.program }} ({{ student.branch }})</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Academic Matrix -->
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          
+          <!-- 1. Schooling & 12th / Diploma Breakdown -->
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.85rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <div style="font-size: 0.82rem; font-weight: 700; color: #0f172a;">
+                📘 10th & {% if student.entry_route == 'DIPLOMA_DSE' %}Diploma Credentials (DSE Entry){% else %}12th High School Credentials{% endif %}
+              </div>
+              <span style="font-size: 0.72rem; font-weight: 800; padding: 0.15rem 0.5rem; border-radius: 4px; {% if student.entry_route == 'DIPLOMA_DSE' %}background: #fef3c7; color: #92400e; border: 1px solid #fde68a;{% else %}background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe;{% endif %}">
+                {% if student.entry_route == 'DIPLOMA_DSE' %}⚙️ Diploma DSE Route{% else %}🎓 12th HSC Regular Route{% endif %}
+              </span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.78rem;">
+              <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.5rem;">
+                <span style="color: #64748b; font-size: 0.7rem; font-weight: 700; display: block;">10th Standard:</span>
+                <strong style="color: #0f172a; font-size: 0.88rem;">{{ student.tenth_percentage }}%</strong>
+                <div style="color: #64748b; font-size: 0.72rem; margin-top: 0.15rem;">{{ student.tenth_board }} • {{ student.tenth_year }} • {{ student.tenth_school|truncatechars:28 }}</div>
+              </div>
+              <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.5rem;">
+                {% if student.entry_route == 'DIPLOMA_DSE' %}
+                <span style="color: #64748b; font-size: 0.7rem; font-weight: 700; display: block;">Diploma Aggregate:</span>
+                <strong style="color: #0f172a; font-size: 0.88rem;">{{ student.diploma_percentage }}%</strong>
+                <div style="color: #64748b; font-size: 0.72rem; margin-top: 0.15rem;">{{ student.diploma_board }} • {{ student.diploma_college|truncatechars:28 }}</div>
+                {% else %}
+                <span style="color: #64748b; font-size: 0.7rem; font-weight: 700; display: block;">12th Standard HSC:</span>
+                <strong style="color: #0f172a; font-size: 0.88rem;">{{ student.twelfth_percentage }}%</strong>
+                <div style="color: #64748b; font-size: 0.72rem; margin-top: 0.15rem;">{{ student.twelfth_board }} • {{ student.twelfth_year }} • {{ student.twelfth_school|truncatechars:28 }}</div>
+                {% endif %}
+              </div>
+            </div>
+
+            {% if student.entry_route == 'DIPLOMA_DSE' %}
+            <!-- Diploma Sem 1 to 6 Breakdown -->
+            <div style="margin-top: 0.65rem; padding-top: 0.65rem; border-top: 1px dashed #e2e8f0;">
+              <div style="font-size: 0.74rem; font-weight: 700; color: #1e40af; margin-bottom: 0.35rem;">📊 Diploma Semester Progression (Sem 1 to Sem 6):</div>
+              <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.4rem;">
+                {% for dsem in student.diploma_semesters %}
+                <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.35rem; text-align: center;">
+                  <div style="font-size: 0.65rem; color: #64748b; font-weight: 700;">{{ dsem.sem }}</div>
+                  <div style="font-size: 0.82rem; font-weight: 800; color: #0284c7;">{{ dsem.percentage }}%</div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+            {% else %}
+            <!-- 12th Subject-Wise Marks -->
+            <div style="margin-top: 0.65rem; padding-top: 0.65rem; border-top: 1px dashed #e2e8f0;">
+              <div style="font-size: 0.74rem; font-weight: 700; color: #1e40af; margin-bottom: 0.35rem;">📝 12th Subject-Wise Marks Breakdown:</div>
+              <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 0.4rem; font-size: 0.74rem;">
+                {% for sub in student.all_twelfth_subjects %}
+                <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.35rem 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                  <span style="color: #475569; font-weight: 600;">{{ sub.icon }} {{ sub.name }}</span>
+                  <strong style="color: #0284c7;">{{ sub.marks }}%</strong>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- 2. Degree Semesters & Backlogs Matrix -->
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.85rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem;">
+              <div>
+                <div style="font-size: 0.82rem; font-weight: 700; color: #0f172a;">🎓 Degree Semester Pointers & Backlog History</div>
+                <div style="font-size: 0.72rem; color: #64748b;">{{ student.degree }} • {{ student.specialization }}</div>
+              </div>
+              <div style="display: flex; gap: 0.4rem; align-items: center;">
+                <span style="font-size: 0.78rem; font-weight: 800; color: #1d4ed8; background: #eff6ff; border: 1px solid #bfdbfe; padding: 0.15rem 0.55rem; border-radius: 4px;">
+                  Overall CPI: {{ student.cgpa }}
+                </span>
+                <span style="font-size: 0.75rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 4px; {% if student.active_backlogs > 0 %}background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca;{% else %}background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0;{% endif %}">
+                  {% if student.active_backlogs > 0 %}⚠️ {{ student.active_backlogs }} Live Backlog{% else %}✓ 0 Active Backlogs{% endif %}
+                </span>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem;">
+              {% for sem in student.semester_pointers %}
+              <div style="background: #ffffff; border: 1.5px solid {% if sem.backlogs > 0 %}#f87171{% else %}#cbd5e1{% endif %}; border-radius: 8px; padding: 0.5rem; text-align: center;">
+                <div style="font-size: 0.7rem; color: #64748b; font-weight: 700;">{{ sem.sem }}</div>
+                <div style="font-size: 0.95rem; font-weight: 800; color: #0f172a; margin: 0.15rem 0;">{{ sem.sgpa }} SGPA</div>
+                <div style="font-size: 0.68rem; {% if sem.backlogs > 0 %}color: #dc2626; font-weight: 800;{% else %}color: #059669; font-weight: 600;{% endif %}">
+                  {% if sem.backlogs > 0 %}⚠️ {{ sem.backlogs }} Backlog{% else %}✓ 0 Backlogs{% endif %}
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Master Resume List -->
+        <div>
+          <h4 style="font-size: 0.88rem; color: #0f172a; margin-bottom: 0.6rem; font-weight: 700;">Uploaded Master Resumes</h4>
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            {% for resume in student.resumes.all %}
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0.85rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.82rem;">
+              <span style="font-weight: 600; color: #0f172a;">📄 {{ resume.title }}</span>
+              <span style="font-size: 0.72rem; color: #059669; font-weight: 700;">✓ DPC Verified</span>
+            </div>
+            {% empty %}
+            <p style="font-size: 0.78rem; color: #64748b; margin: 0;">Standard Master Resume Active</p>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="padding-top: 1rem; margin-top: 1rem; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+        <a href="{% url 'students:edit_profile' %}" class="btn btn-primary btn-sm" style="background: #2563eb; color: #ffffff; text-decoration: none; font-weight: 700; font-size: 0.76rem; padding: 0.4rem 0.85rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.35rem;">
+          <span>✏️</span> Edit & Update Complete Registration Records →
+        </a>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeStudentProfileModal()" style="padding: 0.4rem 0.8rem; border-radius: 6px; border: 1px solid #cbd5e1; background: #f1f5f9; cursor: pointer;">Close</button>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Official Recruitment Email Inbox Modal -->
+  <div class="modal-overlay" id="student-email-tray-modal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
+    <div class="modal-content" style="background: #ffffff; border-radius: 16px; width: 720px; max-width: 92%; padding: 1.5rem; box-shadow: 0 24px 48px rgba(0,0,0,0.3); max-height: 88vh; display: flex; flex-direction: column;">
+      
+      <!-- Modal Header -->
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.85rem; margin-bottom: 1rem;">
+        <div style="display: flex; align-items: center; gap: 0.65rem;">
+          <div style="width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, #1d4ed8, #0284c7); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; box-shadow: 0 0 12px rgba(2, 132, 199, 0.35);">
+            📬
+          </div>
+          <div>
+            <h3 style="font-size: 1.15rem; color: #0f172a; font-weight: 800; margin: 0;">Official Recruitment Mailbox</h3>
+            <span style="font-size: 0.72rem; color: #059669; font-weight: 600;">Automated Dispatch Log • Test, Interview & Offer Letters</span>
+          </div>
+        </div>
+        <button type="button" onclick="closeStudentEmailTray()" style="border: none; background: #f1f5f9; border-radius: 50%; width: 32px; height: 32px; font-size: 1.1rem; cursor: pointer; color: #64748b;">&times;</button>
+      </div>
+
+      <!-- Email List Body -->
+      <div style="overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 0.75rem; padding-right: 0.25rem;">
+        {% for n in student_notifications %}
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1rem; transition: all 0.15s ease; position: relative;">
+          
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.4rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              {% if n.notification_type == 'SHORTLIST' %}
+                <span style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 0.68rem; font-weight: 800; padding: 0.15rem 0.5rem; border-radius: 9999px;">🎯 TEST SHORTLIST</span>
+              {% elif n.notification_type == 'INTERVIEW' %}
+                <span style="background: #fffbeb; color: #b45309; border: 1px solid #fde68a; font-size: 0.68rem; font-weight: 800; padding: 0.15rem 0.5rem; border-radius: 9999px;">🎙️ INTERVIEW CALL</span>
+              {% elif n.notification_type == 'OFFER' %}
+                <span style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; font-size: 0.68rem; font-weight: 800; padding: 0.15rem 0.5rem; border-radius: 9999px;">🏆 JOB OFFER LETTER</span>
+              {% elif n.notification_type == 'OTP' %}
+                <span style="background: #f5f3ff; color: #6d28d9; border: 1px solid #ddd6fe; font-size: 0.68rem; font-weight: 800; padding: 0.15rem 0.5rem; border-radius: 9999px;">🔐 AUTH OTP</span>
+              {% else %}
+                <span style="background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; font-size: 0.68rem; font-weight: 800; padding: 0.15rem 0.5rem; border-radius: 9999px;">UPDATE</span>
+              {% endif %}
+              <span style="font-size: 0.72rem; color: #64748b; font-weight: 600;">{{ n.created_at|date:"M d, Y • h:i A" }}</span>
+            </div>
+            <span style="font-size: 0.7rem; color: #0284c7; font-weight: 700; font-family: monospace;">To: {{ n.recipient_email }}</span>
+          </div>
+
+          <h4 style="font-size: 0.92rem; color: #0f172a; font-weight: 700; margin: 0 0 0.35rem 0; line-height: 1.3;">
+            {{ n.subject }}
+          </h4>
+
+          <p style="font-size: 0.78rem; color: #475569; line-height: 1.45; white-space: pre-line; margin: 0; background: #ffffff; border: 1px solid #f1f5f9; padding: 0.75rem; border-radius: 8px;">
+{{ n.body_content }}
+          </p>
+
+          <div style="margin-top: 0.75rem; display: flex; justify-content: flex-end; gap: 0.5rem;">
+            {% if n.action_url %}
+            <a href="{{ n.action_url }}" {% if 'http' in n.action_url %}target="_blank" rel="noopener noreferrer"{% endif %} class="btn btn-primary btn-sm" style="font-size: 0.76rem; padding: 0.35rem 0.85rem; border-radius: 6px; text-decoration: none; background: #2563eb; color: #ffffff; font-weight: 700; display: inline-flex; align-items: center; gap: 0.3rem;">
+              <span>👁️</span> {{ n.action_label|default:"View Details →" }}
+            </a>
+            {% elif n.notification_type == 'OFFER' %}
+            <a href="{% url 'students:applications' %}" class="btn btn-primary btn-sm" style="font-size: 0.76rem; padding: 0.35rem 0.85rem; border-radius: 6px; text-decoration: none; background: #059669; color: #ffffff; font-weight: 700; display: inline-flex; align-items: center; gap: 0.3rem;">
+              <span>🏆</span> View Offer Letter →
+            </a>
+            {% elif n.notification_type == 'INTERVIEW' %}
+            <a href="{% url 'students:schedule' %}" class="btn btn-primary btn-sm" style="font-size: 0.76rem; padding: 0.35rem 0.85rem; border-radius: 6px; text-decoration: none; background: #7c3aed; color: #ffffff; font-weight: 700; display: inline-flex; align-items: center; gap: 0.3rem;">
+              <span>🎙️</span> View Interview Room →
+            </a>
+            {% elif n.notification_type == 'SHORTLIST' %}
+            <a href="{% url 'students:applications' %}" class="btn btn-primary btn-sm" style="font-size: 0.76rem; padding: 0.35rem 0.85rem; border-radius: 6px; text-decoration: none; background: #d97706; color: #ffffff; font-weight: 700; display: inline-flex; align-items: center; gap: 0.3rem;">
+              <span>📝</span> View Test Shortlist →
+            </a>
+            {% else %}
+            <a href="{% url 'students:notifications' %}" class="btn btn-secondary btn-sm" style="font-size: 0.76rem; padding: 0.35rem 0.85rem; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem;">
+              <span>🔔</span> View Full Notice →
+            </a>
+            {% endif %}
+          </div>
+
+        </div>
+        {% empty %}
+        <div style="text-align: center; padding: 3rem 1.5rem; background: #f8fafc; border-radius: 12px; border: 1px dashed #cbd5e1;">
+          <div style="font-size: 2rem; margin-bottom: 0.5rem;">📭</div>
+          <h4 style="font-size: 0.95rem; color: #0f172a; font-weight: 700; margin-bottom: 0.2rem;">No Emails Dispatched Yet</h4>
+          <p style="font-size: 0.78rem; color: #64748b; margin: 0;">When companies advance your applications (Test, Interview, Offer), official emails will be logged and dispatched here instantly.</p>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- Modal Footer -->
+      <div style="padding-top: 1rem; margin-top: 1rem; border-top: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.72rem; color: #64748b;">A2Z Email Dispatch Engine • Connected to Campus SMTP</span>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeStudentEmailTray()" style="padding: 0.4rem 0.85rem; border-radius: 6px; border: 1px solid #cbd5e1; background: #f1f5f9; cursor: pointer;">Close Mailbox</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 1. JAF Detailed Specifications & Recruitment Drive Modal -->
+  <div class="modal-overlay" id="jaf-modal" role="dialog" aria-modal="true" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.75); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(6px); padding: 1rem;">
+    <div class="modal-content" style="background: #ffffff; border-radius: 16px; width: 860px; max-width: 95%; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35); overflow: hidden; border: 1px solid #e2e8f0;">
+      
+      <!-- Modal Header -->
+      <div class="modal-header" id="modal-jaf-title" style="padding: 1.15rem 1.5rem; border-bottom: 1px solid #e2e8f0; background: #ffffff; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 20;">
+        <div style="font-size: 0.95rem; color: #64748b;">Loading JAF Information...</div>
+        <button type="button" class="modal-close-btn" onclick="closeModal()">&times;</button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="modal-body" id="modal-jaf-body" style="padding: 1.5rem; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 1.25rem;">
+        <div style="text-align: center; padding: 2.5rem; color: #64748b;">
+          <span>⏳ Fetching in-depth company recruitment specifications...</span>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer" id="modal-jaf-footer" style="padding: 1rem 1.5rem; border-top: 1px solid #e2e8f0; background: #f8fafc; display: flex; justify-content: space-between; align-items: center;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal()">Close</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 2. Verified Master Resume Inspection Modal -->
+  <div class="modal-overlay" id="resume-modal" role="dialog" aria-modal="true" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.75); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(6px); padding: 1rem;">
+    <div class="modal-content" style="background: #ffffff; border-radius: 16px; width: 560px; max-width: 95%; max-height: 85vh; padding: 1.5rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35); border: 1px solid #e2e8f0;">
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.75rem; margin-bottom: 1rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-size: 1.3rem;">📄</span>
+          <div>
+            <h3 style="font-size: 1.05rem; color: #0f172a; font-weight: 700; margin: 0;">Verified Master Resume Document</h3>
+            <span style="font-size: 0.72rem; color: #059669; font-weight: 600;">✓ Cryptographically Locked for Phase 1</span>
+          </div>
+        </div>
+        <button type="button" onclick="closeResumeModal()" style="border: none; background: #f1f5f9; border-radius: 50%; width: 32px; height: 32px; font-size: 1.1rem; cursor: pointer; color: #64748b;">&times;</button>
+      </div>
+      
+      <div style="text-align: center; padding: 1.5rem; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; margin-bottom: 1.25rem;">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📄</div>
+        <h4 style="font-size: 1rem; color: #0f172a; margin-bottom: 0.25rem;" id="resume-modal-filename">Master_Resume.pdf</h4>
+        <p style="font-size: 0.78rem; color: #64748b; margin: 0;">Certified by Prof. S. Bhattacharya (Head, Placement Cell & DPC In-Charge)</p>
+      </div>
+
+      <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 0.75rem; font-size: 0.78rem; color: #1e40af; margin-bottom: 1rem;">
+        🔒 <strong>Policy Note:</strong> Master Resumes are frozen for Phase 1 recruitment drives. All company applications automatically link to this certified document.
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeResumeModal()">Close</button>
+        {% if student %}
+        <a href="{% url 'students:download_resume' student.id %}" target="_blank" class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #1e40af, #2563eb); color: #ffffff; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.4rem 0.85rem; border-radius: 6px; box-shadow: 0 2px 6px rgba(30,64,175,0.25);">
+          <span>📥</span> Download Certified Master PDF
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Live Company Recruitment Process & Hiring Flow Tracker Modal -->
+  <div class="modal-overlay" id="hiring-tracker-modal" role="dialog" aria-modal="true" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.75); z-index: 99999; align-items: center; justify-content: center; backdrop-filter: blur(6px); padding: 1rem;">
+    <div class="modal-content" style="background: #ffffff; border-radius: 16px; width: 880px; max-width: 95%; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35); overflow: hidden; border: 1px solid #cbd5e1;">
+      
+      <!-- Modal Header -->
+      <div class="modal-header" id="modal-tracker-title" style="padding: 1.15rem 1.5rem; border-bottom: 1px solid #e2e8f0; background: #ffffff; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 20;">
+        <div style="font-size: 0.95rem; color: #64748b;">Loading Hiring Pipeline & Stage Tracker...</div>
+        <button type="button" class="modal-close-btn" onclick="closeHiringTrackerModal()">&times;</button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div class="modal-body" id="modal-tracker-body" style="padding: 1.5rem; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 1.25rem;">
+        <div style="text-align: center; padding: 2.5rem; color: #64748b;">
+          <span>⏳ Fetching live recruitment stages and milestones...</span>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer" id="modal-tracker-footer" style="padding: 1rem 1.5rem; border-top: 1px solid #e2e8f0; background: #f8fafc; display: flex; justify-content: space-between; align-items: center;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeHiringTrackerModal()">Close Tracker</button>
+        <div id="modal-tracker-footer-action">
+          <a href="{% url 'students:schedule' %}" class="btn btn-primary btn-sm" style="background: #1e40af; color: #ffffff; text-decoration: none; font-weight: 700; padding: 0.45rem 1rem; border-radius: 6px;">
+            <span>📅</span> View Interview Schedule
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="{% static 'js/student_portal.js' %}"></script>
+  <script>
+    function openStudentProfileModal() {
+      const modal = document.getElementById('student-profile-modal');
+      if (modal) modal.style.display = 'flex';
+    }
+    function closeStudentProfileModal() {
+      const modal = document.getElementById('student-profile-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function openStudentEmailTray() {
+      const modal = document.getElementById('student-email-tray-modal');
+      if (modal) modal.style.display = 'flex';
+    }
+    function closeStudentEmailTray() {
+      const modal = document.getElementById('student-email-tray-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    // Live search filter across Job Cards and Application Rows in Student Portal
+    function filterStudentWorkspaceSearch(query) {
+      const q = query.toLowerCase().trim();
+      const jobCards = document.querySelectorAll('.job-announcement-card, .jaf-card, .job-card');
+      const tableRows = document.querySelectorAll('tbody tr');
+
+      if (jobCards.length > 0) {
+        let visibleCount = 0;
+        jobCards.forEach(card => {
+          const text = card.textContent.toLowerCase();
+          const matches = text.includes(q);
+          card.style.display = matches ? '' : 'none';
+          if (matches) visibleCount++;
+        });
+        const badge = document.getElementById('jaf-count-badge');
+        if (badge) {
+          badge.innerText = q ? `${visibleCount} Found` : `${jobCards.length} Openings Live`;
+        }
+      }
+
+      if (tableRows.length > 0) {
+        tableRows.forEach(row => {
+          const text = row.textContent.toLowerCase();
+          row.style.display = text.includes(q) ? '' : 'none';
+        });
+      }
+    }
+  </script>
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,510 @@
+{% extends 'students/base.html' %}
+{% load static %}
+
+{% block title %}A2Z Placement Cell | Single Sign-On (SSO) & Portal Login{% endblock %}
+
+{% block content %}
+<div class="login-page-wrapper">
+  <div class="login-card-container">
+    
+    <div class="login-card">
+      <!-- A2Z Placement Cell Branding Header -->
+      <div class="login-header">
+        <div class="login-crest-wrap">A2Z</div>
+        <h2>A2Z Placement Cell</h2>
+        <p>Single Sign-On (SSO) • Career & Recruitment Gateway</p>
+        
+        <div class="login-season-tag">
+          <span class="pulse-dot"></span>
+          <span>Phase 1 Recruitment Season 2025-26</span>
+        </div>
+      </div>
+
+      <!-- Role Switcher Tabs -->
+      <div class="login-role-tabs" role="tablist">
+        <button type="button" class="login-role-tab active" id="tab-student" onclick="switchLoginRole('student', true)">
+          <span>🎓</span> Student (LDAP)
+        </button>
+        <button type="button" class="login-role-tab" id="tab-recruiter" onclick="switchLoginRole('recruiter', true)">
+          <span>🏢</span> Recruiter Desk
+        </button>
+        <button type="button" class="login-role-tab" id="tab-admin" onclick="switchLoginRole('admin', true)">
+          <span>🛡️</span> Placement Cell (TPO)
+        </button>
+      </div>
+
+      <!-- Login Form Body -->
+      <form method="POST" action="{% url 'students:login' %}" class="login-body" id="iitb-login-form">
+        {% csrf_token %}
+        <input type="hidden" name="role" id="login-role-input" value="student">
+
+        {% if request.GET.payment_success or is_registered %}
+        <div style="background: #ecfdf5; border: 1.5px solid #34d399; border-radius: var(--radius-sm); padding: 0.85rem 1rem; font-size: 0.84rem; color: #047857; display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.25rem;">
+          <span style="font-size: 1.3rem;">🎉</span>
+          <div>
+            <strong>₹99 Placement Enrollment Fee Paid & Account Activated!</strong><br>
+            <span style="color: #065f46; font-size: 0.78rem;">नोंदणी व फी यशस्वीरीत्या पूर्ण झाली आहे. कृपया लॉगिन करा.</span>
+          </div>
+        </div>
+        {% endif %}
+
+        {% if error_message %}
+        <div class="login-alert">
+          <span>⚠️</span>
+          <span>{{ error_message }}</span>
+        </div>
+        {% endif %}
+
+        <!-- Username / LDAP ID -->
+        <div class="form-group">
+          <label for="username-input" class="form-label" id="user-label-text">
+            <span>LDAP ID / Roll Number</span>
+            <span style="font-size: 0.7rem; color: var(--accent-cyan);">e.g. 220050042 or aarav</span>
+          </label>
+          <div class="form-input-wrap">
+            <span class="form-input-icon" id="user-icon">👤</span>
+            <input type="text" name="username" id="username-input" class="form-input" placeholder="Enter LDAP Username or Roll No" required autocomplete="username" value="{{ entered_username|default:'' }}">
+          </div>
+        </div>
+
+        <!-- Password / SSO Key -->
+        <div class="form-group">
+          <label for="password-input" class="form-label">
+            <span>LDAP Password / Insti SSO Key</span>
+            <a href="javascript:void(0)" onclick="openForgotPasswordModal()" style="font-size: 0.75rem; color: #60a5fa; text-decoration: underline; font-weight: 700;" title="Reset password via Email OTP">Forgot Password?</a>
+          </label>
+          <div class="form-input-wrap">
+            <span class="form-input-icon">🔒</span>
+            <input type="password" name="password" id="password-input" class="form-input" placeholder="••••••••••••" required autocomplete="current-password">
+          </div>
+        </div>
+
+        <!-- 🤖 Premium Cyber-Glass CAPTCHA Verification Box -->
+        <div style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.75) 0%, rgba(30, 41, 59, 0.85) 100%); border: 1.5px solid rgba(129, 140, 248, 0.4); border-radius: 14px; padding: 0.95rem 1.1rem; margin-bottom: 1.25rem; backdrop-filter: blur(12px); box-shadow: 0 8px 24px rgba(15, 23, 42, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.15);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; font-weight: 800; color: #f8fafc;">
+              <span style="font-size: 1.1rem;">🤖</span> Security Verification
+              <span style="font-size: 0.65rem; color: #a5b4fc; background: rgba(99, 102, 241, 0.2); border: 1px solid rgba(129, 140, 248, 0.4); padding: 0.12rem 0.5rem; border-radius: 9999px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase;">Anti-Bot Guard</span>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 0.55rem;">
+              <div id="captcha-code-display" style="background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); border: 1.5px solid #818cf8; border-radius: 8px; padding: 0.3rem 0.85rem; font-family: 'Outfit', monospace; font-size: 1.2rem; font-weight: 900; letter-spacing: 0.3em; color: #a5b4fc; text-shadow: 0 0 14px rgba(165, 180, 252, 0.8); box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.2); user-select: none;">
+                {{ captcha_code|default:"7492" }}
+              </div>
+              <button type="button" onclick="refreshCaptcha()" style="background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(129, 140, 248, 0.4); color: #e0e7ff; width: 34px; height: 34px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; transition: all 0.2s ease;" onmouseover="this.style.background='rgba(99, 102, 241, 0.35)'; this.style.transform='rotate(180deg)';" onmouseout="this.style.background='rgba(99, 102, 241, 0.15)'; this.style.transform='rotate(0deg)';" title="Click to Generate New Code">
+                🔄
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <input type="text" name="captcha_input" id="captcha-input" maxlength="6" required class="form-input" placeholder="Enter 4-digit security code above" style="width: 100%; box-sizing: border-box; padding: 0.65rem 0.85rem; font-size: 0.95rem; font-weight: 800; text-align: center; letter-spacing: 0.25em; color: #ffffff; background: rgba(15, 23, 42, 0.65); border: 1.5px solid rgba(129, 140, 248, 0.4); border-radius: 8px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);">
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn-login-submit" id="login-btn-text">
+          <span>🔐</span> Log In with A2Z Portal
+        </button>
+
+        <!-- New Student Registration Callout (Visible only for Student Role) -->
+        <div id="student-register-callout" style="background: rgba(59, 130, 246, 0.08); border: 1px solid rgba(59, 130, 246, 0.25); border-radius: var(--radius-sm); padding: 0.75rem; text-align: center; font-size: 0.8rem; margin-top: 1rem;">
+          <span style="color: var(--text-secondary);">New Student to Placement Season? </span>
+          <a href="{% url 'students:register' %}" style="color: #38bdf8; font-weight: 700; text-decoration: underline;">Register / Enroll Account →</a>
+        </div>
+
+        <!-- Footer Links -->
+        <div class="login-footer-links" style="margin-top: 1.25rem;">
+          <a href="{% url 'students:policy' %}" target="_blank">📋 Placement Policy Guidelines</a>
+          <a href="mailto:tpo@a2zplacement.edu">✉️ Placement Helpdesk</a>
+        </div>
+      </form>
+    </div>
+
+    <!-- Security Gateway Seal -->
+    <div class="security-badge">
+      <span>🔒</span>
+      <span>A2Z Placement Cell Secure TLS 1.3 Certified • Multi-Role SSO Gateway</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- FORGOT PASSWORD & OTP RESET MODAL -->
+<div id="forgot-password-modal" style="display: none; position: fixed; inset: 0; background: rgba(9, 13, 22, 0.75); backdrop-filter: blur(8px); z-index: 9999; justify-content: center; align-items: center; padding: 1rem;">
+  <div style="background: #ffffff; border-radius: 16px; width: 100%; max-width: 480px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); border: 1px solid #cbd5e1; overflow: hidden; animation: popIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);">
+    
+    <!-- Modal Header -->
+    <div style="background: linear-gradient(135deg, #1e293b, #0f172a); color: #ffffff; padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+      <div style="display: flex; align-items: center; gap: 0.65rem;">
+        <span style="font-size: 1.4rem;">🔑</span>
+        <div>
+          <h3 style="margin: 0; font-size: 1.1rem; font-weight: 800; color: #ffffff;">Forgot Password & Reset</h3>
+          <p style="margin: 0; font-size: 0.75rem; color: #94a3b8;">Email OTP Verification & Instant Reset</p>
+        </div>
+      </div>
+      <button type="button" onclick="closeForgotPasswordModal()" style="background: transparent; border: none; color: #94a3b8; font-size: 1.5rem; cursor: pointer; line-height: 1;">&times;</button>
+    </div>
+
+    <!-- Modal Body -->
+    <div style="padding: 1.5rem;">
+      
+      <!-- Alert Message Box -->
+      <div id="reset-alert-box" style="display: none; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.82rem; font-weight: 600; margin-bottom: 1.25rem;"></div>
+
+      <!-- Step 1: Enter Registered Email/Username -->
+      <div id="reset-step-1">
+        <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 0.4rem;">
+          Enter Registered Email ID or Roll Number *
+        </label>
+        <div style="position: relative; margin-bottom: 1.25rem;">
+          <input type="text" id="reset-email-input" class="form-input" placeholder="e.g. aarav@campus.ac.in or aarav" style="width: 100%; box-sizing: border-box; padding-left: 2.5rem; color: #0f172a;">
+          <span style="position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); font-size: 1rem;">✉️</span>
+        </div>
+        <button type="button" id="btn-request-reset-otp" onclick="requestResetOTP()" class="btn btn-primary" style="width: 100%; padding: 0.75rem; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 0.5rem; background: #2563eb; border-color: #2563eb;">
+          <span>✉️</span> Send OTP
+        </button>
+      </div>
+
+      <!-- Step 2: Enter 6-Digit OTP (Initially Hidden) -->
+      <div id="reset-step-2" style="display: none;">
+        <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 0.4rem;">
+          Enter 6-Digit Email Verification Code *
+        </label>
+        <div style="position: relative; margin-bottom: 0.85rem;">
+          <input type="text" id="reset-otp-input" maxlength="6" class="form-input" placeholder="• • • • • •" style="width: 100%; box-sizing: border-box; padding-left: 2.5rem; letter-spacing: 0.3em; font-size: 1.1rem; font-weight: 800; text-align: center; color: #0f172a;">
+          <span style="position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%); font-size: 1rem;">🔐</span>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.15rem; background: #f8fafc; border: 1px dashed #cbd5e1; padding: 0.45rem 0.75rem; border-radius: 6px;">
+          <span style="font-size: 0.75rem; color: #64748b; font-weight: 600;">OTP ईमेलवर मिळाला नाही?</span>
+          <button type="button" id="btn-resend-reset-otp" onclick="requestResetOTP(true)" style="background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; font-weight: 700; font-size: 0.75rem; padding: 0.25rem 0.6rem; border-radius: 4px; cursor: pointer; display: inline-flex; align-items: center; gap: 0.3rem;" title="Resend 6-Digit Code to Email">
+            <span>🔄</span> Resend OTP
+          </button>
+        </div>
+
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="button" onclick="goToResetStep(1)" class="btn btn-secondary" style="padding: 0.75rem 1rem; font-weight: 700; background: #f1f5f9; color: #475569; border: 1.5px solid #cbd5e1;" title="Go back to edit email">
+            <span>⬅️</span> Back
+          </button>
+          <button type="button" id="btn-verify-reset-otp" onclick="verifyResetOTP()" class="btn btn-primary" style="flex: 1; padding: 0.75rem; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 0.5rem; background: #059669; border-color: #059669;">
+            <span>✓</span> Verify OTP Code
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 3: New Password Inputs (Initially Hidden) -->
+      <div id="reset-step-3" style="display: none;">
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 0.4rem;">
+            New Password * (Min 6 characters)
+          </label>
+          <input type="password" id="reset-new-password" class="form-input" placeholder="••••••••••••" style="width: 100%; box-sizing: border-box; color: #0f172a;">
+        </div>
+        <div style="margin-bottom: 1.25rem;">
+          <label style="display: block; font-size: 0.82rem; font-weight: 700; color: #334155; margin-bottom: 0.4rem;">
+            Confirm New Password *
+          </label>
+          <input type="password" id="reset-confirm-password" class="form-input" placeholder="••••••••••••" style="width: 100%; box-sizing: border-box; color: #0f172a;">
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="button" onclick="goToResetStep(2)" class="btn btn-secondary" style="padding: 0.75rem 1rem; font-weight: 700; background: #f1f5f9; color: #475569; border: 1.5px solid #cbd5e1;" title="Go back to OTP step">
+            <span>⬅️</span> Back
+          </button>
+          <button type="button" id="btn-submit-new-password" onclick="submitNewPassword()" class="btn btn-primary" style="flex: 1; padding: 0.75rem; font-weight: 700; display: flex; justify-content: center; align-items: center; gap: 0.5rem; background: #2563eb; border-color: #2563eb;">
+            <span>🔒</span> Reset Password & Login
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function switchLoginRole(role, isUserClick = false) {
+  if (role === 'tpo') role = 'admin';
+  document.getElementById('login-role-input').value = role;
+  
+  document.querySelectorAll('.login-role-tab').forEach(tab => tab.classList.remove('active'));
+  const activeTab = document.getElementById(`tab-${role}`);
+  if (activeTab) activeTab.classList.add('active');
+
+  const label = document.getElementById('user-label-text');
+  const userIcon = document.getElementById('user-icon');
+  const input = document.getElementById('username-input');
+  const passInput = document.getElementById('password-input');
+  const btn = document.getElementById('login-btn-text');
+  const registerCallout = document.getElementById('student-register-callout');
+  const alertBox = document.querySelector('.login-alert');
+
+  // If user clicked on a tab, clear both username and password inputs (make them blank)
+  if (isUserClick) {
+    if (input) input.value = '';
+    if (passInput) passInput.value = '';
+    if (alertBox) alertBox.style.display = 'none';
+  }
+
+  if (role === 'student') {
+    label.innerHTML = `<span>Student Roll Number / Username *</span><span style="font-size: 0.7rem; color: var(--accent-cyan);">e.g. 321321 or aarav</span>`;
+    userIcon.textContent = '👨‍🎓';
+    input.placeholder = 'Enter Roll Number or Username (e.g. 321321)';
+    btn.innerHTML = `<span>🔐</span> Log In as Student (Class of 2026)`;
+    if (registerCallout) registerCallout.style.display = 'block';
+  } else if (role === 'recruiter') {
+    label.innerHTML = `<span>Official Recruiter ID / Company HR Email *</span><span style="font-size: 0.7rem; color: var(--accent-cyan);">e.g. google_hr</span>`;
+    userIcon.textContent = '🏢';
+    input.placeholder = 'Enter Recruiter ID (e.g. google_hr or recruiter)';
+    btn.innerHTML = `<span>🏢</span> Log In to Corporate Recruiter Desk`;
+    if (registerCallout) registerCallout.style.display = 'none';
+  } else if (role === 'admin') {
+    label.innerHTML = `<span>TPO Officer Institutional ID *</span><span style="font-size: 0.7rem; color: var(--accent-cyan);">e.g. tpo or admin</span>`;
+    userIcon.textContent = '🛡️';
+    input.placeholder = 'Enter TPO Officer ID (e.g. tpo)';
+    btn.innerHTML = `<span>🛡️</span> Log In to TPO Master Control Room`;
+    if (registerCallout) registerCallout.style.display = 'none';
+  }
+
+  if (isUserClick && input) {
+    input.focus();
+  }
+}
+
+function openForgotPasswordModal() {
+  const modal = document.getElementById('forgot-password-modal');
+  if (modal) {
+    modal.style.display = 'flex';
+    goToResetStep(1);
+    const input = document.getElementById('reset-email-input');
+    if (input) {
+      input.value = document.getElementById('username-input') ? document.getElementById('username-input').value.trim() : '';
+      input.focus();
+    }
+  }
+}
+
+function goToResetStep(step) {
+  const s1 = document.getElementById('reset-step-1');
+  const s2 = document.getElementById('reset-step-2');
+  const s3 = document.getElementById('reset-step-3');
+  const alertBox = document.getElementById('reset-alert-box');
+
+  if (s1) s1.style.display = step === 1 ? 'block' : 'none';
+  if (s2) s2.style.display = step === 2 ? 'block' : 'none';
+  if (s3) s3.style.display = step === 3 ? 'block' : 'none';
+  if (alertBox) alertBox.style.display = 'none';
+
+  if (step === 1) {
+    const input = document.getElementById('reset-email-input');
+    if (input) input.focus();
+  } else if (step === 2) {
+    const otpInput = document.getElementById('reset-otp-input');
+    if (otpInput) otpInput.focus();
+  }
+}
+
+function closeForgotPasswordModal() {
+  const modal = document.getElementById('forgot-password-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+function requestResetOTP(isResend = false) {
+  const emailInput = document.getElementById('reset-email-input');
+  const query = emailInput ? emailInput.value.trim() : '';
+  const alertBox = document.getElementById('reset-alert-box');
+  const btn = document.getElementById('btn-request-reset-otp');
+  const btnResend = document.getElementById('btn-resend-reset-otp');
+
+  if (!query) {
+    alertBox.style.background = '#fef2f2';
+    alertBox.style.color = '#b91c1c';
+    alertBox.style.border = '1px solid #fecaca';
+    alertBox.innerHTML = '⚠️ कृपया ईमेल आयडी किंवा युझरनेम प्रविष्ट करा.';
+    alertBox.style.display = 'block';
+    if (emailInput) emailInput.focus();
+    return;
+  }
+
+  if (isResend && btnResend) {
+    btnResend.disabled = true;
+    btnResend.innerHTML = '<span>⏳</span> Sending...';
+  } else if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<span>⏳</span> Sending OTP...';
+  }
+
+  fetch(`/api/forgot-password/request-otp/?email=${encodeURIComponent(query)}`)
+    .then(res => res.json().then(data => ({ ok: res.ok, data })))
+    .then(({ ok, data }) => {
+      if (btnResend) {
+        btnResend.disabled = false;
+        btnResend.innerHTML = '<span>🔄</span> Resend OTP';
+      }
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<span>✉️</span> Send OTP';
+      }
+
+      if (ok && data.success) {
+        alertBox.style.background = '#f0fdf4';
+        alertBox.style.color = '#15803d';
+        alertBox.style.border = '1px solid #bbf7d0';
+        alertBox.innerHTML = `✓ ६-अंकी OTP कोड '${data.email || ''}' वर पाठवला आहे. (कृपया ई-मेल Inbox तपासा)`;
+        alertBox.style.display = 'block';
+
+        document.getElementById('reset-step-1').style.display = 'none';
+        document.getElementById('reset-step-2').style.display = 'block';
+        const otpInput = document.getElementById('reset-otp-input');
+        if (otpInput) {
+          otpInput.value = '';
+          otpInput.focus();
+        }
+      } else {
+        alertBox.style.background = '#fef2f2';
+        alertBox.style.color = '#b91c1c';
+        alertBox.style.border = '1px solid #fecaca';
+        alertBox.innerHTML = data.error || 'हा ई-मेल पोर्टलवर नोंदणीकृत नाही!';
+        alertBox.style.display = 'block';
+        if (emailInput) {
+          emailInput.style.borderColor = '#ef4444';
+          emailInput.focus();
+        }
+      }
+    })
+    .catch(err => {
+      if (btnResend) {
+        btnResend.disabled = false;
+        btnResend.innerHTML = '<span>🔄</span> Resend OTP';
+      }
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<span>✉️</span> Send OTP';
+      }
+      alertBox.style.background = '#fef2f2';
+      alertBox.style.color = '#b91c1c';
+      alertBox.style.border = '1px solid #fecaca';
+      alertBox.innerHTML = 'सर्व्हरशी संपर्क होऊ शकला नाही.';
+      alertBox.style.display = 'block';
+    });
+}
+
+function verifyResetOTP() {
+  const otpInput = document.getElementById('reset-otp-input');
+  const otp = otpInput ? otpInput.value.trim() : '';
+  const alertBox = document.getElementById('reset-alert-box');
+
+  if (!otp || otp.length !== 6) {
+    alertBox.style.background = '#fef2f2';
+    alertBox.style.color = '#b91c1c';
+    alertBox.style.border = '1px solid #fecaca';
+    alertBox.innerHTML = '⚠️ कृपया ६-अंकी OTP टाका.';
+    alertBox.style.display = 'block';
+    if (otpInput) otpInput.focus();
+    return;
+  }
+
+  fetch(`/api/forgot-password/verify-otp/?otp=${encodeURIComponent(otp)}`)
+    .then(res => res.json().then(data => ({ ok: res.ok, data })))
+    .then(({ ok, data }) => {
+      if (ok && data.success) {
+        alertBox.style.background = '#f0fdf4';
+        alertBox.style.color = '#15803d';
+        alertBox.style.border = '1px solid #bbf7d0';
+        alertBox.innerHTML = '✓ OTP पडताळणी यशस्वी! आता नवीन पासवर्ड सेट करा.';
+        alertBox.style.display = 'block';
+
+        document.getElementById('reset-step-2').style.display = 'none';
+        document.getElementById('reset-step-3').style.display = 'block';
+        const passInput = document.getElementById('reset-new-password');
+        if (passInput) passInput.focus();
+      } else {
+        alertBox.style.background = '#fef2f2';
+        alertBox.style.color = '#b91c1c';
+        alertBox.style.border = '1px solid #fecaca';
+        alertBox.innerHTML = data.error || '❌ चुकीचा OTP कोड आहे!';
+        alertBox.style.display = 'block';
+        if (otpInput) {
+          otpInput.style.borderColor = '#ef4444';
+          otpInput.focus();
+        }
+      }
+    });
+}
+
+function submitNewPassword() {
+  const newPass = document.getElementById('reset-new-password').value.trim();
+  const confirmPass = document.getElementById('reset-confirm-password').value.trim();
+  const alertBox = document.getElementById('reset-alert-box');
+
+  if (!newPass || newPass.length < 6) {
+    alertBox.style.background = '#fef2f2';
+    alertBox.style.color = '#b91c1c';
+    alertBox.style.border = '1px solid #fecaca';
+    alertBox.innerHTML = '⚠️ पासवर्ड किमान ६ अक्षरांचा असावा.';
+    alertBox.style.display = 'block';
+    return;
+  }
+
+  if (newPass !== confirmPass) {
+    alertBox.style.background = '#fef2f2';
+    alertBox.style.color = '#b91c1c';
+    alertBox.style.border = '1px solid #fecaca';
+    alertBox.innerHTML = '⚠️ पासवर्ड आणि कन्फर्म पासवर्ड जुळत नाहीत.';
+    alertBox.style.display = 'block';
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('new_password', newPass);
+  formData.append('confirm_password', confirmPass);
+
+  fetch('/api/forgot-password/reset/', {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': '{{ csrf_token }}'
+    },
+    body: formData
+  })
+    .then(res => res.json().then(data => ({ ok: res.ok, data })))
+    .then(({ ok, data }) => {
+      if (ok && data.success) {
+        closeForgotPasswordModal();
+        alert(data.message || '✓ पासवर्ड यशस्वीरीत्या बदलला आहे!');
+        const passInput = document.getElementById('password-input');
+        if (passInput) passInput.value = newPass;
+      } else {
+        alertBox.style.background = '#fef2f2';
+        alertBox.style.color = '#b91c1c';
+        alertBox.style.border = '1px solid #fecaca';
+        alertBox.innerHTML = data.error || 'त्रुटी आली. पुन्हा प्रयत्न करा.';
+        alertBox.style.display = 'block';
+      }
+    });
+}
+
+function refreshCaptcha() {
+  const display = document.getElementById('captcha-code-display');
+  if (display) display.innerText = '⏳';
+
+  fetch("{% url 'students:api_refresh_captcha' %}")
+    .then(res => res.json())
+    .then(data => {
+      if (data.success && display) {
+        display.innerText = data.captcha_code;
+      }
+    })
+    .catch(err => {
+      if (display) display.innerText = '7492';
+    });
+}
+
+// Automatically activate tab on load
+document.addEventListener('DOMContentLoaded', function() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const role = urlParams.get('role') || 'student';
+  switchLoginRole(role, false);
+});
+</script>
+{% endblock %}

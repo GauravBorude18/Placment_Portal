@@ -1,0 +1,429 @@
+{% extends 'students/base_student.html' %}
+{% load static %}
+
+{% block title %}My Profile & Academic Credentials | A2Z Placement Cell{% endblock %}
+
+{% block content %}
+<div style="max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem;">
+
+  <!-- 1. EXECUTIVE PROFILE BANNER HEADER -->
+  <div style="background: linear-gradient(135deg, #0f172a, #1e293b); border-radius: 16px; padding: 1.75rem 2rem; color: #ffffff; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.15); flex-wrap: wrap;">
+    
+    <div style="display: flex; align-items: center; gap: 1.25rem;">
+      <!-- Avatar Photo -->
+      <div style="width: 76px; height: 76px; border-radius: 50%; background: linear-gradient(135deg, #1d4ed8, #3b82f6); color: #ffffff; font-weight: 800; font-size: 1.6rem; display: flex; align-items: center; justify-content: center; overflow: hidden; border: 3px solid rgba(255,255,255,0.3); flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+        {% if student.profile_picture_url %}
+          <img src="{{ student.profile_picture_url }}" alt="{{ student.full_name }}" style="width: 100%; height: 100%; object-fit: cover;">
+        {% else %}
+          {{ student.full_name|slice:":2"|upper }}
+        {% endif %}
+      </div>
+
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
+          <h2 style="margin: 0; font-size: 1.45rem; font-weight: 800; color: #ffffff;">{{ student.full_name }}</h2>
+          {% if student.is_dpc_verified %}
+          <span style="background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); font-size: 0.72rem; font-weight: 800; padding: 0.15rem 0.55rem; border-radius: 9999px;">
+            ✓ DPC Certified
+          </span>
+          {% else %}
+          <span style="background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.4); font-size: 0.72rem; font-weight: 800; padding: 0.15rem 0.55rem; border-radius: 9999px;">
+            ⏳ Verification Pending
+          </span>
+          {% endif %}
+        </div>
+
+        <div style="font-size: 0.88rem; color: #cbd5e1; margin-top: 0.35rem; display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
+          <span>Roll No: <strong style="color: #60a5fa;">{{ student.roll_number }}</strong></span> &bull; 
+          <span>{{ student.degree }}</span>
+        </div>
+
+        <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <span style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: #e2e8f0; font-size: 0.74rem; padding: 0.15rem 0.5rem; border-radius: 4px; font-weight: 600;">
+            Cumulative CPI: <strong>{{ student.cgpa }}/10.0</strong>
+          </span>
+          {% if student.department_rank %}
+          <span style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); color: #e2e8f0; font-size: 0.74rem; padding: 0.15rem 0.5rem; border-radius: 4px; font-weight: 600;">
+            Dept Rank: <strong>#{{ student.department_rank }}</strong>
+          </span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Profile Action Button -->
+    <div>
+      <a href="{% url 'students:edit_profile' %}" class="btn" style="background: linear-gradient(135deg, #2563eb, #3b82f6); color: #ffffff; font-weight: 800; font-size: 0.88rem; padding: 0.65rem 1.25rem; border-radius: 10px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35); transition: transform 0.15s ease, box-shadow 0.15s ease;">
+        <span>✏️</span> Edit Details →
+      </a>
+    </div>
+
+  </div>
+
+  <!-- 2. MASTER RESUMES & FEE RECEIPT ROW -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;">
+    
+    <a href="{% url 'students:fee_receipt' %}" target="_blank" style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 1rem 1.15rem; text-decoration: none; color: #0f172a; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+      <div style="display: flex; align-items: center; gap: 0.65rem;">
+        <span style="font-size: 1.5rem;">📥</span>
+        <div>
+          <h4 style="margin: 0; font-size: 0.85rem; font-weight: 800;">₹99 Fee Receipt</h4>
+          <span style="font-size: 0.72rem; color: #059669; font-weight: 700;">✓ Certified Paid</span>
+        </div>
+      </div>
+      <span style="color: #2563eb; font-weight: 700; font-size: 0.8rem;">PDF ↗</span>
+    </a>
+
+    <a href="{% url 'students:download_resume' student.id %}" target="_blank" style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 1rem 1.15rem; text-decoration: none; color: #0f172a; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+      <div style="display: flex; align-items: center; gap: 0.65rem;">
+        <span style="font-size: 1.5rem;">📄</span>
+        <div>
+          <h4 style="margin: 0; font-size: 0.85rem; font-weight: 800;">Master Resume (SDE)</h4>
+          <span style="font-size: 0.72rem; color: #64748b; font-weight: 600;">{{ student.resume_sde_name|default:"Uploaded File"|slice:":18" }}</span>
+        </div>
+      </div>
+      <span style="color: #2563eb; font-weight: 700; font-size: 0.8rem;">View ↗</span>
+    </a>
+
+    <a href="{% url 'students:download_resume' student.id %}" target="_blank" style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 1rem 1.15rem; text-decoration: none; color: #0f172a; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+      <div style="display: flex; align-items: center; gap: 0.65rem;">
+        <span style="font-size: 1.5rem;">📊</span>
+        <div>
+          <h4 style="margin: 0; font-size: 0.85rem; font-weight: 800;">Quant/Core Resume</h4>
+          <span style="font-size: 0.72rem; color: #64748b; font-weight: 600;">{{ student.resume_quant_name|default:"Optional File"|slice:":18" }}</span>
+        </div>
+      </div>
+      <span style="color: #2563eb; font-weight: 700; font-size: 0.8rem;">View ↗</span>
+    </a>
+
+  </div>
+
+  <!-- 3. CARD 1: PERSONAL & COMMUNICATION DETAILS -->
+  <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.15rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">
+      <h3 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 0.5rem;">
+        <span>👤</span> Personal & Communication Details
+      </h3>
+      <a href="{% url 'students:edit_profile' %}" style="font-size: 0.78rem; font-weight: 700; color: #2563eb; text-decoration: none;">Edit Details ✏️</a>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; font-size: 0.85rem;">
+      <div>
+        <span style="color: #64748b; font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 0.2rem;">Official Email ID:</span>
+        <strong style="color: #0f172a;">{{ student.user.email }}</strong>
+      </div>
+
+      <div>
+        <span style="color: #64748b; font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 0.2rem;">Student Login ID / Username:</span>
+        <strong style="color: #2563eb;">{{ student.user.username }}</strong>
+      </div>
+
+      <div>
+        <span style="color: #64748b; font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 0.2rem;">Primary Mobile Phone:</span>
+        <strong style="color: #0f172a;">+91 {{ student.phone_number|default:"Not Provided" }}</strong>
+      </div>
+
+      <div>
+        <span style="color: #64748b; font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 0.2rem;">Alternate Contact Phone:</span>
+        <strong style="color: #0f172a;">{% if student.alternate_phone %}+91 {{ student.alternate_phone }}{% else %}N/A{% endif %}</strong>
+      </div>
+
+      <div>
+        <span style="color: #64748b; font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 0.2rem;">City & State:</span>
+        <strong style="color: #0f172a;">{{ student.city|default:"N/A" }}, {{ student.state|default:"N/A" }}</strong>
+      </div>
+
+      <div>
+        <span style="color: #64748b; font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 0.2rem;">Postal PIN Code:</span>
+        <strong style="color: #0f172a;">{{ student.pincode|default:"N/A" }}</strong>
+      </div>
+
+      <div style="grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; background: #f8fafc; padding: 1rem; border-radius: 10px; border: 1px solid #e2e8f0; margin-top: 0.25rem;">
+        <div>
+          <span style="color: #64748b; font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 0.2rem;">Current Communication Address:</span>
+          <strong style="color: #0f172a;">{{ student.current_address|default:student.permanent_address|default:"Not Provided" }}</strong>
+        </div>
+        <div>
+          <span style="color: #64748b; font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 0.2rem;">Permanent Residential Address:</span>
+          <strong style="color: #0f172a;">{{ student.permanent_address|default:"Not Provided" }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. CARD 2: 10TH STANDARD ACADEMIC CREDENTIALS -->
+  <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.15rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">
+      <h3 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 0.5rem;">
+        <span>🏫</span> 10th Standard Academic Credentials
+      </h3>
+      <span style="font-size: 0.74rem; font-weight: 800; color: #059669; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 0.2rem 0.5rem; border-radius: 6px;">Verified Record</span>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; font-size: 0.85rem;">
+      <div>
+        <span style="color: #64748b; font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 0.2rem;">10th Overall Percentage:</span>
+        <strong style="color: #1d4ed8; font-size: 1.15rem;">{{ student.tenth_percentage }}%</strong>
+      </div>
+      <div>
+        <span style="color: #64748b; font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 0.2rem;">10th Board Name:</span>
+        <strong style="color: #0f172a;">{{ student.tenth_board|default:"State / Central Board" }}</strong>
+      </div>
+      <div>
+        <span style="color: #64748b; font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 0.2rem;">Passing Year:</span>
+        <strong style="color: #0f172a;">{{ student.tenth_year|default:"2020" }}</strong>
+      </div>
+      <div style="grid-column: 1 / -1;">
+        <span style="color: #64748b; font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 0.2rem;">High School / Institute Name:</span>
+        <strong style="color: #0f172a;">{{ student.tenth_school|default:"Not Provided" }}</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. CARD 3: 12TH STANDARD / DIPLOMA CREDENTIALS -->
+  <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.15rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">
+      <h3 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 0.5rem;">
+        <span>📜</span> {% if student.entry_route == 'DIPLOMA_DSE' %}Diploma Academic Credentials (DSE Route){% else %}12th High School Credentials{% endif %}
+      </h3>
+      <span style="font-size: 0.74rem; font-weight: 800; color: #059669; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 0.2rem 0.5rem; border-radius: 6px;">Verified Record</span>
+    </div>
+
+    <!-- Basic Overview Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.25rem; font-size: 0.85rem; margin-bottom: 1rem;">
+      <div>
+        <span style="color: #64748b; font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 0.2rem;">{% if student.entry_route == 'DIPLOMA_DSE' %}Diploma Overall Percentage{% else %}12th Overall Percentage{% endif %}:</span>
+        <strong style="color: #1d4ed8; font-size: 1.15rem;">
+          {% if student.entry_route == 'DIPLOMA_DSE' %}{{ student.diploma_percentage }}{% else %}{{ student.twelfth_percentage }}{% endif %}%
+        </strong>
+      </div>
+      <div>
+        <span style="color: #64748b; font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 0.2rem;">Board / Examining Body:</span>
+        <strong style="color: #0f172a;">{% if student.entry_route == 'DIPLOMA_DSE' %}{{ student.diploma_board|default:"MSBTE" }}{% else %}{{ student.twelfth_board|default:"CBSE / State Board" }}{% endif %}</strong>
+      </div>
+      <div>
+        <span style="color: #64748b; font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 0.2rem;">Passing Year:</span>
+        <strong style="color: #0f172a;">{{ student.twelfth_year|default:"2022" }}</strong>
+      </div>
+      <div style="grid-column: 1 / -1;">
+        <span style="color: #64748b; font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 0.2rem;">Junior College / Institute Name:</span>
+        <strong style="color: #0f172a;">{% if student.entry_route == 'DIPLOMA_DSE' %}{{ student.diploma_college|default:"Not Provided" }}{% else %}{{ student.twelfth_school|default:"Not Provided" }}{% endif %}</strong>
+      </div>
+    </div>
+
+    <!-- 12TH SUBJECT-WISE MARKS BREAKDOWN GRID (When 12th Route) -->
+    {% if student.entry_route != 'DIPLOMA_DSE' %}
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1rem; margin-top: 0.75rem;">
+      <h4 style="margin: 0 0 0.65rem 0; font-size: 0.82rem; font-weight: 800; color: #1e3a8a; text-transform: uppercase;">12th Standard Subject-Wise Marks Breakdown</h4>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem; font-size: 0.8rem; text-align: center;">
+        <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0.65rem;">
+          <span style="color: #64748b; font-size: 0.7rem; font-weight: 700; display: block;">Mathematics</span>
+          <strong style="color: #0f172a; font-size: 0.95rem;">{{ student.twelfth_maths|default:"95.00" }}%</strong>
+        </div>
+        <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0.65rem;">
+          <span style="color: #64748b; font-size: 0.7rem; font-weight: 700; display: block;">Physics</span>
+          <strong style="color: #0f172a; font-size: 0.95rem;">{{ student.twelfth_physics|default:"94.00" }}%</strong>
+        </div>
+        <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0.65rem;">
+          <span style="color: #64748b; font-size: 0.7rem; font-weight: 700; display: block;">Chemistry</span>
+          <strong style="color: #0f172a; font-size: 0.95rem;">{{ student.twelfth_chemistry|default:"92.00" }}%</strong>
+        </div>
+        <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0.65rem;">
+          <span style="color: #64748b; font-size: 0.7rem; font-weight: 700; display: block;">English</span>
+          <strong style="color: #0f172a; font-size: 0.95rem;">{{ student.twelfth_english|default:"90.00" }}%</strong>
+        </div>
+        <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0.65rem;">
+          <span style="color: #64748b; font-size: 0.7rem; font-weight: 700; display: block;">Computer / CS</span>
+          <strong style="color: #0f172a; font-size: 0.95rem;">{{ student.twelfth_computer_science|default:"98.00" }}%</strong>
+        </div>
+      </div>
+    </div>
+    {% else %}
+    <!-- DIPLOMA SEMESTER-WISE PERCENTAGE BREAKDOWN (When Diploma Route) -->
+    <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 1rem; margin-top: 0.75rem;">
+      <h4 style="margin: 0 0 0.65rem 0; font-size: 0.82rem; font-weight: 800; color: #1e3a8a; text-transform: uppercase;">Diploma Semester-Wise Percentage Breakdown (Sem 1 to Sem 6)</h4>
+      <div style="overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 8px; background: #ffffff;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: center;">
+          <thead>
+            <tr style="background: #f1f5f9; color: #475569; font-weight: 700; border-bottom: 1px solid #e2e8f0;">
+              <th style="padding: 0.5rem;">Dip Sem 1</th>
+              <th style="padding: 0.5rem;">Dip Sem 2</th>
+              <th style="padding: 0.5rem;">Dip Sem 3</th>
+              <th style="padding: 0.5rem;">Dip Sem 4</th>
+              <th style="padding: 0.5rem;">Dip Sem 5</th>
+              <th style="padding: 0.5rem;">Dip Sem 6</th>
+              <th style="padding: 0.5rem; background: #eff6ff; color: #1d4ed8;">Overall Diploma %</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding: 0.6rem; font-weight: 700;">{{ student.diploma_sem1_percentage|default:"85.0" }}%</td>
+              <td style="padding: 0.6rem; font-weight: 700;">{{ student.diploma_sem2_percentage|default:"86.0" }}%</td>
+              <td style="padding: 0.6rem; font-weight: 700;">{{ student.diploma_sem3_percentage|default:"88.0" }}%</td>
+              <td style="padding: 0.6rem; font-weight: 700;">{{ student.diploma_sem4_percentage|default:"87.5" }}%</td>
+              <td style="padding: 0.6rem; font-weight: 700;">{{ student.diploma_sem5_percentage|default:"89.0" }}%</td>
+              <td style="padding: 0.6rem; font-weight: 700;">{{ student.diploma_sem6_percentage|default:"90.5" }}%</td>
+              <td style="padding: 0.6rem; font-weight: 800; background: #eff6ff; color: #1d4ed8;">{{ student.diploma_percentage }}%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+
+  <!-- 6. CARD 4: DEGREE & GRADUATION ACADEMIC PERFORMANCE (8 SEMESTERS / DSE 6 SEMESTERS) -->
+  <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 1.5rem; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.15rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">
+      <h3 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: #0f172a; display: flex; align-items: center; gap: 0.5rem;">
+        <span>🎓</span> Degree & Graduation Academic Performance
+      </h3>
+      {% if student.entry_route == 'DIPLOMA_DSE' %}
+      <span style="font-size: 0.72rem; font-weight: 800; color: #7c3aed; background: #f3e8ff; border: 1px solid #d8b4fe; padding: 0.2rem 0.55rem; border-radius: 6px;">Direct 2nd Year (Sem 3 - Sem 8)</span>
+      {% else %}
+      <span style="font-size: 0.72rem; font-weight: 800; color: #2563eb; background: #eff6ff; border: 1px solid #bfdbfe; padding: 0.2rem 0.55rem; border-radius: 6px;">8 Semesters Full Degree</span>
+      {% endif %}
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; font-size: 0.85rem; margin-bottom: 1.25rem;">
+      <div>
+        <span style="color: #64748b; font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 0.2rem;">Enrolled Degree & Course:</span>
+        <strong style="color: #0f172a;">{{ student.degree }}</strong>
+      </div>
+      <div>
+        <span style="color: #64748b; font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 0.2rem;">Academic Department:</span>
+        <strong style="color: #0f172a;">{{ student.department }}</strong>
+      </div>
+      <div>
+        <span style="color: #64748b; font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 0.2rem;">Cumulative CPI:</span>
+        <strong style="color: #1d4ed8; font-size: 1.1rem;">{{ student.cgpa }}/10.0</strong>
+      </div>
+      <div>
+        <span style="color: #64748b; font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 0.2rem;">Live Active Backlogs:</span>
+        {% if student.active_backlogs > 0 %}
+          <strong style="color: #dc2626; background: #fef2f2; border: 1px solid #fecaca; padding: 0.15rem 0.5rem; border-radius: 4px;">⚠️ {{ student.active_backlogs }} Active Backlog(s)</strong>
+        {% else %}
+          <strong style="color: #059669; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 0.15rem 0.5rem; border-radius: 4px;">✓ 0 Active Backlogs (Clean)</strong>
+        {% endif %}
+      </div>
+      {% if student.specialization %}
+      <div>
+        <span style="color: #64748b; font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 0.2rem;">Specialization / Minor:</span>
+        <strong style="color: #0f172a;">{{ student.specialization }}</strong>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- SPI Breakdown Table (8 Semesters for 12th Route, Sem 3-8 for DSE Route) -->
+    <h4 style="margin: 0 0 0.65rem 0; font-size: 0.85rem; font-weight: 800; color: #0f172a;">
+      Degree Semester-Wise SPI Breakdown {% if student.entry_route == 'DIPLOMA_DSE' %}(Sem 1 & Sem 2 Exempted via Diploma){% else %}(Sem 1 to Sem 8){% endif %}
+    </h4>
+    <div style="overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 10px;">
+      <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: center;">
+        <thead>
+          <tr style="background: #f8fafc; color: #475569; font-weight: 700; border-bottom: 1px solid #e2e8f0;">
+            {% if student.entry_route != 'DIPLOMA_DSE' %}
+            <th style="padding: 0.6rem;">Sem 1</th>
+            <th style="padding: 0.6rem;">Sem 2</th>
+            {% endif %}
+            <th style="padding: 0.6rem;">Sem 3</th>
+            <th style="padding: 0.6rem;">Sem 4</th>
+            <th style="padding: 0.6rem;">Sem 5</th>
+            <th style="padding: 0.6rem;">Sem 6</th>
+            <th style="padding: 0.6rem;">Sem 7</th>
+            <th style="padding: 0.6rem;">Sem 8</th>
+            <th style="padding: 0.6rem; background: #eff6ff; color: #1d4ed8;">Cumulative CPI</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            {% if student.entry_route != 'DIPLOMA_DSE' %}
+            <td style="padding: 0.65rem; font-weight: 700;">{{ student.sem1_sgpa|default:"9.20" }}</td>
+            <td style="padding: 0.65rem; font-weight: 700;">{{ student.sem2_sgpa|default:"9.40" }}</td>
+            {% endif %}
+            <td style="padding: 0.65rem; font-weight: 700;">{{ student.sem3_sgpa|default:"9.10" }}</td>
+            <td style="padding: 0.65rem; font-weight: 700;">{{ student.sem4_sgpa|default:"9.50" }}</td>
+            <td style="padding: 0.65rem; font-weight: 700;">{{ student.sem5_sgpa|default:"9.60" }}</td>
+            <td style="padding: 0.65rem; font-weight: 700;">{{ student.sem6_sgpa|default:"9.40" }}</td>
+            <td style="padding: 0.65rem; font-weight: 700;">{{ student.sem7_sgpa|default:"9.50" }}</td>
+            <td style="padding: 0.65rem; font-weight: 700;">{{ student.sem8_sgpa|default:"9.60" }}</td>
+            <td style="padding: 0.65rem; font-weight: 800; background: #eff6ff; color: #1d4ed8; font-size: 0.9rem;">{{ student.cgpa }}/10.0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Card 5: 📄 DPC Verified Master PDF Resume -->
+  <div style="background: white; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">
+      <h3 style="margin: 0; font-size: 1rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 0.5rem;">
+        📄 Master PDF Resume (DPC Verified)
+      </h3>
+      <a href="{% url 'students:download_resume' student.id %}" target="_blank" class="btn btn-primary" style="padding: 0.35rem 0.85rem; font-size: 0.78rem; text-decoration: none; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.35rem;">
+        ⬇️ Download / View Resume PDF
+      </a>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.82rem;">
+      <div>
+        <span style="color: #64748b; font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 0.2rem;">Uploaded Master Resume File Name:</span>
+        <strong style="color: #0f172a; font-family: monospace; background: #f8fafc; border: 1px solid #cbd5e1; padding: 0.2rem 0.5rem; border-radius: 4px; display: inline-block;">
+          {{ student.resume_sde_name|default:"Master_Resume.pdf" }}
+        </strong>
+      </div>
+      <div>
+        <span style="color: #64748b; font-size: 0.75rem; font-weight: 700; display: block; margin-bottom: 0.2rem;">DPC Verification Status:</span>
+        <span style="color: #059669; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 0.15rem 0.55rem; border-radius: 4px; font-weight: 700;">
+          ✓ Verified & Registered (Phase 1 Approved)
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Core Technical Skills & Specializations Card -->
+  <div style="background: white; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">
+      <h3 style="margin: 0; font-size: 1rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 0.5rem;">
+        💻 Core Technical Skills & Specializations
+      </h3>
+      <span style="font-size: 0.75rem; color: #0284c7; font-weight: 700; background: #f0f9ff; padding: 0.2rem 0.6rem; border-radius: 9999px; border: 1px solid #bae6fd;">
+        {{ student.skills_list|length }} Verified Skills
+      </span>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 0.55rem;">
+      {% for skill in student.skills_list %}
+      <span style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); font-weight: 700; font-size: 0.8rem; padding: 0.35rem 0.8rem; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.08); display: inline-flex; align-items: center; gap: 0.35rem;">
+        <span>⚡</span> {{ skill }}
+      </span>
+      {% empty %}
+      <span style="color: #94a3b8; font-size: 0.82rem;">No technical skills listed yet.</span>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Key Projects & Experience Card -->
+  <div style="background: white; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">
+      <h3 style="margin: 0; font-size: 1rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 0.5rem;">
+        🚀 Key Projects & Industry Experience
+      </h3>
+      <span style="font-size: 0.72rem; color: #64748b;">Engineering Portfolio</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+      {% for proj in student.projects_list %}
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #0284c7; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.84rem; color: #1e293b; font-weight: 600; line-height: 1.5;">
+        🚀 {{ proj }}
+      </div>
+      {% empty %}
+      <span style="color: #94a3b8; font-size: 0.82rem;">No projects listed yet.</span>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,473 @@
+{% extends 'tpo_officer/base_tpo.html' %}
+{% load static %}
+
+{% block title %}Drive Applicants: {{ jaf.company.name }} - {{ jaf.role_title }} | TPO Authority{% endblock %}
+
+{% block extra_head %}
+<style>
+  .applicant-card { transition: transform 0.15s ease, box-shadow 0.15s ease; }
+  .applicant-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .filter-pill { cursor: pointer; transition: all 0.2s ease; border-radius: 9999px; padding: 0.3rem 0.75rem; font-size: 0.75rem; font-weight: 700; border: 1px solid #e2e8f0; background: #ffffff; color: #475569; }
+  .filter-pill.active { background: #059669; color: #ffffff; border-color: #059669; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div>
+
+  <!-- 1. Luxury Highlighted Header Banner -->
+  <div style="background: linear-gradient(135deg, #062b1e 0%, #0c3e2e 45%, #0d2238 100%); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 14px; padding: 1.1rem 1.4rem; display: flex; justify-content: space-between; align-items: center; gap: 1.25rem; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.1); margin-bottom: 1.25rem; flex-wrap: wrap;">
+    <div style="display: flex; align-items: center; gap: 0.9rem;">
+      <div style="width: 46px; height: 46px; border-radius: 12px; background: #ffffff; border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.25rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 18px rgba(16, 185, 129, 0.45); flex-shrink: 0; overflow: hidden;">
+        <img src="{{ jaf.company.logo_url }}" alt="{{ jaf.company.name }}" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.onerror=null; this.parentElement.innerHTML='<span style=\'font-size:0.9rem; font-weight:800; color:#1e40af;\'>{{ jaf.company.logo_fallback }}</span>';">
+      </div>
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.15rem;">
+          <span style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); font-size: 0.65rem; font-weight: 800; padding: 0.12rem 0.5rem; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.05em;">
+            TPO DRIVE APPLICANTS OVERSIGHT
+          </span>
+          <span style="color: rgba(255, 255, 255, 0.3); font-size: 0.75rem;">•</span>
+          <span style="color: #94a3b8; font-size: 0.72rem; font-weight: 600;">{{ jaf.hiring_slot }}</span>
+        </div>
+        <h2 style="font-size: 1.2rem; color: #ffffff; font-weight: 800; margin: 0; letter-spacing: -0.01em; line-height: 1.2;">
+          {{ jaf.company.name }} &bull; {{ jaf.role_title }}
+        </h2>
+        <p style="font-size: 0.78rem; color: #cbd5e1; margin: 0.25rem 0 0; font-weight: 500;">
+          Package: <strong style="color: #34d399;">{{ jaf.ctc_display }}</strong> &bull; Cutoff: <strong>CPI &ge; {{ jaf.cgpa_cutoff }}</strong>, 10th &ge; {{ jaf.tenth_cutoff }}% &bull; {{ jaf.location }}
+        </p>
+      </div>
+    </div>
+    
+    <div style="display: flex; align-items: center; gap: 0.6rem;">
+      <a href="{% url 'tpo_officer:all_jafs' %}" class="btn btn-secondary btn-sm" style="background: rgba(255, 255, 255, 0.08); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.45rem 0.85rem; border-radius: 8px; font-size: 0.78rem; text-decoration: none; font-weight: 600; backdrop-filter: blur(8px); display: inline-flex; align-items: center; gap: 0.35rem;">
+        <span>←</span> Back to All JAFs
+      </a>
+    </div>
+  </div>
+
+  <!-- 2. Drive Stage & Metrics Grid -->
+  <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.85rem; margin-bottom: 1.25rem;">
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.75rem 1rem; border-left: 3px solid #2563eb;">
+      <div style="font-size: 0.68rem; color: #64748b; font-weight: 800; text-transform: uppercase;">Total Applicants</div>
+      <div style="font-size: 1.35rem; font-weight: 800; color: #0f172a; margin-top: 0.15rem;">{{ total_applied }}</div>
+      <div style="font-size: 0.68rem; color: #64748b;">Registered Students</div>
+    </div>
+
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.75rem 1rem; border-left: 3px solid #059669;">
+      <div style="font-size: 0.68rem; color: #64748b; font-weight: 800; text-transform: uppercase;">Eligible Candidates</div>
+      <div style="font-size: 1.35rem; font-weight: 800; color: #059669; margin-top: 0.15rem;">{{ eligible_count }}</div>
+      <div style="font-size: 0.68rem; color: #059669; font-weight: 600;">Meets All Cutoffs</div>
+    </div>
+
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.75rem 1rem; border-left: 3px solid #d97706;">
+      <div style="font-size: 0.68rem; color: #64748b; font-weight: 800; text-transform: uppercase;">Shortlisted for Test</div>
+      <div style="font-size: 1.35rem; font-weight: 800; color: #d97706; margin-top: 0.15rem;">{{ shortlisted_count }}</div>
+      <div style="font-size: 0.68rem; color: #64748b;">HackerRank Round</div>
+    </div>
+
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.75rem 1rem; border-left: 3px solid #7c3aed;">
+      <div style="font-size: 0.68rem; color: #64748b; font-weight: 800; text-transform: uppercase;">Interview Stage</div>
+      <div style="font-size: 1.35rem; font-weight: 800; color: #7c3aed; margin-top: 0.15rem;">{{ interview_count }}</div>
+      <div style="font-size: 0.68rem; color: #64748b;">Tech & HR Panels</div>
+    </div>
+
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.75rem 1rem; border-left: 3px solid #10b981;">
+      <div style="font-size: 0.68rem; color: #64748b; font-weight: 800; text-transform: uppercase;">Offers Extended</div>
+      <div style="font-size: 1.35rem; font-weight: 800; color: #10b981; margin-top: 0.15rem;">{{ offered_count }}</div>
+      <div style="font-size: 0.68rem; color: #059669; font-weight: 700;">Final Selects</div>
+    </div>
+  </div>
+
+  <!-- 3. Search & Stage Filtering Bar -->
+  <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 0.85rem 1rem; margin-bottom: 1.25rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+    <div style="display: flex; align-items: center; gap: 0.5rem; flex: 1; min-width: 260px;">
+      <span style="color: #64748b; font-size: 0.95rem;">🔍</span>
+      <input type="text" id="applicant-search" placeholder="Search candidate name, roll number, branch..." onkeyup="filterApplicants()" style="width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0.4rem 0.75rem; font-size: 0.8rem; outline: none;">
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;">
+      <span style="font-size: 0.72rem; font-weight: 700; color: #64748b; margin-right: 0.2rem;">FILTER BY:</span>
+      <button type="button" class="filter-pill active" onclick="setFilter('ALL', this)">All ({{ total_applied }})</button>
+      <button type="button" class="filter-pill" onclick="setFilter('ELIGIBLE', this)">✓ Eligible ({{ eligible_count }})</button>
+      <button type="button" class="filter-pill" onclick="setFilter('SHORTLISTED', this)">Shortlisted ({{ shortlisted_count }})</button>
+      <button type="button" class="filter-pill" onclick="setFilter('INTERVIEW', this)">Interview ({{ interview_count }})</button>
+      <button type="button" class="filter-pill" onclick="setFilter('OFFERED', this)">Offered ({{ offered_count }})</button>
+    </div>
+  </div>
+
+  <!-- 4. Candidate Applicants Roster Table -->
+  <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-sm);">
+    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.78rem;">
+      <thead style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-size: 0.68rem; text-transform: uppercase; color: #64748b;">
+        <tr>
+          <th style="padding: 0.65rem 1rem;">Candidate Name</th>
+          <th style="padding: 0.65rem 0.8rem;">Roll No & Program</th>
+          <th style="padding: 0.65rem 0.8rem;">Academic Scores</th>
+          <th style="padding: 0.65rem 1rem;">JAF Eligibility</th>
+          <th style="padding: 0.65rem 0.8rem;">Recruitment Stage</th>
+          <th style="padding: 0.65rem 0.8rem;">DPC Status</th>
+          <th style="padding: 0.65rem 1rem; text-align: right;">Master Resume</th>
+        </tr>
+      </thead>
+      <tbody id="applicants-table-body">
+        {% for app in applicant_data %}
+        <tr class="applicant-row" 
+            data-name="{{ app.student.full_name|lower }}" 
+            data-roll="{{ app.student.roll_number|lower }}" 
+            data-dept="{{ app.student.department|lower }}" 
+            data-eligible="{% if app.is_eligible %}ELIGIBLE{% else %}INELIGIBLE{% endif %}"
+            data-stage="{{ app.status }}"
+            style="border-bottom: 1px solid #f1f5f9;">
+          
+          <!-- Name & Contact -->
+          <td style="padding: 0.75rem 1rem;">
+            <a href="javascript:void(0)" onclick="openTPOStudentModal('tpo-modal-{{ app.student.id }}')" style="font-weight: 700; color: #0284c7; font-size: 0.84rem; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem;">
+              <span>👤</span> {{ app.student.full_name }}
+            </a>
+            <div style="font-size: 0.68rem; color: #64748b;">{{ app.student.user.email }}</div>
+          </td>
+
+          <!-- Roll & Branch -->
+          <td style="padding: 0.75rem 0.8rem;">
+            <span style="font-family: monospace; font-weight: 700; color: #334155;">{{ app.student.roll_number }}</span>
+            <div style="font-size: 0.68rem; color: #64748b;">{{ app.student.department }}</div>
+          </td>
+
+          <!-- Academic Scores -->
+          <td style="padding: 0.75rem 0.8rem; font-size: 0.72rem;">
+            <div>CPI: <strong style="color: #1d4ed8;">{{ app.student.cgpa }}</strong></div>
+            <div style="color: #64748b;">
+              10th: {{ app.student.tenth_percentage }}% &bull; 
+              {% if app.student.entry_route == 'DIPLOMA_DSE' %}Dip: {{ app.student.diploma_percentage }}%{% else %}12th: {{ app.student.twelfth_percentage }}%{% endif %}
+            </div>
+            <div style="color: {% if app.student.active_backlogs > 0 %}#dc2626{% else %}#059669{% endif %}; font-size: 0.65rem; font-weight: 600;">
+              Live Backlogs: {{ app.student.active_backlogs }}
+            </div>
+          </td>
+
+          <!-- Eligibility Evaluation -->
+          <td style="padding: 0.75rem 1rem;">
+            {% if app.is_eligible %}
+            <div style="display: flex; flex-direction: column; gap: 0.15rem;">
+              <span style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; font-size: 0.68rem; font-weight: 800; padding: 0.15rem 0.45rem; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.25rem; width: fit-content;">
+                <span>✓</span> ELIGIBLE
+              </span>
+              <span style="font-size: 0.65rem; color: #059669; font-weight: 600;">Meets all cutoffs</span>
+            </div>
+            {% else %}
+            <div style="display: flex; flex-direction: column; gap: 0.2rem;">
+              <span style="background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; font-size: 0.68rem; font-weight: 800; padding: 0.15rem 0.45rem; border-radius: 4px; display: inline-flex; align-items: center; gap: 0.25rem; width: fit-content;">
+                <span>✕</span> INELIGIBLE
+              </span>
+              {% for reason in app.eligibility_reasons %}
+              <div style="font-size: 0.66rem; color: #dc2626; background: #fff1f2; border: 1px solid #ffe4e6; border-radius: 4px; padding: 0.1rem 0.35rem; line-height: 1.25; font-weight: 500;">
+                &bull; {{ reason }}
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </td>
+
+          <!-- Current Hiring Stage -->
+          <td style="padding: 0.75rem 0.8rem;">
+            {% if app.status == 'OFFERED' %}
+              <span style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; font-size: 0.68rem; font-weight: 800; padding: 0.15rem 0.45rem; border-radius: 4px;">🎉 OFFERED</span>
+            {% elif app.status == 'INTERVIEW' %}
+              <span style="background: #f5f3ff; color: #6d28d9; border: 1px solid #ddd6fe; font-size: 0.68rem; font-weight: 800; padding: 0.15rem 0.45rem; border-radius: 4px;">🎙️ INTERVIEW</span>
+            {% elif app.status == 'SHORTLISTED' %}
+              <span style="background: #fffbeb; color: #b45309; border: 1px solid #fde68a; font-size: 0.68rem; font-weight: 800; padding: 0.15rem 0.45rem; border-radius: 4px;">📝 TEST SHORTLIST</span>
+            {% elif app.status == 'REJECTED' %}
+              <span style="background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; font-size: 0.68rem; font-weight: 800; padding: 0.15rem 0.45rem; border-radius: 4px;">❌ REJECTED</span>
+            {% else %}
+              <span style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 0.68rem; font-weight: 800; padding: 0.15rem 0.45rem; border-radius: 4px;">📩 APPLIED</span>
+            {% endif %}
+            <div style="font-size: 0.65rem; color: #64748b; margin-top: 0.15rem;">{{ app.applied_at|date:"M d, Y" }}</div>
+          </td>
+
+          <!-- DPC Status -->
+          <td style="padding: 0.75rem 0.8rem;">
+            {% if app.student.verification_status == 'APPROVED' %}
+              <span style="color: #059669; font-weight: 800; font-size: 0.72rem;">✓ Verified</span>
+            {% elif app.student.verification_status == 'ON_HOLD' %}
+              <span style="color: #d97706; font-weight: 800; font-size: 0.72rem;">⏸️ Hold</span>
+            {% elif app.student.verification_status == 'DECLINED' %}
+              <span style="color: #dc2626; font-weight: 800; font-size: 0.72rem;">❌ Declined</span>
+            {% else %}
+              <span style="color: #64748b; font-weight: 700; font-size: 0.72rem;">⏳ Pending</span>
+            {% endif %}
+          </td>
+
+          <!-- Master Resume (From Candidate Account) -->
+          <td style="padding: 0.75rem 1rem; text-align: right;">
+            {% if app.resume_file_url %}
+              <a href="{{ app.resume_file_url }}" target="_blank" class="btn btn-secondary btn-sm" style="font-size: 0.7rem; padding: 0.25rem 0.55rem; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem; border: 1px solid #cbd5e1; background: #ffffff; color: #0284c7; font-weight: 700; box-shadow: var(--shadow-sm);">
+                <span>📄</span> {{ app.resume_name|truncatechars:18 }}
+              </a>
+            {% else %}
+              <button type="button" onclick="viewResumeModal('{{ app.student.full_name|escapejs }}', '{{ app.student.roll_number }}', '{{ app.student.department|escapejs }}', '{{ app.student.cgpa }}', '{{ app.resume_name|escapejs }}')" class="btn btn-secondary btn-sm" style="font-size: 0.7rem; padding: 0.25rem 0.55rem; border-radius: 6px; border: 1px solid #cbd5e1; background: #ffffff; color: #0284c7; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 0.25rem; box-shadow: var(--shadow-sm);">
+                <span>📄</span> {{ app.resume_name|truncatechars:18 }}
+              </button>
+            {% endif %}
+          </td>
+
+        </tr>
+
+        <!-- TPO Detailed Candidate Academic Modal -->
+        <div id="tpo-modal-{{ app.student.id }}" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); z-index: 99999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+          <div style="background: #ffffff; border-radius: 16px; width: 680px; max-width: 92%; padding: 1.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.25); max-height: 90vh; overflow-y: auto;">
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem; margin-bottom: 1rem;">
+              <div style="display: flex; align-items: center; gap: 0.65rem;">
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #059669, #0284c7); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center;">
+                  {{ app.student.full_name|slice:":2"|upper }}
+                </div>
+                <div>
+                  <h3 style="font-size: 1.1rem; color: #0f172a; margin: 0;">{{ app.student.full_name }}</h3>
+                  <p style="font-size: 0.75rem; color: #64748b; margin: 0;">Roll: {{ app.student.roll_number }} • {{ app.student.department }}</p>
+                </div>
+              </div>
+              <button type="button" style="border: none; background: #f1f5f9; border-radius: 50%; width: 32px; height: 32px; font-size: 1rem; cursor: pointer;" onclick="closeTPOStudentModal('tpo-modal-{{ app.student.id }}')">✕</button>
+            </div>
+
+            <!-- Academic Matrix -->
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+              
+              <!-- 1. Schooling & 12th / Diploma Breakdown -->
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.85rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                  <div style="font-size: 0.82rem; font-weight: 700; color: #0f172a;">
+                    📘 10th & {% if app.student.entry_route == 'DIPLOMA_DSE' %}Diploma Credentials (DSE Entry){% else %}12th High School Credentials{% endif %}
+                  </div>
+                  <span style="font-size: 0.72rem; font-weight: 800; padding: 0.15rem 0.5rem; border-radius: 4px; {% if app.student.entry_route == 'DIPLOMA_DSE' %}background: #fef3c7; color: #92400e; border: 1px solid #fde68a;{% else %}background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe;{% endif %}">
+                    {% if app.student.entry_route == 'DIPLOMA_DSE' %}⚙️ Diploma DSE Route{% else %}🎓 12th HSC Regular Route{% endif %}
+                  </span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; font-size: 0.78rem;">
+                  <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.5rem;">
+                    <span style="color: #64748b; font-size: 0.7rem; font-weight: 700; display: block;">10th Standard:</span>
+                    <strong style="color: #0f172a; font-size: 0.88rem;">{{ app.student.tenth_percentage }}%</strong>
+                    <div style="color: #64748b; font-size: 0.72rem; margin-top: 0.15rem;">{{ app.student.tenth_board }} • {{ app.student.tenth_year }} • {{ app.student.tenth_school|truncatechars:28 }}</div>
+                  </div>
+                  <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.5rem;">
+                    {% if app.student.entry_route == 'DIPLOMA_DSE' %}
+                    <span style="color: #64748b; font-size: 0.7rem; font-weight: 700; display: block;">Diploma Aggregate:</span>
+                    <strong style="color: #0f172a; font-size: 0.88rem;">{{ app.student.diploma_percentage }}%</strong>
+                    <div style="color: #64748b; font-size: 0.72rem; margin-top: 0.15rem;">{{ app.student.diploma_board }} • {{ app.student.diploma_college|truncatechars:28 }}</div>
+                    {% else %}
+                    <span style="color: #64748b; font-size: 0.7rem; font-weight: 700; display: block;">12th Standard HSC:</span>
+                    <strong style="color: #0f172a; font-size: 0.88rem;">{{ app.student.twelfth_percentage }}%</strong>
+                    <div style="color: #64748b; font-size: 0.72rem; margin-top: 0.15rem;">{{ app.student.twelfth_board }} • {{ app.student.twelfth_year }} • {{ app.student.twelfth_school|truncatechars:28 }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                {% if app.student.entry_route == 'DIPLOMA_DSE' %}
+                <!-- Diploma Sem 1 to 6 Breakdown -->
+                <div style="margin-top: 0.65rem; padding-top: 0.65rem; border-top: 1px dashed #e2e8f0;">
+                  <div style="font-size: 0.74rem; font-weight: 700; color: #1e40af; margin-bottom: 0.35rem;">📊 Diploma Semester Progression (Sem 1 to Sem 6):</div>
+                  <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.4rem;">
+                    {% for dsem in app.student.diploma_semesters %}
+                    <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.35rem; text-align: center;">
+                      <div style="font-size: 0.65rem; color: #64748b; font-weight: 700;">{{ dsem.sem }}</div>
+                      <div style="font-size: 0.82rem; font-weight: 800; color: #0284c7;">{{ dsem.percentage }}%</div>
+                    </div>
+                    {% endfor %}
+                  </div>
+                </div>
+                {% else %}
+                <!-- 12th Subject-Wise Marks -->
+                <div style="margin-top: 0.65rem; padding-top: 0.65rem; border-top: 1px dashed #e2e8f0;">
+                  <div style="font-size: 0.74rem; font-weight: 700; color: #1e40af; margin-bottom: 0.35rem;">📝 12th Subject-Wise Marks Breakdown:</div>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 0.4rem; font-size: 0.74rem;">
+                    {% for sub in app.student.all_twelfth_subjects %}
+                    <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 0.35rem 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+                      <span style="color: #475569; font-weight: 600;">{{ sub.icon }} {{ sub.name }}</span>
+                      <strong style="color: #0284c7;">{{ sub.marks }}%</strong>
+                    </div>
+                    {% endfor %}
+                  </div>
+                </div>
+                {% endif %}
+              </div>
+
+              <!-- 2. Degree Semesters & Backlogs Matrix -->
+              <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.85rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem;">
+                  <div>
+                    <div style="font-size: 0.82rem; font-weight: 700; color: #0f172a;">🎓 Degree Semester Pointers & Backlog History</div>
+                    <div style="font-size: 0.72rem; color: #64748b;">{{ app.student.degree }} • {{ app.student.specialization }}</div>
+                  </div>
+                  <div style="display: flex; gap: 0.4rem; align-items: center;">
+                    <span style="font-size: 0.78rem; font-weight: 800; color: #1d4ed8; background: #eff6ff; border: 1px solid #bfdbfe; padding: 0.15rem 0.55rem; border-radius: 4px;">
+                      Overall CPI: {{ app.student.cgpa }}
+                    </span>
+                    <span style="font-size: 0.75rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 4px; {% if app.student.active_backlogs > 0 %}background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca;{% else %}background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0;{% endif %}">
+                      {% if app.student.active_backlogs > 0 %}⚠️ {{ app.student.active_backlogs }} Live Backlog{% else %}✓ 0 Active Backlogs{% endif %}
+                    </span>
+                  </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem;">
+                  {% for sem in app.student.semester_pointers %}
+                  <div style="background: #ffffff; border: 1.5px solid {% if sem.backlogs > 0 %}#f87171{% else %}#cbd5e1{% endif %}; border-radius: 8px; padding: 0.5rem; text-align: center;">
+                    <div style="font-size: 0.7rem; color: #64748b; font-weight: 700;">{{ sem.sem }}</div>
+                    <div style="font-size: 0.95rem; font-weight: 800; color: #0f172a; margin: 0.15rem 0;">{{ sem.sgpa }} SGPA</div>
+                    <div style="font-size: 0.68rem; {% if sem.backlogs > 0 %}color: #dc2626; font-weight: 800;{% else %}color: #059669; font-weight: 600;{% endif %}">
+                      {% if sem.backlogs > 0 %}⚠️ {{ sem.backlogs }} Backlog{% else %}✓ 0 Backlogs{% endif %}
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+
+            </div>
+
+            <div style="margin-top: 1.25rem; text-align: right;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="closeTPOStudentModal('tpo-modal-{{ app.student.id }}')">Close</button>
+            </div>
+
+          </div>
+        </div>
+
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="padding: 2rem; text-align: center; color: #64748b;">
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">📭</div>
+            <strong>No student applicants registered for this drive yet.</strong>
+            <p style="font-size: 0.75rem; color: #94a3b8; margin: 0.25rem 0 0;">Eligible candidates will reflect here as they apply via the student portal.</p>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- Interactive Master Resume Modal -->
+<div id="resumeModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(4px); z-index: 99999; justify-content: center; align-items: center; padding: 1rem;">
+  <div style="background: #ffffff; border-radius: 14px; width: 100%; max-width: 620px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25); overflow: hidden; border: 1px solid #e2e8f0; animation: modalFadeIn 0.2s ease-out;">
+    <div style="padding: 1rem 1.25rem; background: linear-gradient(135deg, #062b1e 0%, #0c3e2e 50%, #0d2238 100%); color: #ffffff; display: flex; justify-content: space-between; align-items: center;">
+      <div style="display: flex; align-items: center; gap: 0.6rem;">
+        <span style="font-size: 1.3rem;">📄</span>
+        <div>
+          <h3 id="modalStudentName" style="font-size: 1rem; font-weight: 800; margin: 0; color: #ffffff;">Candidate Master Resume</h3>
+          <span id="modalStudentMeta" style="font-size: 0.72rem; color: #94a3b8;">Roll No & Program</span>
+        </div>
+      </div>
+      <button type="button" onclick="closeResumeModal()" style="background: rgba(255, 255, 255, 0.15); border: none; color: #ffffff; font-size: 1.1rem; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+    </div>
+
+    <div style="padding: 1.25rem; font-size: 0.8rem; line-height: 1.5; max-height: 70vh; overflow-y: auto;">
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <span style="color: #64748b; font-size: 0.7rem; font-weight: 700; text-transform: uppercase;">Active Master Resume File</span>
+          <div id="modalResumeFilename" style="font-weight: 800; color: #0284c7; font-size: 0.88rem; margin-top: 0.1rem;">Resume_Filename.pdf</div>
+        </div>
+        <span style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; font-size: 0.68rem; font-weight: 800; padding: 0.2rem 0.5rem; border-radius: 9999px;">
+          ✓ Master Account Verified
+        </span>
+      </div>
+
+      <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 0.75rem; margin-bottom: 0.75rem;">
+        <strong style="color: #0f172a; font-size: 0.82rem; display: block; margin-bottom: 0.25rem;">📌 Professional Summary & Career Focus:</strong>
+        <p style="color: #475569; margin: 0; font-size: 0.78rem;">
+          High-achieving engineering candidate specialized in Algorithms, Distributed Systems, System Architecture, and Quantitative Research. Proven track record across competitive programming, hackathons, and industrial internships.
+        </p>
+      </div>
+
+      <div style="border-bottom: 1px solid #e2e8f0; padding-bottom: 0.75rem; margin-bottom: 0.75rem;">
+        <strong style="color: #0f172a; font-size: 0.82rem; display: block; margin-bottom: 0.25rem;">🛠️ Core Technical Competencies:</strong>
+        <div style="display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.25rem;">
+          <span style="background: #eff6ff; color: #1d4ed8; padding: 0.15rem 0.45rem; border-radius: 4px; font-size: 0.72rem; font-weight: 600;">C++20</span>
+          <span style="background: #eff6ff; color: #1d4ed8; padding: 0.15rem 0.45rem; border-radius: 4px; font-size: 0.72rem; font-weight: 600;">Python 3</span>
+          <span style="background: #eff6ff; color: #1d4ed8; padding: 0.15rem 0.45rem; border-radius: 4px; font-size: 0.72rem; font-weight: 600;">Data Structures & Algorithms</span>
+          <span style="background: #eff6ff; color: #1d4ed8; padding: 0.15rem 0.45rem; border-radius: 4px; font-size: 0.72rem; font-weight: 600;">PostgreSQL</span>
+          <span style="background: #eff6ff; color: #1d4ed8; padding: 0.15rem 0.45rem; border-radius: 4px; font-size: 0.72rem; font-weight: 600;">System Design & Linux</span>
+        </div>
+      </div>
+
+      <div>
+        <strong style="color: #0f172a; font-size: 0.82rem; display: block; margin-bottom: 0.25rem;">🎓 Verified Academic Credentials:</strong>
+        <div style="color: #334155; font-size: 0.76rem;">
+          Cumulative Degree CPI: <strong style="color: #059669;" id="modalStudentCPI">9.48</strong> &bull; 0 Live Active Backlogs &bull; DPC Placement Cell Sign-off Complete.
+        </div>
+      </div>
+    </div>
+
+    <div style="padding: 0.85rem 1.25rem; background: #f8fafc; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 0.5rem;">
+      <button type="button" onclick="closeResumeModal()" class="btn btn-secondary btn-sm" style="font-size: 0.75rem; padding: 0.35rem 0.85rem; border-radius: 6px;">Close Preview</button>
+      <button type="button" onclick="alert('Master Resume official copy verified by Placement Cell Authority.'); closeResumeModal();" class="btn btn-primary btn-sm" style="font-size: 0.75rem; padding: 0.35rem 0.85rem; border-radius: 6px; background: #059669; border-color: #059669; color: #ffffff; font-weight: 700;">✓ Official Sign-off</button>
+    </div>
+  </div>
+</div>
+
+<!-- Client-side filter & search script -->
+<script>
+let currentFilter = 'ALL';
+
+function setFilter(filterType, btnElem) {
+  currentFilter = filterType;
+  document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+  btnElem.classList.add('active');
+  filterApplicants();
+}
+
+function filterApplicants() {
+  const query = document.getElementById('applicant-search').value.toLowerCase().trim();
+  const rows = document.querySelectorAll('.applicant-row');
+
+  rows.forEach(row => {
+    const name = row.getAttribute('data-name') || '';
+    const roll = row.getAttribute('data-roll') || '';
+    const dept = row.getAttribute('data-dept') || '';
+    const eligible = row.getAttribute('data-eligible') || '';
+    const stage = row.getAttribute('data-stage') || '';
+
+    const matchesQuery = name.includes(query) || roll.includes(query) || dept.includes(query);
+    
+    let matchesFilter = true;
+    if (currentFilter === 'ELIGIBLE') {
+      matchesFilter = (eligible === 'ELIGIBLE');
+    } else if (currentFilter === 'SHORTLISTED') {
+      matchesFilter = (stage === 'SHORTLISTED');
+    } else if (currentFilter === 'INTERVIEW') {
+      matchesFilter = (stage === 'INTERVIEW');
+    } else if (currentFilter === 'OFFERED') {
+      matchesFilter = (stage === 'OFFERED');
+    }
+
+    if (matchesQuery && matchesFilter) {
+      row.style.display = '';
+    } else {
+      row.style.display = 'none';
+    }
+  });
+}
+
+function openTPOStudentModal(id) {
+  const modal = document.getElementById(id);
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeTPOStudentModal(id) {
+  const modal = document.getElementById(id);
+  if (modal) modal.style.display = 'none';
+}
+
+function viewResumeModal(name, roll, dept, cpi, filename) {
+  document.getElementById('modalStudentName').innerText = name;
+  document.getElementById('modalStudentMeta').innerText = `Roll No: ${roll} • ${dept}`;
+  document.getElementById('modalResumeFilename').innerText = filename;
+  document.getElementById('modalStudentCPI').innerText = cpi;
+  const modal = document.getElementById('resumeModal');
+  modal.style.display = 'flex';
+}
+
+function closeResumeModal() {
+  document.getElementById('resumeModal').style.display = 'none';
+}
+</script>
+{% endblock %}

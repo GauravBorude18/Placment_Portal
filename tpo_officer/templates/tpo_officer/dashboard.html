@@ -1,0 +1,304 @@
+{% extends 'tpo_officer/base_tpo.html' %}
+{% load static %}
+
+{% block title %}TPO Master Dashboard | A2Z Placement Cell{% endblock %}
+
+{% block extra_head %}
+<style>
+  /* Compact & Dense Executive Dashboard Styles */
+  .stat-number { font-size: 1.35rem !important; line-height: 1.15; font-weight: 800; }
+  .stat-card { padding: 0.85rem 1.1rem !important; border-radius: 12px !important; box-shadow: 0 4px 14px rgba(0,0,0,0.05) !important; transition: transform 0.15s ease; }
+  .stat-card:hover { transform: translateY(-2px); }
+  .stat-label { font-size: 0.7rem !important; font-weight: 800; letter-spacing: 0.03em; }
+  .stat-footer { font-size: 0.68rem !important; margin-top: 0.35rem !important; }
+  .stat-icon-wrap { width: 28px !important; height: 28px !important; font-size: 0.85rem !important; }
+  
+  table th { font-size: 0.68rem !important; padding: 0.65rem 0.75rem !important; }
+  table td { font-size: 0.76rem !important; padding: 0.65rem 0.75rem !important; }
+  h2 { font-size: 1.15rem !important; }
+  h3 { font-size: 0.92rem !important; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="padding-bottom: 2rem;">
+  
+  <!-- 1. Luxury Highlighted Grand Header Banner -->
+  <div style="background: linear-gradient(135deg, #062b1e 0%, #0c3e2e 45%, #0d2238 100%); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 16px; padding: 1.25rem 1.6rem; display: flex; justify-content: space-between; align-items: center; gap: 1.25rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1); margin-bottom: 1.5rem; flex-wrap: wrap;">
+    <div style="display: flex; align-items: center; gap: 0.95rem;">
+      <div style="width: 46px; height: 46px; border-radius: 12px; background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; box-shadow: 0 0 20px rgba(16, 185, 129, 0.5); border: 1px solid rgba(255, 255, 255, 0.2); flex-shrink: 0;">
+        🏛️
+      </div>
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem;">
+          <span style="background: rgba(16, 185, 129, 0.25); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.5); font-size: 0.65rem; font-weight: 800; padding: 0.12rem 0.55rem; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.05em;">
+            🟢 LIVE SEASON 2026-27 (CLASS OF 2027)
+          </span>
+          <span style="color: rgba(255, 255, 255, 0.3); font-size: 0.72rem;">•</span>
+          <span style="color: #94a3b8; font-size: 0.72rem; font-weight: 600;">Prof. S. Bhattacharya (Head, TPO)</span>
+        </div>
+        <h2 style="font-size: 1.25rem; color: #ffffff; font-weight: 900; margin: 0; letter-spacing: -0.01em; line-height: 1.2;">Training & Placement Officer (TPO) Master Dashboard</h2>
+        <p style="font-size: 0.78rem; color: #cbd5e1; margin: 0.25rem 0 0; font-weight: 500;">Live Campus Governance (2026-27) &bull; Star Placements, Department Velocity & Multi-Year Benchmarks</p>
+      </div>
+    </div>
+
+    <!-- Quick Action Hub -->
+    <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+      <a href="{% url 'tpo_officer:verify_students' %}" class="btn btn-primary btn-sm" style="background: #059669; border-color: #059669; font-size: 0.76rem; padding: 0.45rem 0.85rem; border-radius: 8px; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 0.35rem; box-shadow: 0 4px 12px rgba(5,150,105,0.25);">
+        <span>🛡️</span> Student Verifications ({{ pending_students }})
+      </a>
+      <a href="{% url 'tpo_officer:all_jafs' %}" class="btn btn-secondary btn-sm" style="background: rgba(255, 255, 255, 0.08); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.2); font-size: 0.76rem; padding: 0.45rem 0.85rem; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem;">
+        <span>💼</span> Company JAFs ({{ pending_jafs }})
+      </a>
+      <a href="{% url 'tpo_officer:analytics' %}" class="btn btn-secondary btn-sm" style="background: rgba(255, 255, 255, 0.08); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.2); font-size: 0.76rem; padding: 0.45rem 0.85rem; border-radius: 8px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.35rem;">
+        <span>📈</span> Analytics & Graphs
+      </a>
+    </div>
+  </div>
+
+  <!-- 2. Executive 4-KPI Metrics Grid (Color-Coded Pastel Cards) -->
+  <section class="stats-grid" style="margin-bottom: 1.5rem; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
+    
+    <div class="stat-card" style="background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%); border: 1.5px solid #a7f3d0; border-left: 5px solid #059669;">
+      <div class="stat-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <span class="stat-label" style="color: #065f46;">2026-27 Live Placement Rate</span>
+        <div class="stat-icon-wrap" style="background: #d1fae5; color: #047857; border-radius: 8px; padding: 0.3rem;">🎯</div>
+      </div>
+      <div class="stat-number" style="color: #047857; margin-top: 0.35rem;">98.8% Placed</div>
+      <div class="stat-footer">
+        <span style="color: #047857; font-weight: 800;">395 Offers Issued</span> &bull; 
+        <span style="color: #065f46;">Class of 2027</span>
+      </div>
+    </div>
+
+    <div class="stat-card" style="background: linear-gradient(135deg, #fffbeb 0%, #ffffff 100%); border: 1.5px solid #fde68a; border-left: 5px solid #d97706;">
+      <div class="stat-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <span class="stat-label" style="color: #92400e;">Highest Package (2026-27)</span>
+        <div class="stat-icon-wrap" style="background: #fef3c7; color: #b45309; border-radius: 8px; padding: 0.3rem;">🏆</div>
+      </div>
+      <div class="stat-number" style="color: #b45309; margin-top: 0.35rem;">₹1.68 Cr CTC</div>
+      <div class="stat-footer">
+        <span style="color: #92400e; font-weight: 700;">Optiver Amsterdam &bull; Quant Research</span>
+      </div>
+    </div>
+
+    <div class="stat-card" style="background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%); border: 1.5px solid #93c5fd; border-left: 5px solid #2563eb;">
+      <div class="stat-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <span class="stat-label" style="color: #1e40af;">Average Batch CTC (2026-27)</span>
+        <div class="stat-icon-wrap" style="background: #dbeafe; color: #1d4ed8; border-radius: 8px; padding: 0.3rem;">📊</div>
+      </div>
+      <div class="stat-number" style="color: #1d4ed8; margin-top: 0.35rem;">₹26.8 LPA</div>
+      <div class="stat-footer">
+        <span style="color: #1d4ed8; font-weight: 800;">+8.9% over 2025-26</span> &bull; <span style="color: #1e40af;">Median: ₹23.5 LPA</span>
+      </div>
+    </div>
+
+    <div class="stat-card" style="background: linear-gradient(135deg, #faf5ff 0%, #ffffff 100%); border: 1.5px solid #d8b4fe; border-left: 5px solid #7c3aed;">
+      <div class="stat-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+        <span class="stat-label" style="color: #6b21a8;">Corporate Drives & JAFs</span>
+        <div class="stat-icon-wrap" style="background: #f3e8ff; color: #7e22ce; border-radius: 8px; padding: 0.3rem;">🏢</div>
+      </div>
+      <div class="stat-number" style="color: #7e22ce; margin-top: 0.35rem;">{{ total_jafs }} Positions</div>
+      <div class="stat-footer">
+        <span style="color: #059669; font-weight: 800;">{{ approved_jafs }} Live Active</span> &bull; 
+        <span style="color: #d97706; font-weight: 700;">{{ pending_jafs }} Pending</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. TOP ACHIEVERS & HIGHEST CTC STAR CANDIDATES TABLE (EMERALD MINT THEME) -->
+  <section style="background: #ffffff; border: 1.5px solid #a7f3d0; border-radius: 14px; overflow: hidden; box-shadow: 0 6px 20px rgba(16, 185, 129, 0.08); margin-bottom: 1.5rem;">
+    
+    <!-- Card Header -->
+    <div style="background: linear-gradient(135deg, #064e3b 0%, #047857 50%, #059669 100%); color: #ffffff; padding: 1rem 1.35rem; display: flex; justify-content: space-between; align-items: center;">
+      <div style="display: flex; align-items: center; gap: 0.65rem;">
+        <div style="width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; font-weight: 800;">🏆</div>
+        <div>
+          <h3 style="font-size: 0.98rem; font-weight: 800; color: #ffffff; margin: 0;">Star Placement Achievers & Highest Package Breakdown</h3>
+          <p style="font-size: 0.72rem; color: #a7f3d0; margin: 0.1rem 0 0 0;">Top International & Domestic Campus Selections (Class of 2026)</p>
+        </div>
+      </div>
+      <span style="background: #ffffff; color: #047857; font-size: 0.7rem; font-weight: 800; padding: 0.25rem 0.65rem; border-radius: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+        Super Dream League
+      </span>
+    </div>
+
+    <div style="padding: 1.1rem; background: #f0fdf4; overflow-x: auto;">
+      <table style="width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; font-size: 0.8rem; background: #ffffff; border-radius: 10px; overflow: hidden; border: 1px solid #a7f3d0; min-width: 800px;">
+        <thead style="background: linear-gradient(135deg, #064e3b, #047857); color: #ffffff; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em;">
+          <tr>
+            <th style="padding: 0.75rem 1rem; color: #ffffff;">Candidate</th>
+            <th style="padding: 0.75rem 0.8rem; color: #a7f3d0;">Roll No & Department</th>
+            <th style="padding: 0.75rem 1rem; color: #ffffff;">Hiring Company</th>
+            <th style="padding: 0.75rem 0.8rem; color: #a7f3d0;">Designation / Role</th>
+            <th style="padding: 0.75rem 0.8rem; color: #fde68a;">Package (CTC)</th>
+            <th style="padding: 0.75rem 1rem; text-align: right; color: #ffffff;">Tier / Category</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for st in star_placed_students %}
+          <tr style="border-bottom: 1px solid #e2e8f0; background: {% cycle '#ffffff' '#f0fdf4' %}; transition: background 0.15s ease;">
+            <td style="padding: 0.8rem 1rem; font-weight: 800; color: #0f172a;">{{ st.name }}</td>
+            <td style="padding: 0.8rem 0.8rem;">
+              <span style="font-family: monospace; color: #475569; font-weight: 700;">{{ st.roll }}</span> &bull; 
+              <span style="color: #047857; font-weight: 700;">{{ st.dept }}</span>
+            </td>
+            <td style="padding: 0.8rem 1rem;">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <div style="width: 26px; height: 26px; border-radius: 6px; background: #ffffff; border: 1px solid #cbd5e1; padding: 0.15rem; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+                  <img src="{{ st.company_logo }}" alt="{{ st.company }}" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.onerror=null; this.parentElement.innerHTML='<span style=\'font-size:0.6rem; font-weight:800; color:#1e40af;\'>{{ st.company_fallback }}</span>';">
+                </div>
+                <strong style="color: #0f172a; font-size: 0.84rem;">{{ st.company }}</strong>
+              </div>
+            </td>
+            <td style="padding: 0.8rem 0.8rem; color: #1e293b; font-weight: 700;">{{ st.role }}</td>
+            <td style="padding: 0.8rem 0.8rem;">
+              <div style="font-size: 0.95rem; font-weight: 900; color: #047857;">{{ st.ctc }}</div>
+              <div style="font-size: 0.65rem; color: #059669; font-weight: 600;">{{ st.ctc_badge }}</div>
+            </td>
+            <td style="padding: 0.8rem 1rem; text-align: right;">
+              <span style="background: {% if st.tier == 'Super Dream' %}#dcfce7; color:#15803d; border:1px solid #86efac;{% else %}#eff6ff; color:#1d4ed8; border:1px solid #bfdbfe;{% endif %} font-size: 0.7rem; font-weight: 800; padding: 0.2rem 0.55rem; border-radius: 6px; white-space: nowrap; display: inline-block;">
+                {{ st.tier }}
+              </span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 4. DEPARTMENT-WISE HIRING MATRIX & VELOCITY (ROYAL BLUE THEME) -->
+  <section style="background: #ffffff; border: 1.5px solid #93c5fd; border-radius: 14px; overflow: hidden; box-shadow: 0 6px 20px rgba(37, 99, 235, 0.08); margin-bottom: 1.5rem;">
+    
+    <!-- Card Header -->
+    <div style="background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #2563eb 100%); color: #ffffff; padding: 1rem 1.35rem; display: flex; justify-content: space-between; align-items: center;">
+      <div style="display: flex; align-items: center; gap: 0.65rem;">
+        <div style="width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; font-weight: 800;">📊</div>
+        <div>
+          <h3 style="font-size: 0.98rem; font-weight: 800; color: #ffffff; margin: 0;">Department-Wise Placement Performance & Hiring Velocity</h3>
+          <p style="font-size: 0.72rem; color: #bfdbfe; margin: 0.1rem 0 0 0;">Enrolled vs Placed, Package Statistics & Top Hiring Partners</p>
+        </div>
+      </div>
+      <a href="{% url 'tpo_officer:analytics' %}" style="background: #ffffff; color: #1d4ed8; font-size: 0.72rem; font-weight: 800; padding: 0.25rem 0.75rem; border-radius: 20px; text-decoration: none; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+        Deep Analytics Graphs →
+      </a>
+    </div>
+
+    <div style="padding: 1.1rem; background: #f0f9ff; overflow-x: auto;">
+      <table style="width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; font-size: 0.8rem; background: #ffffff; border-radius: 10px; overflow: hidden; border: 1px solid #bfdbfe; min-width: 900px;">
+        <thead style="background: linear-gradient(135deg, #1e3a8a, #1d4ed8); color: #ffffff; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em;">
+          <tr>
+            <th style="padding: 0.75rem 1rem; color: #ffffff;">Department / Discipline</th>
+            <th style="padding: 0.75rem 0.75rem; color: #93c5fd; white-space: nowrap;">Enrolled</th>
+            <th style="padding: 0.75rem 0.75rem; color: #6ee7b7; white-space: nowrap;">Placed</th>
+            <th style="padding: 0.75rem 0.75rem; color: #fde68a; white-space: nowrap;">Placement Rate</th>
+            <th style="padding: 0.75rem 0.75rem; color: #93c5fd; white-space: nowrap;">Average CTC</th>
+            <th style="padding: 0.75rem 0.75rem; color: #fde68a; white-space: nowrap;">Highest CTC</th>
+            <th style="padding: 0.75rem 1rem; text-align: right; color: #ffffff;">Key Hiring Organizations</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for dept in department_hiring_data %}
+          <tr style="border-bottom: 1px solid #e2e8f0; background: {% cycle '#ffffff' '#f0f9ff' %};">
+            <td style="padding: 0.8rem 1rem; font-weight: 800; color: #0f172a;">
+              <span>{{ dept.icon }}</span> {{ dept.name }}
+            </td>
+            <td style="padding: 0.8rem 0.75rem; color: #475569; font-weight: 700; white-space: nowrap;">{{ dept.enrolled }}</td>
+            <td style="padding: 0.8rem 0.75rem; font-weight: 800; color: #059669; white-space: nowrap;">{{ dept.placed }}</td>
+            <td style="padding: 0.8rem 0.75rem; white-space: nowrap;">
+              <span style="background: {% if dept.rate >= 95 %}#dcfce7; color:#15803d; border:1px solid #86efac;{% else %}#fef3c7; color:#b45309; border:1px solid #fde68a;{% endif %} font-weight: 800; font-size: 0.74rem; padding: 0.2rem 0.55rem; border-radius: 6px; white-space: nowrap; display: inline-block;">
+                {{ dept.rate }}%
+              </span>
+            </td>
+            <td style="padding: 0.8rem 0.75rem; font-weight: 800; color: #1d4ed8; white-space: nowrap;">
+              <span style="background: #eff6ff; color: #1d4ed8; padding: 0.2rem 0.55rem; border-radius: 6px; border: 1px solid #bfdbfe; white-space: nowrap; display: inline-block;">
+                {{ dept.avg_ctc }}
+              </span>
+            </td>
+            <td style="padding: 0.8rem 0.75rem; font-weight: 900; color: #b45309; white-space: nowrap;">
+              <span style="background: #fef3c7; color: #b45309; padding: 0.2rem 0.55rem; border-radius: 6px; border: 1px solid #fde68a; white-space: nowrap; display: inline-block;">
+                {{ dept.highest_ctc }}
+              </span>
+            </td>
+            <td style="padding: 0.8rem 1rem; text-align: right; color: #475569; font-size: 0.74rem; font-weight: 600;">
+              {{ dept.top_recruiters }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 5. LIVE 2026-27 CORPORATE DRIVES & INTERVIEW SCHEDULE RADAR (ROYAL PURPLE THEME) -->
+  <section style="background: #ffffff; border: 1.5px solid #d8b4fe; border-radius: 14px; overflow: hidden; box-shadow: 0 6px 20px rgba(126, 34, 206, 0.08); margin-bottom: 1.5rem;">
+    
+    <!-- Card Header -->
+    <div style="background: linear-gradient(135deg, #581c87 0%, #7e22ce 50%, #9333ea 100%); color: #ffffff; padding: 1rem 1.35rem; display: flex; justify-content: space-between; align-items: center;">
+      <div style="display: flex; align-items: center; gap: 0.65rem;">
+        <div style="width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; font-weight: 800;">🔴</div>
+        <div>
+          <h3 style="font-size: 0.98rem; font-weight: 800; color: #ffffff; margin: 0;">Live Ongoing Recruitment Pipeline & Interview Schedule Radar (2026-27)</h3>
+          <p style="font-size: 0.72rem; color: #f3e8ff; margin: 0.1rem 0 0 0;">Active HackerRank Online Coding Tests, Day 1 & Day 2 Interview Slots and Live Offers</p>
+        </div>
+      </div>
+      <span style="background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; font-size: 0.7rem; font-weight: 800; padding: 0.25rem 0.65rem; border-radius: 20px; display: inline-flex; align-items: center; gap: 0.35rem;">
+        <span style="width: 7px; height: 7px; background: #dc2626; border-radius: 50%; display: inline-block;"></span>
+        LIVE PIPELINE
+      </span>
+    </div>
+
+    <div style="padding: 1.1rem; background: #faf5ff; overflow-x: auto;">
+      <table style="width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; font-size: 0.8rem; background: #ffffff; border-radius: 10px; overflow: hidden; border: 1px solid #d8b4fe; min-width: 900px;">
+        <thead style="background: linear-gradient(135deg, #581c87, #7e22ce); color: #ffffff; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em;">
+          <tr>
+            <th style="padding: 0.75rem 1rem; color: #ffffff; white-space: nowrap;">Company</th>
+            <th style="padding: 0.75rem 0.8rem; color: #f3e8ff; white-space: nowrap;">Role & Package</th>
+            <th style="padding: 0.75rem 1.2rem; color: #ffffff; white-space: nowrap;">Live Assessment / Interview Stage</th>
+            <th style="padding: 0.75rem 0.8rem; color: #f3e8ff; white-space: nowrap;">Candidates in Stage</th>
+            <th style="padding: 0.75rem 0.8rem; color: #fde68a; white-space: nowrap;">Slot & Timing</th>
+            <th style="padding: 0.75rem 1rem; text-align: right; color: #ffffff; white-space: nowrap;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for sch in live_pipeline_schedules %}
+          <tr style="border-bottom: 1px solid #e2e8f0; background: {% cycle '#ffffff' '#faf5ff' %};">
+            <td style="padding: 0.8rem 1rem;">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <div style="width: 26px; height: 26px; border-radius: 6px; background: #ffffff; border: 1px solid #cbd5e1; padding: 0.15rem; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+                  <img src="{{ sch.logo }}" alt="{{ sch.company }}" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.onerror=null; this.parentElement.innerHTML='<span style=\'font-size:0.6rem; font-weight:800; color:#1e40af;\'>{{ sch.fallback }}</span>';">
+                </div>
+                <strong style="color: #0f172a; font-size: 0.84rem; white-space: nowrap;">{{ sch.company }}</strong>
+              </div>
+            </td>
+            <td style="padding: 0.8rem 0.8rem;">
+              <span style="font-weight: 700; color: #1e293b; white-space: nowrap;">{{ sch.role }}</span>
+              <div style="font-size: 0.74rem; font-weight: 900; color: #047857; white-space: nowrap;">{{ sch.ctc }}</div>
+            </td>
+            <td style="padding: 0.8rem 1.2rem;">
+              <strong style="color: {{ sch.status_color }}; font-size: 0.82rem; white-space: nowrap; display: inline-block;">{{ sch.stage_label }}</strong>
+            </td>
+            <td style="padding: 0.8rem 0.8rem; white-space: nowrap;">
+              <span style="background: #faf5ff; color: #7e22ce; border: 1px solid #d8b4fe; font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.55rem; border-radius: 6px; white-space: nowrap; display: inline-block;">
+                {{ sch.stage_badge }}
+              </span>
+            </td>
+            <td style="padding: 0.8rem 0.8rem; font-size: 0.74rem; color: #475569; white-space: nowrap;">
+              <strong style="color: #0f172a;">{{ sch.slot }}</strong>
+              <div style="color: #64748b; font-weight: 600;">{{ sch.time }}</div>
+            </td>
+            <td style="padding: 0.8rem 1rem; text-align: right;">
+              <a href="{% url 'tpo_officer:all_jafs' %}" class="btn btn-secondary btn-sm" style="font-size: 0.72rem; padding: 0.35rem 0.75rem; border-radius: 6px; text-decoration: none; font-weight: 700; background: #7e22ce; color: #ffffff; border: none; box-shadow: 0 2px 6px rgba(126,34,206,0.25);">
+                Inspect Drive →
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</div>
+{% endblock %}

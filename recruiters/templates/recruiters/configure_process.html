@@ -1,0 +1,314 @@
+{% extends 'recruiters/base_recruiter.html' %}
+{% load static %}
+
+{% block title %}Configure Hiring Workflow & Rounds for {{ company.name }} | A2Z Placement Cell{% endblock %}
+
+{% block content %}
+<div class="recruiter-dashboard-wrap">
+
+  <!-- Header Card -->
+  <div style="background: linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e293b 100%); border: 1px solid rgba(6, 182, 212, 0.35); border-radius: var(--radius-lg); padding: 1.35rem 1.6rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; box-shadow: 0 4px 20px rgba(0,0,0,0.15); flex-wrap: wrap;">
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <div style="width: 50px; height: 50px; border-radius: 14px; background: linear-gradient(135deg, #0284c7, #06b6d4); color: #ffffff; font-weight: 800; font-size: 1rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 16px rgba(6, 182, 212, 0.35); flex-shrink: 0;">
+        {{ company.logo_fallback }}
+      </div>
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
+          <h2 style="font-size: 1.3rem; color: #ffffff; margin: 0;">{{ company.name }} • Hiring Workflow & Stage Setup</h2>
+          <span style="background: rgba(6, 182, 212, 0.2); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.4); font-size: 0.72rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: var(--radius-full);">
+            {{ jaf.role_title }}
+          </span>
+        </div>
+        <p style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.35rem;">
+          Configure evaluation rounds, set deadlines, order positions (Round 1, 2, 3...) and Online/Offline links.
+        </p>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 0.65rem; align-items: center;">
+      <a href="{% url 'recruiters:roadmap' jaf.id %}" class="btn btn-primary btn-sm" style="background: #0284c7; border-color: #0284c7;">
+        <span>🗺️</span> View Live Road Map
+      </a>
+      <a href="{% url 'recruiters:delete_jaf' jaf.id %}" onclick="return confirm('⚠️ नकी ही नोकरी (Job Posting) Delete करायची आहे का?\n\nAre you sure you want to delete this job posting \'{{ jaf.role_title|escapejs }}\'? All candidate applications and scheduled rounds for this drive will be permanently removed.')" class="btn btn-sm" style="background: #fef2f2; color: #dc2626; border: 1px solid #fca5a5; font-weight: 700;">
+        <span>🗑️</span> Delete Job Posting
+      </a>
+      <a href="{% url 'recruiters:dashboard' %}" class="btn btn-secondary btn-sm">
+        ← Dashboard
+      </a>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 1.25rem; margin-top: 1.25rem;">
+    
+    <!-- Left Column: Add / Customize Recruitment Round Form -->
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 1.5rem; box-shadow: var(--shadow-sm);">
+      <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.25rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">
+        <span style="font-size: 1.2rem;">➕</span>
+        <div>
+          <h3 style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 0;">Add Process Stage & Deadline</h3>
+          <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.1rem;">Title is optional (auto-filled if empty). Set schedule, deadline, and venue mode.</p>
+        </div>
+      </div>
+
+      <form method="POST">
+        {% csrf_token %}
+        
+        <div style="display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 0.75rem; margin-bottom: 0.85rem;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" style="font-size: 0.78rem; font-weight: 800; color: #0f172a;">Round Type *</label>
+            <select name="round_type" class="filter-select" style="width: 100%; padding: 0.6rem; border-radius: var(--radius-sm); font-weight: 700;">
+              <option value="SHORTLISTING">📋 Resume & Profile Shortlisting Round</option>
+              <option value="ONLINE_TEST">💻 Online Technical Test / Coding Assessment</option>
+              <option value="GROUP_DISCUSSION">🗣️ Group Discussion (GD) / Communication Round</option>
+              <option value="TECH_INTERVIEW_1">⚙️ Technical Interview (Round 1 - Core Domain)</option>
+              <option value="TECH_INTERVIEW_2">🔬 Technical Interview (Round 2 - System Design)</option>
+              <option value="HR_INTERVIEW">👔 HR & Cultural Fitment Round</option>
+              <option value="OFFER_ROLLOUT">🏆 Final Job Offer Rollout</option>
+            </select>
+          </div>
+
+          <!-- POSITION ORDER NUMBER SELECTOR -->
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" style="font-size: 0.78rem; font-weight: 800; color: #0284c7;">🔢 Sequence Position *</label>
+            <select name="position_number" class="filter-select" style="width: 100%; padding: 0.6rem; border-radius: var(--radius-sm); font-weight: 800; background: #f0f9ff; border-color: #7dd3fc; color: #0369a1;">
+              <option value="1">Position 1 (At Start of Drive)</option>
+              <option value="2">Position 2</option>
+              <option value="3">Position 3</option>
+              <option value="4">Position 4</option>
+              <option value="5">Position 5</option>
+              <option value="0" selected>At End of Sequence (Default)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- OPTIONAL ROUND TITLE FIELD -->
+        <div class="form-group" style="margin-bottom: 0.85rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+            <label class="form-label" style="font-size: 0.78rem; font-weight: 800; color: #0f172a; margin: 0;">Round Title & Topic (Optional)</label>
+            <span style="font-size: 0.7rem; color: #059669; font-weight: 700;">✓ Auto-filled if left blank</span>
+          </div>
+          <input type="text" name="title" class="form-input" placeholder="e.g. Special System Architecture Round (Optional)" style="font-weight: 600;">
+        </div>
+
+        <!-- DRIVE EVALUATION MODE SELECTOR (ONLINE / OFFLINE / HYBRID) -->
+        <div class="form-group" style="margin-bottom: 1rem; background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 0.9rem;">
+          <label class="form-label" style="font-size: 0.8rem; font-weight: 800; color: #047857; display: block; margin-bottom: 0.5rem;">
+            Process Evaluation Mode *
+          </label>
+          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; font-weight: 700; color: #1e293b; cursor: pointer; background: #ffffff; padding: 0.4rem 0.75rem; border-radius: 8px; border: 1px solid #cbd5e1;">
+              <input type="radio" name="mode" value="ONLINE" checked onchange="toggleModeFields('ONLINE')">
+              <span>🌐 Online Mode</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; font-weight: 700; color: #1e293b; cursor: pointer; background: #ffffff; padding: 0.4rem 0.75rem; border-radius: 8px; border: 1px solid #cbd5e1;">
+              <input type="radio" name="mode" value="OFFLINE" onchange="toggleModeFields('OFFLINE')">
+              <span>📍 Offline / Venue Mode</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; font-weight: 700; color: #1e293b; cursor: pointer; background: #ffffff; padding: 0.4rem 0.75rem; border-radius: 8px; border: 1px solid #cbd5e1;">
+              <input type="radio" name="mode" value="HYBRID" onchange="toggleModeFields('HYBRID')">
+              <span>🔀 Hybrid (Link & Address)</span>
+            </label>
+          </div>
+
+          <!-- DYNAMIC ONLINE MEETING LINK FIELD -->
+          <div id="online-link-box" style="margin-top: 0.85rem;">
+            <label style="font-size: 0.76rem; font-weight: 800; color: #1d4ed8; display: block; margin-bottom: 0.3rem;">
+              Online Meeting Video Link / Assessment Portal URL *
+            </label>
+            <input type="url" name="meeting_link" class="form-input" placeholder="e.g. https://meet.google.com/a2z-interview-panel-1 or https://hackerrank.com/test-link" style="font-weight: 600; border-color: #93c5fd; background: #ffffff;">
+            <span style="font-size: 0.7rem; color: #64748b; margin-top: 0.2rem; display: block;">
+              🔗 Shared with shortlisted candidates to join video interview / coding test.
+            </span>
+          </div>
+
+          <!-- DYNAMIC OFFLINE VENUE ADDRESS FIELD -->
+          <div id="offline-venue-box" style="display: none; margin-top: 0.85rem;">
+            <label style="font-size: 0.76rem; font-weight: 800; color: #b45309; display: block; margin-bottom: 0.3rem;">
+              Physical Campus Venue & Full Address *
+            </label>
+            <textarea name="venue_address" rows="2" class="form-input" placeholder="e.g. Room MB-204, Gulmohar Building, Main Admin Block, Campus HQ" style="font-weight: 600; border-color: #fde68a; background: #ffffff;"></textarea>
+            <span style="font-size: 0.7rem; color: #64748b; margin-top: 0.2rem; display: block;">
+              📍 Address & hall details for candidate reporting and offline rounds.
+            </span>
+          </div>
+        </div>
+
+        <!-- SCHEDULED DATE, TIME & DEADLINE -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.6rem; margin-bottom: 0.85rem;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" style="font-size: 0.76rem; font-weight: 700;">Scheduled Date *</label>
+            <input type="text" name="scheduled_date" class="form-input" placeholder="e.g. Dec 1, 2026" value="Dec 1, 2026" required>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" style="font-size: 0.76rem; font-weight: 700;">Scheduled Time *</label>
+            <input type="text" name="scheduled_time" class="form-input" placeholder="e.g. 10:00 AM IST" value="10:00 AM IST" required>
+          </div>
+          <!-- DEDICATED DEADLINE FIELD -->
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" style="font-size: 0.76rem; font-weight: 800; color: #dc2626;">⏳ Submission Deadline</label>
+            <input type="text" name="deadline" class="form-input" placeholder="e.g. Dec 2, 11:59 PM" value="Dec 2, 2026 • 11:59 PM IST" style="font-weight: 700; border-color: #fca5a5; background: #fff5f5; color: #991b1b;">
+          </div>
+        </div>
+
+        <!-- ENFORCE PASSING QUALIFICATION CRITERIA CHECKBOX TOGGLE -->
+        <div class="form-group" style="margin-bottom: 0.85rem; background: #fafafa; border: 1px solid #e2e8f0; border-radius: 10px; padding: 0.75rem 0.9rem;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; font-weight: 800; color: #0f172a; cursor: pointer; margin: 0;">
+            <input type="checkbox" name="enforce_passing_criteria" id="enforce_criteria_cb" checked onchange="toggleCriteriaBox(this.checked)" style="width: 16px; height: 16px; accent-color: #059669;">
+            <span>🎯 Enforce Passing Qualification Criteria / Cutoff</span>
+          </label>
+
+          <div id="criteria_input_box" style="margin-top: 0.6rem;">
+            <input type="text" name="passing_criteria" class="form-input" placeholder="e.g. Min 70% in Coding Test / CPI Cutoff ≥ 7.5" value="Min 70% Score" style="font-weight: 600;">
+            <span style="font-size: 0.7rem; color: #64748b; margin-top: 0.2rem; display: block;">
+              Minimum score or rating required for candidates to pass this evaluation round.
+            </span>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label class="form-label" style="font-size: 0.78rem;">Description & Instructions</label>
+          <textarea name="description" rows="2" class="form-input" placeholder="Guidelines for candidate evaluation..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; background: linear-gradient(135deg, #059669, #10b981); border: none; padding: 0.75rem; font-weight: 800; font-size: 0.9rem; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);">
+          <span>✨</span> Insert Stage at Chosen Position
+        </button>
+      </form>
+    </div>
+
+    <!-- Right Column: Current Configured Stages List & Re-order Control -->
+    <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 1.5rem; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; justify-content: space-between;">
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.75rem;">
+          <div>
+            <h3 style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 0;">Configured Process Stages ({{ rounds.count }})</h3>
+            <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.1rem;">Recruitment workflow for {{ jaf.role_title }}</p>
+          </div>
+          <span style="font-size: 0.72rem; background: #ecfdf5; color: #059669; font-weight: 800; padding: 0.18rem 0.6rem; border-radius: var(--radius-full);">
+            ✓ Live Sequence
+          </span>
+        </div>
+
+        <form method="POST">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="reorder_rounds">
+
+          <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+            {% for r in rounds %}
+            <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 0.85rem 1.1rem; display: flex; justify-content: space-between; align-items: flex-start; gap: 0.75rem; box-shadow: 0 2px 6px rgba(0,0,0,0.02);">
+              <div style="display: flex; align-items: flex-start; gap: 0.75rem;">
+                <!-- POSITION CHANGE INPUT -->
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 0.15rem;">
+                  <span style="font-size: 0.65rem; color: #64748b; font-weight: 800;">POS</span>
+                  <input type="number" name="pos_round_{{ r.id }}" value="{{ r.round_number }}" min="1" max="20" style="width: 38px; height: 32px; text-align: center; font-weight: 800; font-size: 0.84rem; border: 1.5px solid #0284c7; border-radius: 6px; background: #f0f9ff; color: #0369a1;">
+                </div>
+
+                <div>
+                  <div style="display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap;">
+                    <strong style="font-weight: 800; font-size: 0.88rem; color: #0f172a;">{{ r.title }}</strong>
+                    
+                    <!-- MODE BADGE -->
+                    {% if r.mode == 'OFFLINE' %}
+                    <span style="background: #fef3c7; color: #b45309; border: 1px solid #fde68a; font-size: 0.65rem; font-weight: 800; padding: 0.1rem 0.45rem; border-radius: 4px;">
+                      📍 Offline Venue
+                    </span>
+                    {% elif r.mode == 'HYBRID' %}
+                    <span style="background: #f3e8ff; color: #7e22ce; border: 1px solid #d8b4fe; font-size: 0.65rem; font-weight: 800; padding: 0.1rem 0.45rem; border-radius: 4px;">
+                      🔀 Hybrid Mode
+                    </span>
+                    {% else %}
+                    <span style="background: #dbeafe; color: #1d4ed8; border: 1px solid #93c5fd; font-size: 0.65rem; font-weight: 800; padding: 0.1rem 0.45rem; border-radius: 4px;">
+                      🌐 Online Meeting / Test
+                    </span>
+                    {% endif %}
+                  </div>
+
+                  <div style="font-size: 0.74rem; color: #475569; margin-top: 0.25rem; display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;">
+                    <span>📅 {{ r.scheduled_date }} • 🕒 {{ r.scheduled_time }}</span>
+                    {% if r.deadline %}
+                    <span style="background: #fff1f2; color: #991b1b; border: 1px solid #fecaca; font-weight: 800; font-size: 0.68rem; padding: 0.1rem 0.45rem; border-radius: 4px;">
+                      ⏳ Deadline: {{ r.deadline }}
+                    </span>
+                    {% endif %}
+                  </div>
+
+                  <!-- LINK / VENUE ADDRESS PREVIEW -->
+                  {% if r.meeting_link %}
+                  <div style="margin-top: 0.35rem;">
+                    <a href="{{ r.meeting_link }}" target="_blank" style="font-size: 0.72rem; color: #2563eb; font-weight: 800; text-decoration: none; background: #eff6ff; border: 1px solid #93c5fd; padding: 0.2rem 0.55rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.25rem;">
+                      🔗 Join Online Meeting / Assessment ↗
+                    </a>
+                  </div>
+                  {% endif %}
+
+                  {% if r.venue_address %}
+                  <div style="font-size: 0.72rem; color: #92400e; font-weight: 700; background: #fffbeb; border: 1px solid #fde68a; padding: 0.2rem 0.55rem; border-radius: 6px; margin-top: 0.35rem; display: inline-block;">
+                    📍 Campus Address: {{ r.venue_address }}
+                  </div>
+                  {% endif %}
+
+                </div>
+              </div>
+
+              <div style="display: flex; align-items: center; gap: 0.45rem;">
+                {% if r.status == 'COMPLETED' %}
+                <span style="font-size: 0.68rem; font-weight: 800; color: #059669; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 0.12rem 0.5rem; border-radius: var(--radius-full);">✓ Done</span>
+                {% elif r.status == 'ACTIVE' %}
+                <span style="font-size: 0.68rem; font-weight: 800; color: #1d4ed8; background: #eff6ff; border: 1px solid #93c5fd; padding: 0.12rem 0.5rem; border-radius: var(--radius-full);">⚡ Active</span>
+                {% else %}
+                <span style="font-size: 0.68rem; font-weight: 800; color: #64748b; background: #f1f5f9; border: 1px solid #cbd5e1; padding: 0.12rem 0.5rem; border-radius: var(--radius-full);">⏳ Upcoming</span>
+                {% endif %}
+
+                <a href="{% url 'recruiters:delete_round' r.id %}?next=configure" class="btn btn-secondary btn-sm" style="font-size: 0.7rem; padding: 0.2rem 0.5rem; color: #dc2626; border-color: #fecaca; background: #fff1f2;" onclick="return confirm('Are you sure you want to delete {{ r.title }} from your hiring process?');" title="Delete this round">
+                  🗑️
+                </a>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+
+          <div style="margin-top: 1rem; text-align: right;">
+            <button type="submit" class="btn btn-secondary btn-sm" style="background: #f0f9ff; color: #0284c7; border: 1px solid #7dd3fc; font-weight: 800; font-size: 0.78rem; padding: 0.45rem 0.9rem; border-radius: 8px;">
+              🔄 Update Sequence Order
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #f1f5f9; text-align: center;">
+        <a href="{% url 'recruiters:roadmap' jaf.id %}" class="btn btn-primary" style="background: linear-gradient(135deg, #0284c7, #06b6d4); border: none; width: 100%; font-weight: 800; font-size: 0.88rem; padding: 0.7rem;">
+          <span>🗺️</span> Open Interactive Road Map Tracker →
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+function toggleModeFields(selectedMode) {
+  const onlineBox = document.getElementById('online-link-box');
+  const offlineBox = document.getElementById('offline-venue-box');
+
+  if (selectedMode === 'ONLINE') {
+    if (onlineBox) onlineBox.style.display = 'block';
+    if (offlineBox) offlineBox.style.display = 'none';
+  } else if (selectedMode === 'OFFLINE') {
+    if (onlineBox) onlineBox.style.display = 'none';
+    if (offlineBox) offlineBox.style.display = 'block';
+  } else if (selectedMode === 'HYBRID') {
+    if (onlineBox) onlineBox.style.display = 'block';
+    if (offlineBox) offlineBox.style.display = 'block';
+  }
+}
+
+function toggleCriteriaBox(isEnforced) {
+  const box = document.getElementById('criteria_input_box');
+  if (box) {
+    box.style.display = isEnforced ? 'block' : 'none';
+  }
+}
+</script>
+{% endblock %}

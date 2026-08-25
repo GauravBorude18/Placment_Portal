@@ -1,0 +1,384 @@
+{% extends 'tpo_officer/base_tpo.html' %}
+{% load static %}
+
+{% block title %}Registration Setup & Controls | TPO Officer Desk{% endblock %}
+
+{% block content %}
+<div style="max-width: 1100px; margin: 0 auto; padding-bottom: 3rem;">
+
+  <!-- Executive Header Banner -->
+  <div style="background: linear-gradient(135deg, #064e3b 0%, #047857 50%, #065f46 100%); color: #ffffff; border-radius: 16px; padding: 1.75rem 2rem; margin-bottom: 1.75rem; box-shadow: 0 10px 25px -5px rgba(4, 120, 87, 0.35); position: relative; overflow: hidden; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(52, 211, 153, 0.3);">
+    <div style="position: absolute; right: -20px; bottom: -30px; font-size: 8rem; opacity: 0.08; pointer-events: none;">⚙️</div>
+    <div>
+      <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.35rem;">
+        <span style="background: rgba(255,255,255,0.2); backdrop-filter: blur(4px); padding: 0.25rem 0.65rem; border-radius: 20px; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase;">
+          🛡️ Institutional Governance Desk
+        </span>
+        <span style="background: #34d399; color: #064e3b; padding: 0.25rem 0.65rem; border-radius: 20px; font-size: 0.72rem; font-weight: 800;">
+          ● Live Sync Active
+        </span>
+      </div>
+      <h1 style="font-size: 1.6rem; font-weight: 900; margin: 0; color: #ffffff; letter-spacing: -0.02em;">
+        Student Registration Portal Setup & Controls
+      </h1>
+      <p style="font-size: 0.85rem; color: #a7f3d0; margin: 0.35rem 0 0 0; max-width: 680px; line-height: 1.4;">
+        Configure student enrollment fee, allowed qualification degrees, and academic department dropdowns for the Graduating Batch of 2026.
+      </p>
+    </div>
+
+    <a href="{% url 'students:register' %}" target="_blank" style="background: #ffffff; color: #047857; padding: 0.65rem 1.15rem; border-radius: 10px; font-weight: 800; font-size: 0.82rem; text-decoration: none; display: flex; align-items: center; gap: 0.4rem; box-shadow: 0 4px 14px rgba(0,0,0,0.18); transition: transform 0.15s ease;">
+      <span>👁️</span> Preview Live Student Portal ↗
+    </a>
+  </div>
+
+  <!-- Success / Alert Messages -->
+  {% if success_message %}
+  <div style="background: linear-gradient(135deg, #ecfdf5, #d1fae5); border: 1.5px solid #34d399; color: #065f46; padding: 1rem 1.25rem; border-radius: 12px; margin-bottom: 1.5rem; font-weight: 700; font-size: 0.88rem; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.18); animation: fadeInStep 0.25s ease;">
+    <div style="display: flex; align-items: center; gap: 0.6rem;">
+      <span style="font-size: 1.2rem;">🎉</span>
+      <span>{{ success_message }}</span>
+    </div>
+    <span style="font-size: 0.72rem; background: #047857; color: #ffffff; font-weight: 800; padding: 0.25rem 0.65rem; border-radius: 6px;">Published Live</span>
+  </div>
+  {% endif %}
+
+  {% if error_message %}
+  <div style="background: #fef2f2; border: 1.5px solid #fca5a5; color: #b91c1c; padding: 1rem 1.25rem; border-radius: 12px; margin-bottom: 1.5rem; font-weight: 700; font-size: 0.88rem; display: flex; align-items: center; gap: 0.6rem;">
+    <span style="font-size: 1.2rem;">⚠️</span>
+    <span>{{ error_message }}</span>
+  </div>
+  {% endif %}
+
+  <!-- Main Setup Form -->
+  <form method="POST" action="{% url 'tpo_officer:registration_setup' %}">
+    {% csrf_token %}
+
+    <div style="display: grid; grid-template-columns: 1fr 340px; gap: 1.5rem; align-items: start;">
+      
+      <!-- LEFT COLUMN: COLOR-CODED CONTROLS CARDS -->
+      <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+
+        <!-- CARD 1: REGISTRATION FEE MANAGEMENT (EMERALD THEME) -->
+        <div style="background: #ffffff; border: 1.5px solid #a7f3d0; border-radius: 14px; box-shadow: 0 6px 20px rgba(16, 185, 129, 0.08); overflow: hidden;">
+          
+          <!-- Vibrant Header -->
+          <div style="background: linear-gradient(135deg, #065f46 0%, #047857 50%, #059669 100%); color: #ffffff; padding: 1rem 1.35rem; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 0.65rem;">
+              <div style="width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; font-weight: 800;">💳</div>
+              <div>
+                <h3 style="font-size: 0.98rem; font-weight: 800; color: #ffffff; margin: 0; letter-spacing: -0.01em;">Campus Placement Registration Fee</h3>
+                <p style="font-size: 0.72rem; color: #a7f3d0; margin: 0.1rem 0 0 0;">Official enrollment fee collected from candidate during registration</p>
+              </div>
+            </div>
+            <span style="background: #ffffff; color: #047857; font-size: 0.7rem; font-weight: 800; padding: 0.25rem 0.65rem; border-radius: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+              Active Gatekeeper
+            </span>
+          </div>
+
+          <div style="padding: 1.35rem; background: #f0fdf4;">
+            <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem;">
+              <div style="flex: 1;">
+                <label style="font-size: 0.76rem; font-weight: 800; color: #065f46; display: block; margin-bottom: 0.35rem;">
+                  Registration Fee Amount (INR ₹) *
+                </label>
+                <div style="display: flex; align-items: center; background: #ffffff; border: 2px solid #10b981; border-radius: 8px; padding: 0 0.85rem; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);">
+                  <span style="font-size: 1.3rem; font-weight: 900; color: #047857; margin-right: 0.5rem;">₹</span>
+                  <input type="number" step="0.01" min="0" id="fee-amount-input" name="registration_fee_amount" value="{{ active_tpo.registration_fee_amount|default:'99.00' }}" required style="width: 100%; border: none; background: transparent; outline: none; padding: 0.65rem 0; font-size: 1.2rem; font-weight: 800; color: #047857; font-family: monospace;">
+                </div>
+              </div>
+
+              <!-- Quick Presets -->
+              <div style="flex: 1.2;">
+                <label style="font-size: 0.72rem; font-weight: 800; color: #065f46; display: block; margin-bottom: 0.35rem;">
+                  ⚡ Quick Fee Presets:
+                </label>
+                <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+                  <button type="button" onclick="setFeePreset('99.00')" style="background: #ffffff; border: 1px solid #6ee7b7; padding: 0.35rem 0.65rem; border-radius: 6px; font-size: 0.78rem; font-weight: 800; color: #047857; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">₹99</button>
+                  <button type="button" onclick="setFeePreset('149.00')" style="background: #ffffff; border: 1px solid #6ee7b7; padding: 0.35rem 0.65rem; border-radius: 6px; font-size: 0.78rem; font-weight: 800; color: #047857; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">₹149</button>
+                  <button type="button" onclick="setFeePreset('199.00')" style="background: #ffffff; border: 1px solid #6ee7b7; padding: 0.35rem 0.65rem; border-radius: 6px; font-size: 0.78rem; font-weight: 800; color: #047857; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">₹199</button>
+                  <button type="button" onclick="setFeePreset('250.00')" style="background: #ffffff; border: 1px solid #6ee7b7; padding: 0.35rem 0.65rem; border-radius: 6px; font-size: 0.78rem; font-weight: 800; color: #047857; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">₹250</button>
+                  <button type="button" onclick="setFeePreset('500.00')" style="background: #ffffff; border: 1px solid #6ee7b7; padding: 0.35rem 0.65rem; border-radius: 6px; font-size: 0.78rem; font-weight: 800; color: #047857; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">₹500</button>
+                </div>
+              </div>
+            </div>
+
+            <div style="font-size: 0.72rem; color: #047857; background: #ffffff; border: 1px solid #a7f3d0; padding: 0.55rem 0.85rem; border-radius: 8px; font-weight: 700; display: flex; align-items: center; gap: 0.4rem;">
+              <span>💡</span> Updates all payment buttons, Razorpay checkout orders, and student receipts automatically across the portal.
+            </div>
+          </div>
+        </div>
+
+        <!-- CARD 2: PROGRAM / DEGREE MANAGEMENT (DEEP BLUE THEME) -->
+        <div style="background: #ffffff; border: 1.5px solid #93c5fd; border-radius: 14px; box-shadow: 0 6px 20px rgba(37, 99, 235, 0.08); overflow: hidden;">
+          
+          <!-- Vibrant Header -->
+          <div style="background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #2563eb 100%); color: #ffffff; padding: 1rem 1.35rem; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 0.65rem;">
+              <div style="width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; font-weight: 800;">🎓</div>
+              <div>
+                <h3 style="font-size: 0.98rem; font-weight: 800; color: #ffffff; margin: 0; letter-spacing: -0.01em;">Program / Degree Qualification Options</h3>
+                <p style="font-size: 0.72rem; color: #bfdbfe; margin: 0.1rem 0 0 0;">Degrees available in student registration Part 4 dropdown</p>
+              </div>
+            </div>
+            <span id="degree-count-badge" style="background: #ffffff; color: #1d4ed8; font-size: 0.7rem; font-weight: 800; padding: 0.25rem 0.65rem; border-radius: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+              {{ active_tpo.degree_list|length }} Degrees Configured
+            </span>
+          </div>
+
+          <div style="padding: 1.35rem; background: #f0f9ff;">
+            
+            <!-- Active Badges Live Display Container -->
+            <div style="margin-bottom: 1rem;">
+              <label style="font-size: 0.74rem; font-weight: 800; color: #1e40af; text-transform: uppercase; letter-spacing: 0.04em; display: block; margin-bottom: 0.45rem;">
+                Active Dropdown Options Preview:
+              </label>
+              <div id="degree-badges-container" style="display: flex; gap: 0.45rem; flex-wrap: wrap; background: #ffffff; border: 1.5px solid #bfdbfe; border-radius: 10px; padding: 0.85rem; box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);">
+                {% for deg in active_tpo.degree_list %}
+                <span class="degree-badge-chip" style="background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%); border: 1.5px solid #93c5fd; color: #1e40af; padding: 0.35rem 0.75rem; border-radius: 8px; font-size: 0.8rem; font-weight: 800; box-shadow: 0 2px 5px rgba(37,99,235,0.12); display: flex; align-items: center; gap: 0.4rem;">
+                  <span>🎓</span> {{ deg }}
+                </span>
+                {% endfor %}
+              </div>
+            </div>
+
+            <!-- Editor Input Box -->
+            <div style="margin-bottom: 0.85rem;">
+              <label style="font-size: 0.76rem; font-weight: 800; color: #1e3a8a; display: block; margin-bottom: 0.35rem;">
+                Edit Degree Options List (Comma-Separated Text) *
+              </label>
+              <textarea id="available-degrees-textarea" name="available_degrees" rows="3" required style="width: 100%; padding: 0.65rem 0.85rem; border: 1.5px solid #93c5fd; border-radius: 8px; font-size: 0.84rem; font-family: inherit; color: #0f172a; background: #ffffff; box-sizing: border-box; line-height: 1.45; outline: none; transition: border-color 0.15s ease, box-shadow 0.15s ease;" oninput="updateDegreeBadgesLive(this.value)">{{ active_tpo.available_degrees }}</textarea>
+            </div>
+
+            <!-- Quick Add Presets -->
+            <div>
+              <div style="font-size: 0.72rem; font-weight: 800; color: #1e40af; margin-bottom: 0.35rem;">
+                ⚡ Quick Add Degree Presets:
+              </div>
+              <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+                <button type="button" onclick="addDegreePreset('B.E. (Bachelor of Engineering)')" style="background: #ffffff; border: 1px solid #93c5fd; padding: 0.28rem 0.65rem; border-radius: 6px; font-size: 0.74rem; font-weight: 800; color: #1d4ed8; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">+ B.E.</button>
+                <button type="button" onclick="addDegreePreset('B.Tech (Bachelor of Technology)')" style="background: #ffffff; border: 1px solid #93c5fd; padding: 0.28rem 0.65rem; border-radius: 6px; font-size: 0.74rem; font-weight: 800; color: #1d4ed8; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">+ B.Tech</button>
+                <button type="button" onclick="addDegreePreset('M.Tech in AI & Data Science')" style="background: #ffffff; border: 1px solid #93c5fd; padding: 0.28rem 0.65rem; border-radius: 6px; font-size: 0.74rem; font-weight: 800; color: #1d4ed8; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">+ M.Tech</button>
+                <button type="button" onclick="addDegreePreset('Dual Degree (B.Tech + M.Tech)')" style="background: #ffffff; border: 1px solid #93c5fd; padding: 0.28rem 0.65rem; border-radius: 6px; font-size: 0.74rem; font-weight: 800; color: #1d4ed8; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">+ Dual Degree</button>
+                <button type="button" onclick="addDegreePreset('BS in Mathematics & Computing')" style="background: #ffffff; border: 1px solid #93c5fd; padding: 0.28rem 0.65rem; border-radius: 6px; font-size: 0.74rem; font-weight: 800; color: #1d4ed8; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">+ BS</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- CARD 3: DEPARTMENT / BRANCH MANAGEMENT (DEEP PURPLE THEME) -->
+        <div style="background: #ffffff; border: 1.5px solid #d8b4fe; border-radius: 14px; box-shadow: 0 6px 20px rgba(126, 34, 206, 0.08); overflow: hidden;">
+          
+          <!-- Vibrant Header -->
+          <div style="background: linear-gradient(135deg, #581c87 0%, #7e22ce 50%, #9333ea 100%); color: #ffffff; padding: 1rem 1.35rem; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 0.65rem;">
+              <div style="width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; font-weight: 800;">🏛️</div>
+              <div>
+                <h3 style="font-size: 0.98rem; font-weight: 800; color: #ffffff; margin: 0; letter-spacing: -0.01em;">Academic Departments & Branches</h3>
+                <p style="font-size: 0.72rem; color: #f3e8ff; margin: 0.1rem 0 0 0;">Branches available in student registration Part 4 dropdown</p>
+              </div>
+            </div>
+            <span id="dept-count-badge" style="background: #ffffff; color: #7e22ce; font-size: 0.7rem; font-weight: 800; padding: 0.25rem 0.65rem; border-radius: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+              {{ active_tpo.department_list|length }} Departments Configured
+            </span>
+          </div>
+
+          <div style="padding: 1.35rem; background: #faf5ff;">
+            
+            <!-- Active Badges Live Display Container -->
+            <div style="margin-bottom: 1rem;">
+              <label style="font-size: 0.74rem; font-weight: 800; color: #6b21a8; text-transform: uppercase; letter-spacing: 0.04em; display: block; margin-bottom: 0.45rem;">
+                Active Dropdown Options Preview:
+              </label>
+              <div id="dept-badges-container" style="display: flex; gap: 0.45rem; flex-wrap: wrap; background: #ffffff; border: 1.5px solid #e9d5ff; border-radius: 10px; padding: 0.85rem; box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);">
+                {% for dept in active_tpo.department_list %}
+                <span class="dept-badge-chip" style="background: linear-gradient(135deg, #f3e8ff 0%, #faf5ff 100%); border: 1.5px solid #d8b4fe; color: #6b21a8; padding: 0.35rem 0.75rem; border-radius: 8px; font-size: 0.8rem; font-weight: 800; box-shadow: 0 2px 5px rgba(126,34,206,0.12); display: flex; align-items: center; gap: 0.4rem;">
+                  <span>🏛️</span> {{ dept }}
+                </span>
+                {% endfor %}
+              </div>
+            </div>
+
+            <!-- Editor Input Box -->
+            <div style="margin-bottom: 0.85rem;">
+              <label style="font-size: 0.76rem; font-weight: 800; color: #581c87; display: block; margin-bottom: 0.35rem;">
+                Edit Department Options List (Comma-Separated Text) *
+              </label>
+              <textarea id="available-departments-textarea" name="available_departments" rows="3" required style="width: 100%; padding: 0.65rem 0.85rem; border: 1.5px solid #d8b4fe; border-radius: 8px; font-size: 0.84rem; font-family: inherit; color: #0f172a; background: #ffffff; box-sizing: border-box; line-height: 1.45; outline: none; transition: border-color 0.15s ease, box-shadow 0.15s ease;" oninput="updateDeptBadgesLive(this.value)">{{ active_tpo.available_departments }}</textarea>
+            </div>
+
+            <!-- Quick Add Presets -->
+            <div>
+              <div style="font-size: 0.72rem; font-weight: 800; color: #6b21a8; margin-bottom: 0.35rem;">
+                ⚡ Quick Add Department Presets:
+              </div>
+              <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+                <button type="button" onclick="addDeptPreset('Computer Engineering')" style="background: #ffffff; border: 1px solid #d8b4fe; padding: 0.28rem 0.65rem; border-radius: 6px; font-size: 0.74rem; font-weight: 800; color: #7e22ce; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">+ Computer Engg</button>
+                <button type="button" onclick="addDeptPreset('Information Technology')" style="background: #ffffff; border: 1px solid #d8b4fe; padding: 0.28rem 0.65rem; border-radius: 6px; font-size: 0.74rem; font-weight: 800; color: #7e22ce; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">+ IT</button>
+                <button type="button" onclick="addDeptPreset('Computer Science & Engineering')" style="background: #ffffff; border: 1px solid #d8b4fe; padding: 0.28rem 0.65rem; border-radius: 6px; font-size: 0.74rem; font-weight: 800; color: #7e22ce; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">+ CSE</button>
+                <button type="button" onclick="addDeptPreset('E&TC')" style="background: #ffffff; border: 1px solid #d8b4fe; padding: 0.28rem 0.65rem; border-radius: 6px; font-size: 0.74rem; font-weight: 800; color: #7e22ce; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">+ E&TC</button>
+                <button type="button" onclick="addDeptPreset('Mechanical Engineering')" style="background: #ffffff; border: 1px solid #d8b4fe; padding: 0.28rem 0.65rem; border-radius: 6px; font-size: 0.74rem; font-weight: 800; color: #7e22ce; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">+ Mechanical</button>
+                <button type="button" onclick="addDeptPreset('Civil Engineering')" style="background: #ffffff; border: 1px solid #d8b4fe; padding: 0.28rem 0.65rem; border-radius: 6px; font-size: 0.74rem; font-weight: 800; color: #7e22ce; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">+ Civil</button>
+                <button type="button" onclick="addDeptPreset('Electrical Engineering')" style="background: #ffffff; border: 1px solid #d8b4fe; padding: 0.28rem 0.65rem; border-radius: 6px; font-size: 0.74rem; font-weight: 800; color: #7e22ce; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">+ Electrical</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- SAVE BUTTON BAR -->
+        <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 14px; padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);">
+          <div style="font-size: 0.78rem; color: #475569; font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
+            <span>🔒</span> Institutional Sync: Changes publish live to `/register/` immediately upon saving.
+          </div>
+          <button type="submit" style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: #ffffff; border: none; padding: 0.8rem 1.85rem; border-radius: 10px; font-weight: 800; font-size: 0.94rem; cursor: pointer; box-shadow: 0 4px 18px rgba(16, 185, 129, 0.35); display: flex; align-items: center; gap: 0.5rem; transition: transform 0.15s ease;">
+            <span>💾</span> Save Registration Settings & Publish Live
+          </button>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN: REAL-TIME STUDENT FORM PREVIEW CARD -->
+      <div style="position: sticky; top: 80px;">
+        
+        <div style="background: #ffffff; border: 2px solid #3b82f6; border-radius: 14px; box-shadow: 0 12px 30px -5px rgba(37, 99, 235, 0.18); overflow: hidden;">
+          
+          <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #ffffff; padding: 1rem 1.25rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #334155;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span style="font-size: 1.15rem;">📱</span>
+              <span style="font-weight: 800; font-size: 0.88rem; color: #ffffff;">Live Student Form Preview</span>
+            </div>
+            <span style="background: #2563eb; color: #ffffff; font-size: 0.65rem; font-weight: 800; padding: 0.2rem 0.55rem; border-radius: 4px;">Step 4 View</span>
+          </div>
+
+          <div style="padding: 1.25rem; background: #f8fafc; display: flex; flex-direction: column; gap: 1.15rem;">
+            
+            <div style="font-size: 0.72rem; color: #1e40af; background: #eff6ff; border: 1px solid #bfdbfe; padding: 0.5rem 0.85rem; border-radius: 8px; font-weight: 700; line-height: 1.4;">
+              👁️ This is exactly how graduating students will see the dropdowns on `/register/`.
+            </div>
+
+            <!-- Preview Degree Dropdown -->
+            <div>
+              <label style="font-size: 0.74rem; font-weight: 800; color: #1e3a8a; display: block; margin-bottom: 0.3rem;">
+                Program / Degree *
+              </label>
+              <select id="preview-degree-select" class="form-input" style="width: 100%; padding: 0.55rem; border: 1.5px solid #93c5fd; border-radius: 8px; font-size: 0.82rem; background: #ffffff; font-weight: 700; color: #1e40af;">
+                {% for deg in active_tpo.degree_list %}
+                <option value="{{ deg }}">{{ deg }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <!-- Preview Department Dropdown -->
+            <div>
+              <label style="font-size: 0.74rem; font-weight: 800; color: #581c87; display: block; margin-bottom: 0.3rem;">
+                Department *
+              </label>
+              <select id="preview-dept-select" class="form-input" style="width: 100%; padding: 0.55rem; border: 1.5px solid #d8b4fe; border-radius: 8px; font-size: 0.82rem; background: #ffffff; font-weight: 700; color: #6b21a8;">
+                {% for dept in active_tpo.department_list %}
+                <option value="{{ dept }}">{{ dept }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <!-- Preview Payment Button -->
+            <div>
+              <label style="font-size: 0.74rem; font-weight: 800; color: #065f46; display: block; margin-bottom: 0.3rem;">
+                Enrollment Submit Button Preview
+              </label>
+              <button type="button" id="preview-pay-btn" style="width: 100%; background: linear-gradient(135deg, #1e40af, #2563eb); color: #ffffff; border: none; padding: 0.75rem; border-radius: 8px; font-weight: 800; font-size: 0.85rem; cursor: default; box-shadow: 0 4px 12px rgba(37,99,235,0.25);">
+                💳 Pay ₹<span id="preview-fee-amount">{{ active_tpo.registration_fee_amount|default:'99.00' }}</span> Fee & Complete Enrollment ➔
+              </button>
+            </div>
+
+          </div>
+
+          <div style="background: #ffffff; border-top: 1px solid #e2e8f0; padding: 0.8rem 1.15rem; font-size: 0.7rem; color: #64748b; text-align: center; font-weight: 600;">
+            A2Z Placement Cell • Live Portal Governance
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </form>
+
+</div>
+
+<script>
+function setFeePreset(val) {
+  const input = document.getElementById('fee-amount-input');
+  if (input) {
+    input.value = val;
+    const prevSpan = document.getElementById('preview-fee-amount');
+    if (prevSpan) prevSpan.innerText = val;
+  }
+}
+
+document.getElementById('fee-amount-input')?.addEventListener('input', function() {
+  const prevSpan = document.getElementById('preview-fee-amount');
+  if (prevSpan) prevSpan.innerText = this.value || '0.00';
+});
+
+function updateDegreeBadgesLive(text) {
+  const container = document.getElementById('degree-badges-container');
+  const previewSelect = document.getElementById('preview-degree-select');
+  const countBadge = document.getElementById('degree-count-badge');
+  if (!container || !previewSelect) return;
+
+  const items = text.split(',').map(s => s.trim()).filter(s => s.length > 0);
+  
+  if (countBadge) countBadge.innerText = `${items.length} Degrees Configured`;
+
+  let html = '';
+  let selHtml = '';
+  items.forEach(item => {
+    html += `<span class="degree-badge-chip" style="background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%); border: 1.5px solid #93c5fd; color: #1e40af; padding: 0.35rem 0.75rem; border-radius: 8px; font-size: 0.8rem; font-weight: 800; box-shadow: 0 2px 5px rgba(37,99,235,0.12); display: flex; align-items: center; gap: 0.4rem;"><span>🎓</span> ${item}</span>`;
+    selHtml += `<option value="${item}">${item}</option>`;
+  });
+
+  container.innerHTML = html || '<span style="font-size:0.75rem; color:#94a3b8;">No degrees added yet</span>';
+  previewSelect.innerHTML = selHtml || '<option>No degrees available</option>';
+}
+
+function updateDeptBadgesLive(text) {
+  const container = document.getElementById('dept-badges-container');
+  const previewSelect = document.getElementById('preview-dept-select');
+  const countBadge = document.getElementById('dept-count-badge');
+  if (!container || !previewSelect) return;
+
+  const items = text.split(',').map(s => s.trim()).filter(s => s.length > 0);
+
+  if (countBadge) countBadge.innerText = `${items.length} Departments Configured`;
+
+  let html = '';
+  let selHtml = '';
+  items.forEach(item => {
+    html += `<span class="dept-badge-chip" style="background: linear-gradient(135deg, #f3e8ff 0%, #faf5ff 100%); border: 1.5px solid #d8b4fe; color: #6b21a8; padding: 0.35rem 0.75rem; border-radius: 8px; font-size: 0.8rem; font-weight: 800; box-shadow: 0 2px 5px rgba(126,34,206,0.12); display: flex; align-items: center; gap: 0.4rem;"><span>🏛️</span> ${item}</span>`;
+    selHtml += `<option value="${item}">${item}</option>`;
+  });
+
+  container.innerHTML = html || '<span style="font-size:0.75rem; color:#94a3b8;">No departments added yet</span>';
+  previewSelect.innerHTML = selHtml || '<option>No departments available</option>';
+}
+
+function addDegreePreset(name) {
+  const area = document.getElementById('available-degrees-textarea');
+  if (!area) return;
+  const current = area.value.trim();
+  if (current.includes(name)) return;
+  area.value = current ? current + ', ' + name : name;
+  updateDegreeBadgesLive(area.value);
+}
+
+function addDeptPreset(name) {
+  const area = document.getElementById('available-departments-textarea');
+  if (!area) return;
+  const current = area.value.trim();
+  if (current.includes(name)) return;
+  area.value = current ? current + ', ' + name : name;
+  updateDeptBadgesLive(area.value);
+}
+</script>
+{% endblock %}

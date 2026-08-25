@@ -1,0 +1,736 @@
+/* ==========================================================================
+   A2Z RECRUITER DESK & CORPORATE HR PORTAL STYLES (SIDEBAR + TOPBAR LAYOUT)
+   ========================================================================== */
+
+/* App Master Layout */
+.recruiter-app-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f8fafc;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: #0f172a;
+}
+
+/* 1. Left Sidebar - PERMANENTLY FIXED & STABLE */
+.recruiter-sidebar {
+  width: 270px;
+  min-width: 270px;
+  background: linear-gradient(180deg, #090d16 0%, #0f172a 55%, #1e293b 100%);
+  border-right: 1px solid rgba(6, 182, 212, 0.22);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  height: 100vh;
+  padding: 0.95rem 1.15rem 1.25rem;
+  color: #ffffff;
+  z-index: 300;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+  overflow-y: auto;
+}
+
+.sidebar-brand-head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.sidebar-crest {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #0284c7, #06b6d4);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 0.92rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.4);
+  flex-shrink: 0;
+}
+
+.sidebar-brand-text h1 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.sidebar-brand-text p {
+  font-size: 0.7rem;
+  color: #38bdf8;
+  margin: 0.1rem 0 0;
+  font-weight: 600;
+}
+
+/* Sidebar Nav Groups */
+.sidebar-nav-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+  margin-top: 1.5rem;
+  flex: 1;
+}
+
+.sidebar-group-title {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 0 0.5rem 0.4rem;
+}
+
+.sidebar-menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 10px;
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.84rem;
+  font-weight: 600;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.sidebar-link .link-icon {
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+}
+
+.sidebar-link:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  transform: translateX(3px);
+}
+
+.sidebar-link.active {
+  background: linear-gradient(90deg, rgba(2, 132, 199, 0.3) 0%, rgba(6, 182, 212, 0.15) 100%);
+  color: #ffffff;
+  border-left: 3px solid #38bdf8;
+  font-weight: 700;
+}
+
+.sidebar-link.active .link-icon {
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.6));
+}
+
+/* Sidebar Footer Card */
+.sidebar-footer-card {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.sidebar-footer-card .slot-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #22d3ee;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.sidebar-footer-card p {
+  font-size: 0.7rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.35;
+}
+
+/* 2. Main Content Wrapper & Topbar */
+.recruiter-content-wrapper {
+  margin-left: 270px;
+  width: calc(100% - 270px);
+  max-width: calc(100% - 270px);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f8fafc;
+}
+
+.recruiter-topbar {
+  position: fixed;
+  top: 0;
+  left: 270px;
+  right: 0;
+  height: 64px;
+  background: #ffffff;
+  border-bottom: 1.5px solid #cbd5e1;
+  padding: 0 2rem;
+  margin: 0;
+  border-radius: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 9999;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Live Global Search Bar */
+.recruiter-search-box {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0.4rem 0.85rem;
+  width: 380px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.recruiter-search-box:focus-within {
+  background: #ffffff;
+  border-color: #0284c7;
+  box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
+}
+
+.recruiter-search-box input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.84rem;
+  color: #0f172a;
+  width: 100%;
+  font-family: inherit;
+}
+
+.recruiter-search-box input::placeholder {
+  color: #94a3b8;
+}
+
+/* Topbar Actions */
+.topbar-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.topbar-status-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #059669;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+}
+
+.topbar-status-badge .live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation: pulse 2s infinite;
+}
+
+/* Topbar HR Profile Badge */
+.topbar-profile-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.topbar-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0284c7, #06b6d4);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 0.78rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.topbar-profile-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar-profile-name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.topbar-profile-role {
+  font-size: 0.68rem;
+  color: #0284c7;
+  font-weight: 600;
+}
+
+/* Topbar Logout Button */
+.btn-topbar-logout {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #dc2626;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-topbar-logout:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+/* Main Body Area */
+.recruiter-main-body {
+  margin-top: 64px;
+  padding: 1.5rem 2rem;
+  flex: 1;
+}
+
+.recruiter-dashboard-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* 1. Hero Card */
+.recruiter-hero-card {
+  background: linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e293b 100%);
+  border: 1px solid rgba(6, 182, 212, 0.35);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.recruiter-hero-main {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.recruiter-avatar-crest {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, #0284c7, #06b6d4);
+  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.35);
+  flex-shrink: 0;
+}
+
+.recruiter-hero-text h2 {
+  font-size: 1.2rem;
+  color: #ffffff;
+  margin: 0;
+}
+
+.hero-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.badge-role-tag {
+  background: rgba(6, 182, 212, 0.18);
+  color: #22d3ee;
+  border: 1px solid rgba(6, 182, 212, 0.4);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.55rem;
+  border-radius: var(--radius-full);
+}
+
+.hero-subtext {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin-top: 0.25rem;
+  line-height: 1.4;
+}
+
+/* 2. Enhanced 6-Card Hiring Pipeline Metrics Grid */
+.recruiter-stats-grid-6 {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.75rem;
+}
+
+@media (max-width: 1100px) {
+  .recruiter-stats-grid-6 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .recruiter-stats-grid-6 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.stat-compact-card {
+  padding: 0.85rem 1rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-compact-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  border-color: #cbd5e1;
+}
+
+.stat-compact-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.stat-compact-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.stat-compact-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.icon-blue { background: #eff6ff; color: #2563eb; }
+.icon-sky { background: #f0f9ff; color: #0284c7; }
+.icon-teal { background: #f0fdfa; color: #0d9488; }
+.icon-amber { background: #fffbeb; color: #d97706; }
+.icon-emerald { background: #ecfdf5; color: #059669; }
+.icon-rose { background: #fff1f2; color: #e11d48; }
+
+.stat-compact-number {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0.35rem 0 0.15rem;
+}
+
+.stat-compact-footer {
+  font-size: 0.68rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+/* 3. Section Header */
+.recruiter-jobs-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.section-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.section-title {
+  font-size: 1.15rem;
+  color: #0f172a;
+  margin: 0;
+}
+
+.section-sub {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-top: 0.15rem;
+}
+
+.count-pill {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+}
+
+/* 4. Compact Square-ish JAF Cards Grid */
+.recruiter-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 1.1rem;
+}
+
+@media (max-width: 768px) {
+  .recruiter-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 5. Modern Square-ish JAF Card with Rounded Corners & Rich Hover */
+.recruiter-jaf-square-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.85rem;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  position: relative;
+}
+
+.recruiter-jaf-square-card:hover {
+  transform: translateY(-4px);
+  border-color: #38bdf8;
+  box-shadow: 0 12px 28px rgba(2, 132, 199, 0.12);
+}
+
+/* Card Header */
+.square-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+
+.square-card-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.square-logo-box {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1e3a8a, #0284c7);
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
+}
+
+.square-company-name {
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+.square-role-title {
+  font-size: 0.82rem;
+  color: #0284c7;
+  font-weight: 700;
+  margin-top: 0.15rem;
+}
+
+.square-status-pill {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 20px;
+  white-space: nowrap;
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+
+/* Package Banner */
+.square-package-bar {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.55rem 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.square-ctc-text {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #1d4ed8;
+}
+
+.square-sector-pill {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #64748b;
+  background: #ffffff;
+  padding: 0.15rem 0.45rem;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+/* Criteria Rules Cluster */
+.square-criteria-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.criteria-mini-pill {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.18rem 0.45rem;
+  border-radius: 6px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #334155;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.criteria-mini-pill.cpi {
+  background: #fefce8;
+  border-color: #fef08a;
+  color: #854d0e;
+}
+
+.criteria-mini-pill.backlog {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #15803d;
+}
+
+/* Mini Role Funnel Tracker Ribbon */
+.square-funnel-ribbon {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.45rem 0.25rem;
+  text-align: center;
+}
+
+.funnel-stage-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 0.25rem;
+}
+
+.funnel-stage-item:not(:last-child) {
+  border-right: 1px solid #e2e8f0;
+}
+
+.funnel-num {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.funnel-tag {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 0.1rem;
+}
+
+/* Card Action Footer */
+.square-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.4rem;
+  border-top: 1px solid #f1f5f9;
+}
+
+.square-deadline {
+  font-size: 0.72rem;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.square-deadline strong {
+  color: #0f172a;
+}
+
+.btn-inspect-candidates {
+  padding: 0.45rem 0.85rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 10px;
+  background: #0284c7;
+  color: #ffffff;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid #0284c7;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.btn-inspect-candidates:hover {
+  background: #0369a1;
+  transform: translateY(-1px);
+}

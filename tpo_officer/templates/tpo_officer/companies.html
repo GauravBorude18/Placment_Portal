@@ -1,0 +1,308 @@
+{% extends 'tpo_officer/base_tpo.html' %}
+{% load static %}
+
+{% block title %}Recruiting Companies Directory | TPO Control Room{% endblock %}
+
+{% block content %}
+<div style="padding-bottom: 2.5rem;">
+  
+  <!-- Luxury Highlighted Grand Header Banner -->
+  <div style="background: linear-gradient(135deg, #062b1e 0%, #0c3e2e 45%, #0d2238 100%); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 16px; padding: 1.25rem 1.6rem; display: flex; justify-content: space-between; align-items: center; gap: 1.25rem; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1); margin-bottom: 1.5rem; flex-wrap: wrap;">
+    <div style="display: flex; align-items: center; gap: 0.95rem;">
+      <div style="width: 46px; height: 46px; border-radius: 12px; background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; box-shadow: 0 0 20px rgba(16, 185, 129, 0.5); border: 1px solid rgba(255, 255, 255, 0.2); flex-shrink: 0;">
+        🏢
+      </div>
+      <div>
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem;">
+          <span style="background: rgba(16, 185, 129, 0.25); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.5); font-size: 0.65rem; font-weight: 800; padding: 0.12rem 0.55rem; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.05em;">
+            Corporate Network
+          </span>
+          <span style="color: rgba(255, 255, 255, 0.3); font-size: 0.72rem;">•</span>
+          <span style="color: #94a3b8; font-size: 0.72rem; font-weight: 600;">Campus Hiring Ecosystem</span>
+        </div>
+        <h2 style="font-size: 1.25rem; color: #ffffff; font-weight: 900; margin: 0; letter-spacing: -0.01em; line-height: 1.2;">Registered Campus Recruiting Partners Directory</h2>
+        <p style="font-size: 0.78rem; color: #cbd5e1; margin: 0.25rem 0 0; font-weight: 500;">Official Directory of Multi-National Employers & Global Hiring Organizations</p>
+      </div>
+    </div>
+    
+    <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+      <span style="background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4); padding: 0.45rem 0.85rem; border-radius: 9999px; font-size: 0.78rem; font-weight: 800; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+        🏢 {{ total_companies }} Active Partners
+      </span>
+      
+      <!-- ADD NEW COMPANY PARTNER BUTTON -->
+      <button type="button" onclick="toggleAddCompanyModal()" style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: #ffffff; border: none; padding: 0.55rem 1.15rem; border-radius: 10px; font-weight: 800; font-size: 0.84rem; cursor: pointer; box-shadow: 0 4px 14px rgba(16,185,129,0.35); display: flex; align-items: center; gap: 0.45rem; transition: transform 0.15s ease;">
+        <span>➕</span> Onboard New Corporate Partner
+      </button>
+    </div>
+  </div>
+
+  <!-- Success / Error Alert Notifications -->
+  {% if success_message %}
+  <div style="background: linear-gradient(135deg, #ecfdf5, #d1fae5); border: 1.5px solid #34d399; color: #065f46; padding: 1rem 1.25rem; border-radius: 12px; margin-bottom: 1.5rem; font-weight: 700; font-size: 0.88rem; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.18);">
+    <div style="display: flex; align-items: center; gap: 0.6rem;">
+      <span style="font-size: 1.2rem;">🎉</span>
+      <span>{{ success_message }}</span>
+    </div>
+    <span style="font-size: 0.72rem; background: #047857; color: #ffffff; font-weight: 800; padding: 0.25rem 0.65rem; border-radius: 6px;">Directory Updated</span>
+  </div>
+  {% endif %}
+
+  {% if error_message %}
+  <div style="background: #fef2f2; border: 1.5px solid #fca5a5; color: #b91c1c; padding: 1rem 1.25rem; border-radius: 12px; margin-bottom: 1.5rem; font-weight: 700; font-size: 0.88rem; display: flex; align-items: center; gap: 0.6rem;">
+    <span style="font-size: 1.2rem;">⚠️</span>
+    <span>{{ error_message }}</span>
+  </div>
+  {% endif %}
+
+  <!-- COLLAPSIBLE ONBOARD NEW CORPORATE PARTNER DESK -->
+  <div id="add-company-card" style="display: {% if error_message %}block{% else %}none{% endif %}; background: #ffffff; border: 2px solid #10b981; border-radius: 16px; box-shadow: 0 10px 30px -5px rgba(16, 185, 129, 0.2); margin-bottom: 1.75rem; overflow: hidden; animation: fadeInStep 0.25s ease;">
+    
+    <div style="background: linear-gradient(135deg, #065f46 0%, #047857 50%, #059669 100%); color: #ffffff; padding: 1rem 1.4rem; display: flex; justify-content: space-between; align-items: center;">
+      <div style="display: flex; align-items: center; gap: 0.65rem;">
+        <div style="width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; font-weight: 800;">🏢</div>
+        <div>
+          <h3 style="font-size: 1rem; font-weight: 800; color: #ffffff; margin: 0;">Onboard New Campus Corporate Partner</h3>
+          <p style="font-size: 0.72rem; color: #a7f3d0; margin: 0.1rem 0 0 0;">Register new recruiting organization in official placement cell directory</p>
+        </div>
+      </div>
+      <button type="button" onclick="toggleAddCompanyModal()" style="background: rgba(255,255,255,0.2); color: #ffffff; border: none; padding: 0.3rem 0.65rem; border-radius: 6px; font-weight: 800; font-size: 0.8rem; cursor: pointer;">✕ Close</button>
+    </div>
+
+    <form method="POST" action="{% url 'tpo_officer:companies' %}" enctype="multipart/form-data" style="padding: 1.4rem; background: #f0fdf4;">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="add_company">
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.15rem; margin-bottom: 1.15rem;">
+        
+        <!-- Company Name -->
+        <div>
+          <label style="font-size: 0.76rem; font-weight: 800; color: #065f46; display: block; margin-bottom: 0.35rem;">
+            Company / Organization Name *
+          </label>
+          <input type="text" name="name" required placeholder="e.g. NVIDIA India, Goldman Sachs, Amazon" style="width: 100%; padding: 0.65rem 0.85rem; border: 1.5px solid #6ee7b7; border-radius: 8px; font-size: 0.85rem; font-weight: 700; color: #0f172a; outline: none; background: #ffffff; box-sizing: border-box;">
+        </div>
+
+        <!-- Industry Sector -->
+        <div>
+          <label style="font-size: 0.76rem; font-weight: 800; color: #065f46; display: block; margin-bottom: 0.35rem;">
+            Industry Sector / Category *
+          </label>
+          <select name="sector" required style="width: 100%; padding: 0.65rem 0.85rem; border: 1.5px solid #6ee7b7; border-radius: 8px; font-size: 0.85rem; font-weight: 700; color: #0f172a; outline: none; background: #ffffff; box-sizing: border-box;">
+            <option value="Software & AI">💻 Software & AI</option>
+            <option value="Quant & Finance">💎 Quant & Finance</option>
+            <option value="Core Engineering">⚡ Core Engineering</option>
+            <option value="Management Consulting">🏛️ Management Consulting</option>
+            <option value="E-Commerce & Cloud">☁️ E-Commerce & Cloud</option>
+            <option value="Analytics & Data Science">📊 Analytics & Data Science</option>
+          </select>
+        </div>
+
+        <!-- HQ Location -->
+        <div>
+          <label style="font-size: 0.76rem; font-weight: 800; color: #065f46; display: block; margin-bottom: 0.35rem;">
+            Primary Office / Campus Location
+          </label>
+          <input type="text" name="location" placeholder="e.g. Bangalore / Hyderabad / Pune / Remote" style="width: 100%; padding: 0.65rem 0.85rem; border: 1.5px solid #6ee7b7; border-radius: 8px; font-size: 0.85rem; font-weight: 600; color: #0f172a; outline: none; background: #ffffff; box-sizing: border-box;">
+        </div>
+
+        <!-- Official Website -->
+        <div>
+          <label style="font-size: 0.76rem; font-weight: 800; color: #065f46; display: block; margin-bottom: 0.35rem;">
+            Official Corporate Website URL
+          </label>
+          <input type="url" name="website" placeholder="e.g. https://www.nvidia.com" style="width: 100%; padding: 0.65rem 0.85rem; border: 1.5px solid #6ee7b7; border-radius: 8px; font-size: 0.85rem; font-weight: 600; color: #0f172a; outline: none; background: #ffffff; box-sizing: border-box;">
+        </div>
+
+        <!-- Logo Image Upload -->
+        <div>
+          <label style="font-size: 0.76rem; font-weight: 800; color: #065f46; display: block; margin-bottom: 0.35rem;">
+            Upload Corporate Logo (Optional)
+          </label>
+          <input type="file" name="logo_file" accept="image/*" style="width: 100%; padding: 0.5rem; border: 1.5px solid #6ee7b7; border-radius: 8px; font-size: 0.8rem; background: #ffffff; box-sizing: border-box;">
+        </div>
+
+        <!-- Logo URL or Fallback Text -->
+        <div>
+          <label style="font-size: 0.76rem; font-weight: 800; color: #065f46; display: block; margin-bottom: 0.35rem;">
+            Or Logo Image URL / Fallback Initials (e.g. NV)
+          </label>
+          <div style="display: flex; gap: 0.5rem;">
+            <input type="url" name="logo_url" placeholder="https://..." style="flex: 2; padding: 0.65rem 0.85rem; border: 1.5px solid #6ee7b7; border-radius: 8px; font-size: 0.85rem; font-weight: 600; color: #0f172a; outline: none; background: #ffffff; box-sizing: border-box;">
+            <input type="text" name="logo_fallback" max="4" placeholder="NV" style="flex: 1; padding: 0.65rem 0.5rem; border: 1.5px solid #6ee7b7; border-radius: 8px; font-size: 0.85rem; font-weight: 800; color: #047857; text-align: center; outline: none; background: #ffffff; box-sizing: border-box;">
+          </div>
+        </div>
+
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem; border-top: 1px solid #a7f3d0; padding-top: 1rem;">
+        <button type="button" onclick="toggleAddCompanyModal()" style="background: #ffffff; color: #475569; border: 1px solid #cbd5e1; padding: 0.65rem 1.25rem; border-radius: 8px; font-weight: 700; font-size: 0.84rem; cursor: pointer;">Cancel</button>
+        <button type="submit" style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: #ffffff; border: none; padding: 0.65rem 1.65rem; border-radius: 8px; font-weight: 800; font-size: 0.86rem; cursor: pointer; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35); display: flex; align-items: center; gap: 0.4rem;">
+          <span>✨</span> Onboard Company & Publish to Directory
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+
+  <!-- PENDING CORPORATE RECRUITER REGISTRATION APPROVALS TABLE -->
+  {% if pending_recruiters_count > 0 %}
+  <div style="background: #ffffff; border: 2px solid #f59e0b; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 25px rgba(245, 158, 11, 0.15); margin-bottom: 2rem;">
+    
+    <div style="background: linear-gradient(135deg, #78350f 0%, #b45309 50%, #d97706 100%); color: #ffffff; padding: 1rem 1.4rem; display: flex; justify-content: space-between; align-items: center;">
+      <div style="display: flex; align-items: center; gap: 0.65rem;">
+        <div style="width: 36px; height: 36px; background: rgba(255,255,255,0.2); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 1.15rem; font-weight: 800;">📋</div>
+        <div>
+          <h3 style="font-size: 1rem; font-weight: 800; color: #ffffff; margin: 0;">Pending Corporate Recruiter Onboarding Requests</h3>
+          <p style="font-size: 0.72rem; color: #fef3c7; margin: 0.1rem 0 0 0;">External HR & Corporate Representative registrations awaiting TPO verification</p>
+        </div>
+      </div>
+      <span style="background: #ffffff; color: #b45309; font-size: 0.72rem; font-weight: 800; padding: 0.25rem 0.75rem; border-radius: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+        {{ pending_recruiters_count }} Action Required
+      </span>
+    </div>
+
+    <div style="padding: 1.1rem; background: #fffbeb; overflow-x: auto;">
+      <table style="width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; font-size: 0.8rem; background: #ffffff; border-radius: 10px; overflow: hidden; border: 1px solid #fde68a; min-width: 850px;">
+        <thead style="background: linear-gradient(135deg, #92400e, #b45309); color: #ffffff; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em;">
+          <tr>
+            <th style="padding: 0.75rem 1rem; color: #ffffff; white-space: nowrap;">HR Representative</th>
+            <th style="padding: 0.75rem 0.8rem; color: #fde68a; white-space: nowrap;">Company / Organization</th>
+            <th style="padding: 0.75rem 0.8rem; color: #ffffff; white-space: nowrap;">Official Email & Phone</th>
+            <th style="padding: 0.75rem 0.8rem; color: #fde68a; white-space: nowrap;">Industry & Location</th>
+            <th style="padding: 0.75rem 0.8rem; color: #ffffff; white-space: nowrap;">Date Applied</th>
+            <th style="padding: 0.75rem 1rem; text-align: right; color: #ffffff; white-space: nowrap;">TPO Decision</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for rec in pending_recruiters %}
+          <tr style="border-bottom: 1px solid #fef3c7; background: {% cycle '#ffffff' '#fffbeb' %};">
+            <td style="padding: 0.8rem 1rem;">
+              <strong style="color: #0f172a; font-size: 0.84rem; display: block;">{{ rec.hr_name }}</strong>
+              <span style="font-size: 0.7rem; color: #b45309; font-weight: 700;">{{ rec.designation }}</span>
+            </td>
+            <td style="padding: 0.8rem 0.8rem;">
+              <strong style="color: #1e293b; font-size: 0.84rem; display: block;">{{ rec.company_name }}</strong>
+              {% if rec.website %}
+              <a href="{{ rec.website }}" target="_blank" style="font-size: 0.68rem; color: #2563eb; text-decoration: none; font-weight: 600;">Website ↗</a>
+              {% endif %}
+            </td>
+            <td style="padding: 0.8rem 0.8rem; font-size: 0.74rem;">
+              <span style="color: #0f172a; font-weight: 700; display: block;">✉️ {{ rec.official_email }}</span>
+              <span style="color: #475569; font-weight: 600;">📞 {{ rec.phone_number }}</span>
+            </td>
+            <td style="padding: 0.8rem 0.8rem; font-size: 0.74rem;">
+              <span style="background: #fef3c7; color: #b45309; border: 1px solid #fde68a; font-weight: 800; font-size: 0.68rem; padding: 0.15rem 0.45rem; border-radius: 4px; display: inline-block; margin-bottom: 0.2rem;">{{ rec.sector }}</span>
+              <div style="color: #64748b; font-weight: 600;">📍 {{ rec.location }}</div>
+            </td>
+            <td style="padding: 0.8rem 0.8rem; font-size: 0.72rem; color: #64748b; font-weight: 600;">
+              {{ rec.created_at|date:"M d, Y • H:i" }}
+            </td>
+            <td style="padding: 0.8rem 1rem; text-align: right;">
+              <div style="display: flex; justify-content: flex-end; gap: 0.4rem;">
+                <form method="POST" action="{% url 'tpo_officer:companies' %}" style="display: inline;">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="approve_recruiter">
+                  <input type="hidden" name="recruiter_id" value="{{ rec.id }}">
+                  <button type="submit" style="background: linear-gradient(135deg, #059669, #10b981); color: #ffffff; border: none; padding: 0.4rem 0.75rem; border-radius: 6px; font-weight: 800; font-size: 0.74rem; cursor: pointer; box-shadow: 0 2px 6px rgba(16,185,129,0.25);">
+                    ✓ Approve Access
+                  </button>
+                </form>
+                <form method="POST" action="{% url 'tpo_officer:companies' %}" style="display: inline;">
+                  {% csrf_token %}
+                  <input type="hidden" name="action" value="reject_recruiter">
+                  <input type="hidden" name="recruiter_id" value="{{ rec.id }}">
+                  <button type="submit" style="background: #ffffff; color: #dc2626; border: 1px solid #fca5a5; padding: 0.4rem 0.65rem; border-radius: 6px; font-weight: 800; font-size: 0.74rem; cursor: pointer;">
+                    ✕ Decline
+                  </button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Companies Grid with Light Pastel Gradient Themes -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 1.25rem;">
+    {% for c in companies %}
+    
+    <!-- Dynamic Card Colors based on Sector -->
+    {% if 'Quant' in c.sector or 'Finance' in c.sector %}
+      <div style="background: linear-gradient(135deg, #faf5ff 0%, #ffffff 100%); border: 1.5px solid #d8b4fe; border-top: 4px solid #7c3aed; border-radius: 14px; padding: 1.25rem; box-shadow: 0 6px 18px rgba(126, 34, 206, 0.07); display: flex; flex-direction: column; justify-content: space-between; gap: 1.1rem; transition: transform 0.15s ease;">
+    {% elif 'Software' in c.sector or 'AI' in c.sector or 'Cloud' in c.sector %}
+      <div style="background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%); border: 1.5px solid #93c5fd; border-top: 4px solid #2563eb; border-radius: 14px; padding: 1.25rem; box-shadow: 0 6px 18px rgba(37, 99, 235, 0.07); display: flex; flex-direction: column; justify-content: space-between; gap: 1.1rem; transition: transform 0.15s ease;">
+    {% elif 'Core' in c.sector or 'Engineering' in c.sector %}
+      <div style="background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%); border: 1.5px solid #a7f3d0; border-top: 4px solid #059669; border-radius: 14px; padding: 1.25rem; box-shadow: 0 6px 18px rgba(16, 185, 129, 0.07); display: flex; flex-direction: column; justify-content: space-between; gap: 1.1rem; transition: transform 0.15s ease;">
+    {% else %}
+      <div style="background: linear-gradient(135deg, #fffbeb 0%, #ffffff 100%); border: 1.5px solid #fde68a; border-top: 4px solid #d97706; border-radius: 14px; padding: 1.25rem; box-shadow: 0 6px 18px rgba(217, 119, 6, 0.07); display: flex; flex-direction: column; justify-content: space-between; gap: 1.1rem; transition: transform 0.15s ease;">
+    {% endif %}
+
+      <div style="display: flex; align-items: center; gap: 0.95rem;">
+        <!-- Company Logo Box -->
+        <div style="width: 52px; height: 52px; border-radius: 12px; background: #ffffff; border: 1.5px solid #e2e8f0; padding: 0.4rem; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+          <img src="{{ c.display_logo_url }}" alt="{{ c.name }}" style="max-width: 100%; max-height: 100%; object-fit: contain;" onerror="this.onerror=null; this.parentElement.innerHTML='<span style=\'font-size:1.2rem; font-weight:900; color:#1e40af;\'>{{ c.logo_fallback }}</span>';">
+        </div>
+        
+        <div>
+          <h3 style="font-size: 1.08rem; font-weight: 800; color: #0f172a; margin: 0; letter-spacing: -0.01em;">{{ c.name }}</h3>
+          
+          <!-- Sector Pill Badge -->
+          <span style="display: inline-block; margin-top: 0.25rem; font-size: 0.72rem; font-weight: 800; padding: 0.18rem 0.55rem; border-radius: 6px; white-space: nowrap; 
+            {% if 'Quant' in c.sector or 'Finance' in c.sector %}
+              background: #f3e8ff; color: #7e22ce; border: 1px solid #d8b4fe;
+            {% elif 'Software' in c.sector or 'AI' in c.sector or 'Cloud' in c.sector %}
+              background: #dbeafe; color: #1d4ed8; border: 1px solid #93c5fd;
+            {% elif 'Core' in c.sector or 'Engineering' in c.sector %}
+              background: #dcfce7; color: #15803d; border: 1px solid #86efac;
+            {% else %}
+              background: #fef3c7; color: #b45309; border: 1px solid #fde68a;
+            {% endif %}">
+            {% if 'Quant' in c.sector or 'Finance' in c.sector %}💎{% elif 'Software' in c.sector or 'AI' in c.sector or 'Cloud' in c.sector %}💻{% elif 'Core' in c.sector %}⚡{% else %}🏛️{% endif %} {{ c.sector }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Card Footer Bar -->
+      <div style="border-top: 1px solid rgba(0,0,0,0.06); padding-top: 0.85rem; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.7rem; font-weight: 800; color: #475569; display: flex; align-items: center; gap: 0.25rem;">
+          ⭐ Tier 1 Marquee Partner
+        </span>
+        
+        <a href="{% url 'tpo_officer:all_jafs' %}" style="font-size: 0.74rem; font-weight: 800; padding: 0.35rem 0.85rem; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.3rem; transition: transform 0.15s ease;
+          {% if 'Quant' in c.sector or 'Finance' in c.sector %}
+            background: linear-gradient(135deg, #7e22ce, #9333ea); color: #ffffff; box-shadow: 0 3px 10px rgba(126, 34, 206, 0.25);
+          {% elif 'Software' in c.sector or 'AI' in c.sector or 'Cloud' in c.sector %}
+            background: linear-gradient(135deg, #1d4ed8, #2563eb); color: #ffffff; box-shadow: 0 3px 10px rgba(37, 99, 235, 0.25);
+          {% elif 'Core' in c.sector or 'Engineering' in c.sector %}
+            background: linear-gradient(135deg, #047857, #059669); color: #ffffff; box-shadow: 0 3px 10px rgba(16, 185, 129, 0.25);
+          {% else %}
+            background: linear-gradient(135deg, #d97706, #f59e0b); color: #ffffff; box-shadow: 0 3px 10px rgba(217, 119, 6, 0.25);
+          {% endif %}">
+          View JAFs →
+        </a>
+      </div>
+
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+function toggleAddCompanyModal() {
+  const card = document.getElementById('add-company-card');
+  if (card) {
+    if (card.style.display === 'none' || card.style.display === '') {
+      card.style.display = 'block';
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+      card.style.display = 'none';
+    }
+  }
+}
+</script>
+{% endblock %}
