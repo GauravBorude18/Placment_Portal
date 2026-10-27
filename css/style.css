@@ -184,31 +184,40 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .navbar-public-landing {
-  background: linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e293b 100%);
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(59, 130, 246, 0.25);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
 }
 
 .public-nav-tabs {
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 9999px;
+  padding: 0.25rem;
 }
 
 .public-nav-tabs .nav-tab-link {
-  font-size: 0.84rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  padding: 0.4rem 0.9rem;
-  color: rgba(255, 255, 255, 0.8);
+  padding: 0.35rem 0.85rem;
+  color: #475569;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
 }
 
 .public-nav-tabs .nav-tab-link:hover {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.15);
+  color: #0f172a;
+  background: #ffffff;
 }
 
 .public-nav-tabs .nav-tab-link.active {
-  background: #2563eb;
-  color: #ffffff;
+  background: #ffffff;
+  color: #2563eb;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  font-weight: 700;
 }
 
 .nav-actions {
@@ -2163,6 +2172,153 @@ h1, h2, h3, h4, h5, h6 {
   margin-top: 1.5rem;
   padding-top: 1rem;
   border-top: 1px solid var(--border-subtle);
+}
+
+/* ==========================================================================
+   COMPREHENSIVE PROJECT-WIDE MOBILE & TABLET RESPONSIVE CSS (@media QUERIES)
+   ========================================================================== */
+
+/* Hide scrollbars for touch-scroll containers */
+.public-nav-tabs::-webkit-scrollbar,
+.table-responsive::-webkit-scrollbar,
+.student-table-wrap::-webkit-scrollbar {
+  display: none;
+}
+
+/* Tablet & Mobile Screens (320px - 768px Viewports) */
+@media (max-width: 768px) {
+  body, .landing-wrapper {
+    padding-top: 110px !important;
+  }
+
+  .landing-hero {
+    padding-top: 0.5rem !important;
+    padding-bottom: 1.5rem !important;
+  }
+
+  .nav-container {
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.65rem;
+    padding: 0.25rem 0;
+  }
+
+  .public-nav-tabs {
+    order: 3;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    justify-content: flex-start;
+    padding: 0.35rem 0.5rem;
+  }
+
+  .hero-stats-ribbon {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.85rem !important;
+    padding: 0.9rem !important;
+  }
+
+  .hero-action-cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.85rem !important;
+    width: 100% !important;
+  }
+
+  .role-cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .process-steps-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.85rem !important;
+  }
+
+  h1.hero-title {
+    font-size: 1.85rem !important;
+    line-height: 1.25 !important;
+  }
+
+  .hero-subtitle {
+    font-size: 0.88rem !important;
+    margin-bottom: 1.25rem !important;
+  }
+
+  #login-dropdown-menu {
+    left: 0 !important;
+    right: auto !important;
+    max-width: calc(100vw - 32px) !important;
+  }
+
+  #register-dropdown-menu {
+    right: 0 !important;
+    left: auto !important;
+    max-width: calc(100vw - 32px) !important;
+  }
+
+  /* Student Dashboard Layout Responsiveness */
+  .student-app-layout {
+    flex-direction: column !important;
+  }
+
+  .student-sidebar {
+    position: relative !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    height: auto !important;
+    border-right: none !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    padding: 1rem !important;
+  }
+
+  .student-main-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+    padding: 1rem !important;
+  }
+
+  .student-topbar {
+    height: auto !important;
+    padding: 0.85rem 1rem !important;
+    flex-wrap: wrap !important;
+    gap: 0.75rem !important;
+  }
+
+  .student-search-box {
+    width: 100% !important;
+  }
+
+  .student-stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.85rem !important;
+  }
+
+  .table-responsive, .student-table-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    width: 100% !important;
+  }
+}
+
+/* Small Smartphone Screens (320px - 480px Viewports) */
+@media (max-width: 480px) {
+  .hero-stats-ribbon {
+    grid-template-columns: 1fr !important;
+  }
+
+  .process-step-card, .role-card, .hero-stat-box, .auth-card, .form-card {
+    padding: 1rem !important;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.85rem !important;
+  }
+
+  .auth-container {
+    padding: 1rem 0.5rem !important;
+  }
 }
 
 

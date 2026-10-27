@@ -203,34 +203,39 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .navbar-public-landing {
-  background: radial-gradient(ellipse 90% 80% at 50% 50%, #ffffff 40%, #f0f7ff 65%, #e0f2fe 82%, #dbeafe 95%, #bfdbfe 100%);
+  background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(20px);
-  border-bottom: 1.5px solid #bfdbfe;
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 2px solid #bfdbfe;
+  box-shadow: 0 4px 18px rgba(37, 99, 235, 0.06);
 }
 
 .public-nav-tabs {
-  background: rgba(255, 255, 255, 0.95);
-  border: 1.5px solid #bfdbfe;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 9999px;
+  padding: 0.25rem;
 }
 
 .public-nav-tabs .nav-tab-link {
-  font-size: 0.84rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  padding: 0.4rem 0.9rem;
-  color: #1e3a8a;
+  padding: 0.35rem 0.85rem;
+  color: #475569;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
 }
 
 .public-nav-tabs .nav-tab-link:hover {
-  color: #1d4ed8;
-  background: #f0f7ff;
-  box-shadow: 0 1px 4px rgba(37, 99, 235, 0.08);
+  color: #0f172a;
+  background: #ffffff;
 }
 
 .public-nav-tabs .nav-tab-link.active {
-  background: #dbeafe;
-  color: #1e40af;
-  border: 1.5px solid #93c5fd;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
+  background: #ffffff;
+  color: #2563eb;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   font-weight: 700;
 }
 
@@ -2697,6 +2702,153 @@ h1, h2, h3, h4, h5, h6 {
 /* Smooth anchor scrolling and header offset */
 #about, #portals, #partners, #roadmap, #leadership, #process, #team {
   scroll-margin-top: 85px;
+}
+
+/* ==========================================================================
+   COMPREHENSIVE PROJECT-WIDE MOBILE & TABLET RESPONSIVE CSS (@media QUERIES)
+   ========================================================================== */
+
+/* Hide scrollbars for touch-scroll containers */
+.public-nav-tabs::-webkit-scrollbar,
+.table-responsive::-webkit-scrollbar,
+.student-table-wrap::-webkit-scrollbar {
+  display: none;
+}
+
+/* Tablet & Mobile Screens (320px - 768px Viewports) */
+@media (max-width: 768px) {
+  body, .landing-wrapper {
+    padding-top: 110px !important;
+  }
+
+  .landing-hero {
+    padding-top: 0.5rem !important;
+    padding-bottom: 1.5rem !important;
+  }
+
+  .nav-container {
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.65rem;
+    padding: 0.25rem 0;
+  }
+
+  .public-nav-tabs {
+    order: 3;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    justify-content: flex-start;
+    padding: 0.35rem 0.5rem;
+  }
+
+  .hero-stats-ribbon {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.85rem !important;
+    padding: 0.9rem !important;
+  }
+
+  .hero-action-cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.85rem !important;
+    width: 100% !important;
+  }
+
+  .role-cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1rem !important;
+  }
+
+  .process-steps-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.85rem !important;
+  }
+
+  h1.hero-title {
+    font-size: 1.85rem !important;
+    line-height: 1.25 !important;
+  }
+
+  .hero-subtitle {
+    font-size: 0.88rem !important;
+    margin-bottom: 1.25rem !important;
+  }
+
+  #login-dropdown-menu {
+    left: 0 !important;
+    right: auto !important;
+    max-width: calc(100vw - 32px) !important;
+  }
+
+  #register-dropdown-menu {
+    right: 0 !important;
+    left: auto !important;
+    max-width: calc(100vw - 32px) !important;
+  }
+
+  /* Student Dashboard Layout Responsiveness */
+  .student-app-layout {
+    flex-direction: column !important;
+  }
+
+  .student-sidebar {
+    position: relative !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    height: auto !important;
+    border-right: none !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    padding: 1rem !important;
+  }
+
+  .student-main-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+    padding: 1rem !important;
+  }
+
+  .student-topbar {
+    height: auto !important;
+    padding: 0.85rem 1rem !important;
+    flex-wrap: wrap !important;
+    gap: 0.75rem !important;
+  }
+
+  .student-search-box {
+    width: 100% !important;
+  }
+
+  .student-stats-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.85rem !important;
+  }
+
+  .table-responsive, .student-table-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    width: 100% !important;
+  }
+}
+
+/* Small Smartphone Screens (320px - 480px Viewports) */
+@media (max-width: 480px) {
+  .hero-stats-ribbon {
+    grid-template-columns: 1fr !important;
+  }
+
+  .process-step-card, .role-card, .hero-stat-box, .auth-card, .form-card {
+    padding: 1rem !important;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.85rem !important;
+  }
+
+  .auth-container {
+    padding: 1rem 0.5rem !important;
+  }
 }
 
 

@@ -4,145 +4,160 @@
 {% block title %}A2Z Placement Cell | Official Career & Recruitment Governance Portal{% endblock %}
 
 {% block content %}
-<div class="landing-wrapper">
+<div class="landing-wrapper" style="background: radial-gradient(ellipse 90% 50% at 50% 0%, rgba(219, 234, 254, 0.4) 0%, rgba(248, 250, 252, 0.8) 50%, #fafaf9 100%); min-height: 100vh; padding-bottom: 3rem;">
 
   <!-- 1. Grand Hero & Institutional Gateway Section -->
-  <section class="landing-hero" id="home">
+  <section class="landing-hero" id="home" style="padding-top: 1.5rem;">
     <div class="landing-hero-content">
       
       <!-- Season Badge -->
-      <div class="hero-badge" style="background: rgba(255, 255, 255, 0.9); border: 1px solid #bfdbfe; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.08); padding: 0.35rem 0.9rem;">
-        <span class="pulse-dot"></span>
-        <span style="font-weight: 700; color: #1e40af; font-size: 0.78rem; letter-spacing: 0.02em;">A2Z Placement Cell &bull; Phase 1 Campus Recruitment Season 2026–27</span>
+      <div class="hero-badge" style="background: #ffffff; border: 1px solid #dbeafe; padding: 0.4rem 1rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.55rem; margin-bottom: 0.75rem; box-shadow: 0 2px 10px rgba(37,99,235,0.06);">
+        <span class="pulse-dot" style="width: 8px; height: 8px; background: #2563eb; border-radius: 50%; display: inline-block;"></span>
+        <span style="font-weight: 700; color: #1e40af; font-size: 0.8rem; letter-spacing: 0.01em;">Phase 1 Campus Recruitment Season 2026–27</span>
       </div>
 
       <!-- Main Headline -->
-      <h1 class="hero-title" style="font-size: 2.5rem; line-height: 1.2; margin-bottom: 1rem;">
+      <h1 class="hero-title" style="font-size: 2.75rem; font-weight: 900; color: #0f172a; line-height: 1.22; margin-bottom: 1rem; letter-spacing: -0.02em;">
         Empowering Top Talent & <br>
-        <span class="hero-gradient-text" style="background: linear-gradient(135deg, #1e40af 0%, #2563eb 40%, #0284c7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Global Industry Leaders</span>
+        <span style="color: #1d4ed8;">Connecting Global Industry Leaders</span>
       </h1>
 
-      <p class="hero-subtitle" style="font-size: 0.95rem; color: #475569; max-width: 720px; line-height: 1.55; margin-bottom: 1.75rem;">
-        Welcome to the central gateway of <strong>A2Z Placement Cell</strong>. Facilitating transparent campus recruitment, DPC-verified academic credentials, automated Day 1 slot allocation, and 1-click corporate hiring governance.
+      <p class="hero-subtitle" style="font-size: 1rem; color: #475569; max-width: 720px; line-height: 1.65; margin-bottom: 2rem;">
+        Official Training & Placement portal for <strong>A2Z Institute of Technology</strong>. Streamlining campus recruitment drives, verified academic credentials, and real-time hiring governance.
       </p>
 
       <!-- Primary Action Buttons -->
-      <div class="hero-cta-group" style="gap: 0.75rem; margin-bottom: 2rem;">
+      <div class="hero-cta-group" style="gap: 0.85rem; margin-bottom: 2.25rem;">
         {% if is_tpo_logged_in %}
-          <a href="{% url 'tpo_officer:dashboard' %}" class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #059669, #10b981); border: 1px solid #34d399; box-shadow: 0 4px 16px rgba(5, 150, 105, 0.35); font-weight: 700; padding: 0.65rem 1.3rem; border-radius: 8px;">
-            <span>🛡️</span> Return to TPO Control Room (Prof. S. Bhattacharya) →
+          <a href="{% url 'tpo_officer:dashboard' %}" class="btn btn-primary btn-sm" style="background: #059669; color: #ffffff; font-weight: 700; padding: 0.7rem 1.4rem; border-radius: 9999px; box-shadow: 0 4px 14px rgba(5,150,105,0.25); text-decoration: none;">
+            Return to TPO Control Room (Prof. S. Bhattacharya) →
           </a>
-          <a href="{% url 'tpo_officer:verify_students' %}" class="btn btn-secondary btn-sm" style="padding: 0.65rem 1.1rem; border-radius: 8px;">
-            <span>📋</span> Student Verifications
+          <a href="{% url 'tpo_officer:verify_students' %}" class="btn btn-secondary btn-sm" style="padding: 0.7rem 1.2rem; border-radius: 9999px; background: #ffffff; color: #1e293b; border: 1px solid #cbd5e1; font-weight: 600; text-decoration: none;">
+            Student Verifications
           </a>
 
         {% elif is_recruiter_logged_in and recruiter_company %}
-          <a href="{% url 'recruiters:dashboard' %}" class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #0284c7, #06b6d4); border: 1px solid #38bdf8; box-shadow: 0 4px 16px rgba(6, 182, 212, 0.35); font-weight: 700; padding: 0.65rem 1.3rem; border-radius: 8px;">
-            <span>🏢</span> Return to {{ recruiter_company.name }} HR Desk →
+          <a href="{% url 'recruiters:dashboard' %}" class="btn btn-primary btn-sm" style="background: #0284c7; color: #ffffff; font-weight: 700; padding: 0.7rem 1.4rem; border-radius: 9999px; box-shadow: 0 4px 14px rgba(2,132,199,0.25); text-decoration: none;">
+            Return to {{ recruiter_company.name }} HR Desk →
           </a>
-          <a href="{% url 'recruiters:create_jaf' %}" class="btn btn-outline-cyan btn-sm" style="padding: 0.65rem 1.1rem; border-radius: 8px;">
-            <span>➕</span> Post New JAF
+          <a href="{% url 'recruiters:create_jaf' %}" class="btn btn-secondary btn-sm" style="padding: 0.7rem 1.2rem; border-radius: 9999px; background: #ffffff; color: #1e293b; border: 1px solid #cbd5e1; font-weight: 600; text-decoration: none;">
+            Post New JAF
           </a>
 
         {% elif is_student_logged_in and student %}
-          <a href="{% url 'students:student_dashboard' %}" class="btn btn-primary btn-sm" style="background: linear-gradient(135deg, #1e40af, #2563eb); border: 1px solid #60a5fa; box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35); font-weight: 700; padding: 0.65rem 1.3rem; border-radius: 8px;">
-            <span>🎓</span> Return to Student Workspace ({{ student.full_name|slice:":15" }}) →
+          <a href="{% url 'students:student_dashboard' %}" class="btn btn-primary btn-sm" style="background: #2563eb; color: #ffffff; font-weight: 700; padding: 0.7rem 1.4rem; border-radius: 9999px; box-shadow: 0 4px 16px rgba(37,99,235,0.28); text-decoration: none;">
+            Return to Student Workspace ({{ student.full_name|slice:":15" }}) →
           </a>
-          <a href="{% url 'students:applications' %}" class="btn btn-secondary btn-sm" style="padding: 0.65rem 1.1rem; border-radius: 8px;">
-            <span>📑</span> My Applications
+          <a href="{% url 'students:applications' %}" class="btn btn-secondary btn-sm" style="padding: 0.7rem 1.2rem; border-radius: 9999px; background: #ffffff; color: #1e293b; border: 1px solid #cbd5e1; font-weight: 600; text-decoration: none;">
+            My Applications
           </a>
 
         {% else %}
-          <a href="{% url 'students:register' %}" class="btn-hero-student" title="Register as a graduating candidate">
-            <span>🎓</span> Student Registration
-          </a>
-          <a href="{% url 'recruiters:register' %}" class="btn-hero-recruiter" title="Register company or HR representative for campus hiring" style="background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: #ffffff; text-decoration: none; border-radius: 12px; font-weight: 800; font-size: 0.9rem; padding: 0.75rem 1.35rem; display: inline-flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 16px rgba(16,185,129,0.35);">
-            <span>🏢</span> Corporate Recruiter Registration
-          </a>
-          <a href="{% url 'students:login' %}" class="btn-hero-sso" title="Access SSO Central Gateway">
-            <span>🔐</span> Portal Login (SSO)
-          </a>
+          <div class="hero-action-cards-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; width: 100%; max-width: 900px; margin: 0 auto 2.25rem;">
+            
+            <!-- Hero Card 1: Student Registration -->
+            <a href="{% url 'students:register' %}" style="text-decoration: none; display: flex; align-items: center; gap: 0.85rem; background: linear-gradient(150deg, #ffffff 0%, #f0f7ff 100%); border: 1.5px solid #bfdbfe; border-top: 3.5px solid #2563eb; border-radius: 14px; padding: 1rem 1.15rem; transition: all 0.25s ease; box-shadow: 0 4px 14px rgba(37,99,235,0.08);" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(37,99,235,0.18)'; this.style.background='#ffffff';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 14px rgba(37,99,235,0.08)'; this.style.background='linear-gradient(150deg, #ffffff 0%, #f0f7ff 100%)';">
+              <div style="width: 42px; height: 42px; border-radius: 50%; background: #2563eb; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; box-shadow: 0 4px 10px rgba(37,99,235,0.3);">🎓</div>
+              <div style="text-align: left;">
+                <div style="font-size: 0.95rem; font-weight: 800; color: #0f172a; line-height: 1.2;">Student Registration</div>
+                <div style="font-size: 0.75rem; color: #2563eb; font-weight: 700; margin-top: 0.2rem;">Create Candidate Account →</div>
+              </div>
+            </a>
+
+            <!-- Hero Card 2: Corporate Recruiter Registration -->
+            <a href="{% url 'recruiters:register' %}" style="text-decoration: none; display: flex; align-items: center; gap: 0.85rem; background: linear-gradient(150deg, #ffffff 0%, #f0f9ff 100%); border: 1.5px solid #7dd3fc; border-top: 3.5px solid #0284c7; border-radius: 14px; padding: 1rem 1.15rem; transition: all 0.25s ease; box-shadow: 0 4px 14px rgba(2,132,199,0.08);" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(2,132,199,0.18)'; this.style.background='#ffffff';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 14px rgba(2,132,199,0.08)'; this.style.background='linear-gradient(150deg, #ffffff 0%, #f0f9ff 100%)';">
+              <div style="width: 42px; height: 42px; border-radius: 50%; background: #0284c7; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; box-shadow: 0 4px 10px rgba(2,132,199,0.3);">🏢</div>
+              <div style="text-align: left;">
+                <div style="font-size: 0.95rem; font-weight: 800; color: #0f172a; line-height: 1.2;">Corporate Recruiter</div>
+                <div style="font-size: 0.75rem; color: #0284c7; font-weight: 700; margin-top: 0.2rem;">Post JAFs & Hire Talent →</div>
+              </div>
+            </a>
+
+            <!-- Hero Card 3: Portal Login (SSO) -->
+            <a href="{% url 'students:login' %}" style="text-decoration: none; display: flex; align-items: center; gap: 0.85rem; background: linear-gradient(150deg, #ffffff 0%, #faf5ff 100%); border: 1.5px solid #c4b5fd; border-top: 3.5px solid #7c3aed; border-radius: 14px; padding: 1rem 1.15rem; transition: all 0.25s ease; box-shadow: 0 4px 14px rgba(124,58,237,0.08);" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(124,58,237,0.18)'; this.style.background='#ffffff';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 14px rgba(124,58,237,0.08)'; this.style.background='linear-gradient(150deg, #ffffff 0%, #faf5ff 100%)';">
+              <div style="width: 42px; height: 42px; border-radius: 50%; background: #7c3aed; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; box-shadow: 0 4px 10px rgba(124,58,237,0.3);">🔐</div>
+              <div style="text-align: left;">
+                <div style="font-size: 0.95rem; font-weight: 800; color: #0f172a; line-height: 1.2;">Portal Login (SSO)</div>
+                <div style="font-size: 0.75rem; color: #7c3aed; font-weight: 700; margin-top: 0.2rem;">Sign In to Workspace →</div>
+              </div>
+            </a>
+
+          </div>
         {% endif %}
       </div>
 
-      <!-- Live Placement Season Highlights (4 Premium Frosted Glass VIGNETTE Cards) -->
-      <div class="hero-stats-ribbon" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; padding: 1.15rem 1.25rem; background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(241, 245, 249, 0.75) 100%); backdrop-filter: blur(16px); border: 1.5px solid rgba(255, 255, 255, 0.9); border-radius: 18px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08); width: 100%;">
-        
-        <!-- Glass Card 1: Emerald CTC -->
-        <div class="hero-stat-box" style="background: linear-gradient(145deg, rgba(236, 253, 245, 0.75) 0%, rgba(255, 255, 255, 0.9) 100%); backdrop-filter: blur(12px); border: 1.5px solid rgba(167, 243, 208, 0.8); border-radius: 14px; padding: 0.95rem 0.65rem; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer; box-shadow: 0 6px 16px rgba(5, 150, 105, 0.07), inset 0 1px 2px rgba(255, 255, 255, 0.95);" onmouseover="this.style.transform='translateY(-6px) scale(1.03)'; this.style.background='linear-gradient(145deg, rgba(209, 250, 229, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%)'; this.style.borderColor='#10b981'; this.style.boxShadow='0 16px 36px rgba(5, 150, 105, 0.24)';" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.background='linear-gradient(145deg, rgba(236, 253, 245, 0.75) 0%, rgba(255, 255, 255, 0.9) 100%)'; this.style.borderColor='rgba(167, 243, 208, 0.8)'; this.style.boxShadow='0 6px 16px rgba(5, 150, 105, 0.07)';">
-          <div class="stat-big-num" style="font-size: 1.85rem; color: #059669; font-weight: 800; text-shadow: 0 2px 10px rgba(5, 150, 105, 0.15);">₹1.68 Cr</div>
-          <div class="stat-sub" style="font-size: 0.73rem; color: #15803d; font-weight: 700; margin-top: 0.2rem;">Highest Package (CTC)</div>
+      <!-- Live Placement Highlights (Clean Plain Light Designer Cards) -->
+      <div class="hero-stats-ribbon" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; padding: 1.15rem; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 18px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05); width: 100%;">
+         <!-- Metric Card 1 (Plain Light Blue Accent) -->
+        <div class="hero-stat-box" style="background: #f0f7ff; border: 1.5px solid #bfdbfe; border-top: 3.5px solid #2563eb; border-radius: 14px; padding: 1.15rem 0.9rem; text-align: center; transition: all 0.25s ease; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.06);" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 26px rgba(37, 99, 235, 0.16)'; this.style.background='#ffffff';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 14px rgba(37, 99, 235, 0.06)'; this.style.background='#f0f7ff';">
+          <div class="stat-big-num" style="font-size: 1.95rem; color: #0f172a; font-weight: 800; letter-spacing: -0.02em;">₹1.68 Cr</div>
+          <div class="stat-sub" style="font-size: 0.78rem; color: #1d4ed8; font-weight: 700; margin-top: 0.25rem;">Highest Package (CTC)</div>
+          <div style="font-size: 0.7rem; color: #64748b; margin-top: 0.15rem;">International Offer • 2026-27</div>
         </div>
 
-        <!-- Glass Card 2: Royal Blue Avg CTC -->
-        <div class="hero-stat-box" style="background: linear-gradient(145deg, rgba(239, 246, 255, 0.75) 0%, rgba(255, 255, 255, 0.9) 100%); backdrop-filter: blur(12px); border: 1.5px solid rgba(191, 219, 254, 0.8); border-radius: 14px; padding: 0.95rem 0.65rem; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer; box-shadow: 0 6px 16px rgba(37, 99, 235, 0.07), inset 0 1px 2px rgba(255, 255, 255, 0.95);" onmouseover="this.style.transform='translateY(-6px) scale(1.03)'; this.style.background='linear-gradient(145deg, rgba(219, 234, 254, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%)'; this.style.borderColor='#3b82f6'; this.style.boxShadow='0 16px 36px rgba(37, 99, 235, 0.24)';" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.background='linear-gradient(145deg, rgba(239, 246, 255, 0.75) 0%, rgba(255, 255, 255, 0.9) 100%)'; this.style.borderColor='rgba(191, 219, 254, 0.8)'; this.style.boxShadow='0 6px 16px rgba(37, 99, 235, 0.07)';">
-          <div class="stat-big-num" style="font-size: 1.85rem; color: #2563eb; font-weight: 800; text-shadow: 0 2px 10px rgba(37, 99, 235, 0.15);">₹24.6 LPA</div>
-          <div class="stat-sub" style="font-size: 0.73rem; color: #1e40af; font-weight: 700; margin-top: 0.2rem;">Average Domestic CTC</div>
+        <!-- Metric Card 2 (Plain Light Lavender Purple Card) -->
+        <div class="hero-stat-box" style="background: #f5f3ff; border: 1.5px solid #c4b5fd; border-top: 3.5px solid #7c3aed; border-radius: 14px; padding: 1.15rem 0.9rem; text-align: center; transition: all 0.25s ease; box-shadow: 0 4px 14px rgba(124, 58, 237, 0.12);" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 14px 28px rgba(124, 58, 237, 0.22)'; this.style.background='#ffffff';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 14px rgba(124, 58, 237, 0.12)'; this.style.background='#f5f3ff';">
+          <div class="stat-big-num" style="font-size: 1.95rem; color: #4c1d95; font-weight: 800; letter-spacing: -0.02em;">₹24.6 LPA</div>
+          <div class="stat-sub" style="font-size: 0.78rem; color: #6d28d9; font-weight: 700; margin-top: 0.25rem;">Average Domestic CTC</div>
+          <div style="font-size: 0.7rem; color: #5b21b6; margin-top: 0.15rem;">CSE & Core Engineering</div>
         </div>
 
-        <!-- Glass Card 3: Violet Recruiters -->
-        <div class="hero-stat-box" style="background: linear-gradient(145deg, rgba(245, 243, 255, 0.75) 0%, rgba(255, 255, 255, 0.9) 100%); backdrop-filter: blur(12px); border: 1.5px solid rgba(221, 214, 254, 0.8); border-radius: 14px; padding: 0.95rem 0.65rem; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer; box-shadow: 0 6px 16px rgba(124, 58, 237, 0.07), inset 0 1px 2px rgba(255, 255, 255, 0.95);" onmouseover="this.style.transform='translateY(-6px) scale(1.03)'; this.style.background='linear-gradient(145deg, rgba(237, 233, 254, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%)'; this.style.borderColor='#8b5cf6'; this.style.boxShadow='0 16px 36px rgba(124, 58, 237, 0.24)';" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.background='linear-gradient(145deg, rgba(245, 243, 255, 0.75) 0%, rgba(255, 255, 255, 0.9) 100%)'; this.style.borderColor='rgba(221, 214, 254, 0.8)'; this.style.boxShadow='0 6px 16px rgba(124, 58, 237, 0.07)';">
-          <div class="stat-big-num" style="font-size: 1.85rem; color: #7c3aed; font-weight: 800; text-shadow: 0 2px 10px rgba(124, 58, 237, 0.15);">350+</div>
-          <div class="stat-sub" style="font-size: 0.73rem; color: #6d28d9; font-weight: 700; margin-top: 0.2rem;">Global Recruiters</div>
+        <!-- Metric Card 3 (Plain Light Emerald Accent) -->
+        <div class="hero-stat-box" style="background: #f0fdf4; border: 1.5px solid #a7f3d0; border-top: 3.5px solid #059669; border-radius: 14px; padding: 1.15rem 0.9rem; text-align: center; transition: all 0.25s ease; box-shadow: 0 4px 14px rgba(5, 150, 105, 0.06);" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 26px rgba(5, 150, 105, 0.16)'; this.style.background='#ffffff';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 14px rgba(5, 150, 105, 0.06)'; this.style.background='#f0fdf4';">
+          <div class="stat-big-num" style="font-size: 1.95rem; color: #0f172a; font-weight: 800; letter-spacing: -0.02em;">350+</div>
+          <div class="stat-sub" style="font-size: 0.78rem; color: #047857; font-weight: 700; margin-top: 0.25rem;">Global Recruiters</div>
+          <div style="font-size: 0.7rem; color: #64748b; margin-top: 0.15rem;">Fortune 500 & MNC Partners</div>
         </div>
 
-        <!-- Glass Card 4: Gold Placement Rate -->
-        <div class="hero-stat-box" style="background: linear-gradient(145deg, rgba(254, 243, 199, 0.65) 0%, rgba(255, 255, 255, 0.9) 100%); backdrop-filter: blur(12px); border: 1.5px solid rgba(253, 230, 138, 0.8); border-radius: 14px; padding: 0.95rem 0.65rem; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer; box-shadow: 0 6px 16px rgba(217, 119, 6, 0.07), inset 0 1px 2px rgba(255, 255, 255, 0.95);" onmouseover="this.style.transform='translateY(-6px) scale(1.03)'; this.style.background='linear-gradient(145deg, rgba(253, 230, 138, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%)'; this.style.borderColor='#f59e0b'; this.style.boxShadow='0 16px 36px rgba(217, 119, 6, 0.24)';" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.background='linear-gradient(145deg, rgba(254, 243, 199, 0.65) 0%, rgba(255, 255, 255, 0.9) 100%)'; this.style.borderColor='rgba(253, 230, 138, 0.8)'; this.style.boxShadow='0 6px 16px rgba(217, 119, 6, 0.07)';">
-          <div class="stat-big-num" style="font-size: 1.85rem; color: #d97706; font-weight: 800; text-shadow: 0 2px 10px rgba(217, 119, 6, 0.15);">98.6%</div>
-          <div class="stat-sub" style="font-size: 0.73rem; color: #b45309; font-weight: 700; margin-top: 0.2rem;">Batch Placement Rate</div>
+        <!-- Metric Card 4 (Plain Light Amber Accent) -->
+        <div class="hero-stat-box" style="background: #fffbeb; border: 1.5px solid #fde68a; border-top: 3.5px solid #d97706; border-radius: 14px; padding: 1.15rem 0.9rem; text-align: center; transition: all 0.25s ease; box-shadow: 0 4px 14px rgba(217, 119, 6, 0.06);" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 26px rgba(217, 119, 6, 0.16)'; this.style.background='#ffffff';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 14px rgba(217, 119, 6, 0.06)'; this.style.background='#fffbeb';">
+          <div class="stat-big-num" style="font-size: 1.95rem; color: #0f172a; font-weight: 800; letter-spacing: -0.02em;">98.6%</div>
+          <div class="stat-sub" style="font-size: 0.78rem; color: #b45309; font-weight: 700; margin-top: 0.25rem;">Batch Placement Rate</div>
+          <div style="font-size: 0.7rem; color: #64748b; margin-top: 0.15rem;">Graduating Class of 2026</div>
         </div>
       </div>
 
-      <!-- Institutional Overview & About Placement Cell (Spacious & Polished) -->
-      <div id="about" style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 18px; padding: 1.75rem 2rem; margin-top: 1.75rem; box-shadow: 0 4px 24px rgba(0,0,0,0.05); text-align: left; width: 100%;">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.95rem; margin-bottom: 1.15rem; flex-wrap: wrap; gap: 0.85rem;">
-          <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <div style="width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, #1e40af, #2563eb); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; box-shadow: 0 3px 10px rgba(37,99,235,0.28);">
-              🏛️
-            </div>
-            <div>
-              <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 0;">About A2Z Placement Cell & Career Governance</h3>
-              <p style="font-size: 0.78rem; color: #64748b; margin: 0.15rem 0 0;">Premier Central Placement Office for Engineering, Computing & Applied Sciences</p>
-            </div>
+      <!-- Institutional Overview & About Placement Cell (Human Designed & Crisp) -->
+      <div id="about" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 1.75rem 2rem; margin-top: 1.75rem; box-shadow: 0 4px 20px rgba(15,23,42,0.04); text-align: left; width: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 1rem; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.85rem;">
+          <div>
+            <h3 style="font-size: 1.2rem; font-weight: 800; color: #0f172a; margin: 0; letter-spacing: -0.01em;">About A2Z Placement Cell & Career Governance</h3>
+            <p style="font-size: 0.82rem; color: #64748b; margin: 0.2rem 0 0;">Central Placement Nodal Office for Engineering, Computing & Applied Sciences</p>
           </div>
-          <a href="{% url 'students:policy' %}" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; font-weight: 700; padding: 0.45rem 0.85rem; border-radius: 8px; border-color: #bfdbfe; background: #eff6ff; color: #1d4ed8;">
-            <span>📋</span> View Official Policy & Guidelines →
+          <a href="{% url 'students:policy' %}" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; font-weight: 700; padding: 0.45rem 0.95rem; border-radius: 8px; border-color: #cbd5e1; background: #ffffff; color: #1e293b;">
+            <span>Official Policy & Guidelines →</span>
           </a>
         </div>
 
-        <p style="font-size: 0.88rem; color: #475569; line-height: 1.6; margin-bottom: 1.25rem;">
-          The <strong>A2Z Placement Cell</strong> serves as the central nodal office linking graduating engineering and computing talent with multinational technology leaders, quantitative trading firms, and global enterprises. Built on principles of transparency, cryptographic grade authentication, and zero-conflict interview scheduling.
+        <p style="font-size: 0.9rem; color: #475569; line-height: 1.65; margin-bottom: 1.5rem;">
+          The <strong>A2Z Placement Cell</strong> serves as the central bridge connecting graduating engineering talent with global technology companies, quantitative trading firms, and leading consultancies. Operating under strict institutional governance, verified academic credentials, and transparent interview scheduling.
         </p>
 
-        <!-- 4 Spacious Core Pillars with Enhanced Color-Matched Hover Effects -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(225px, 1fr)); gap: 1.15rem;">
+        <!-- 4 Core Pillars (Plain Light Solid Colors) -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(225px, 1fr)); gap: 1rem;">
           
-          <!-- Pillar 1: Blue Theme -->
-          <div style="background: linear-gradient(150deg, #ffffff 0%, #f0f7ff 100%); border: 1.5px solid #bfdbfe; border-radius: 12px; padding: 1.1rem 1.15rem; border-left: 5px solid #2563eb; box-shadow: 0 2px 10px rgba(37,99,235,0.04); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer;" onmouseover="this.style.transform='translateY(-6px) scale(1.02)'; this.style.background='linear-gradient(135deg, #dbeafe 0%, #eff6ff 50%, #ffffff 100%)'; this.style.borderColor='#3b82f6'; this.style.boxShadow='0 14px 30px rgba(37, 99, 235, 0.22)';" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.background='linear-gradient(150deg, #ffffff 0%, #f0f7ff 100%)'; this.style.borderColor='#bfdbfe'; this.style.boxShadow='0 2px 10px rgba(37,99,235,0.04)';">
-            <div style="font-size: 1.25rem; margin-bottom: 0.35rem;">🛡️</div>
-            <div style="font-weight: 800; font-size: 0.88rem; color: #0f172a; margin-bottom: 0.3rem;">DPC Audited Credentials</div>
-            <div style="font-size: 0.76rem; color: #475569; line-height: 1.45;">Every student's 10th, 12th/Diploma marks, CPI pointers, and resumes are certified by the Placement Head.</div>
+          <!-- Pillar 1 (Plain Light Blue) -->
+          <div style="background: #f0f7ff; border: 1.5px solid #bfdbfe; border-top: 3px solid #2563eb; border-radius: 12px; padding: 1.1rem 1.15rem; transition: all 0.25s ease;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 10px 20px rgba(37,99,235,0.12)'; this.style.background='#ffffff';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.background='#f0f7ff';">
+            <div style="font-weight: 800; font-size: 0.9rem; color: #0f172a; margin-bottom: 0.35rem;">DPC Verified Credentials</div>
+            <div style="font-size: 0.78rem; color: #475569; line-height: 1.5;">All 10th, 12th/Diploma percentages, semester SGPA, and master resumes are audited and certified by Placement Head.</div>
           </div>
 
-          <!-- Pillar 2: Green Theme -->
-          <div style="background: linear-gradient(150deg, #ffffff 0%, #f0fdf9 100%); border: 1.5px solid #a7f3d0; border-radius: 12px; padding: 1.1rem 1.15rem; border-left: 5px solid #059669; box-shadow: 0 2px 10px rgba(5,150,105,0.04); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer;" onmouseover="this.style.transform='translateY(-6px) scale(1.02)'; this.style.background='linear-gradient(135deg, #d1fae5 0%, #ecfdf5 50%, #ffffff 100%)'; this.style.borderColor='#10b981'; this.style.boxShadow='0 14px 30px rgba(16, 185, 129, 0.22)';" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.background='linear-gradient(150deg, #ffffff 0%, #f0fdf9 100%)'; this.style.borderColor='#a7f3d0'; this.style.boxShadow='0 2px 10px rgba(5,150,105,0.04)';">
-            <div style="font-size: 1.25rem; margin-bottom: 0.35rem;">⚡</div>
-            <div style="font-weight: 800; font-size: 0.88rem; color: #0f172a; margin-bottom: 0.3rem;">Day 1 Superday Slots</div>
-            <div style="font-size: 0.76rem; color: #475569; line-height: 1.45;">Automated conflict-free slot allotment across Slot 1 (08:00 AM) and Slot 2 (02:00 PM) for parallel corporate interviews.</div>
+          <!-- Pillar 2 (Plain Light Lavender) -->
+          <div style="background: #f5f3ff; border: 1.5px solid #c4b5fd; border-top: 3px solid #7c3aed; border-radius: 12px; padding: 1.1rem 1.15rem; transition: all 0.25s ease;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 10px 20px rgba(124,58,237,0.14)'; this.style.background='#ffffff';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.background='#f5f3ff';">
+            <div style="font-weight: 800; font-size: 0.9rem; color: #4c1d95; margin-bottom: 0.35rem;">Day 1 Superday Slots</div>
+            <div style="font-size: 0.78rem; color: #5b21b6; line-height: 1.5;">Automated conflict-free slot allotment across Slot 1 (08:00 AM) and Slot 2 (02:00 PM) for parallel interviews.</div>
           </div>
 
-          <!-- Pillar 3: Purple Theme -->
-          <div style="background: linear-gradient(150deg, #ffffff 0%, #faf5ff 100%); border: 1.5px solid #ddd6fe; border-radius: 12px; padding: 1.1rem 1.15rem; border-left: 5px solid #7c3aed; box-shadow: 0 2px 10px rgba(124,58,237,0.04); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer;" onmouseover="this.style.transform='translateY(-6px) scale(1.02)'; this.style.background='linear-gradient(135deg, #ede9fe 0%, #f5f3ff 50%, #ffffff 100%)'; this.style.borderColor='#8b5cf6'; this.style.boxShadow='0 14px 30px rgba(139, 92, 246, 0.22)';" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.background='linear-gradient(150deg, #ffffff 0%, #faf5ff 100%)'; this.style.borderColor='#ddd6fe'; this.style.boxShadow='0 2px 10px rgba(124,58,237,0.04)';">
-            <div style="font-size: 1.25rem; margin-bottom: 0.35rem;">📜</div>
-            <div style="font-weight: 800; font-size: 0.88rem; color: #0f172a; margin-bottom: 0.3rem;">1-Student-1-Job Policy</div>
-            <div style="font-size: 0.76rem; color: #475569; line-height: 1.45;">Strict institutional governance ensuring equal placement access with Dream (≥15 LPA) offer upgrades.</div>
+          <!-- Pillar 3 (Plain Light Emerald) -->
+          <div style="background: #f0fdf4; border: 1.5px solid #a7f3d0; border-top: 3px solid #059669; border-radius: 12px; padding: 1.1rem 1.15rem; transition: all 0.25s ease;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 10px 20px rgba(5,150,105,0.12)'; this.style.background='#ffffff';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.background='#f0fdf4';">
+            <div style="font-weight: 800; font-size: 0.9rem; color: #0f172a; margin-bottom: 0.35rem;">1-Student-1-Job Policy</div>
+            <div style="font-size: 0.78rem; color: #475569; line-height: 1.5;">Institutional policy ensuring equal opportunity with Dream offer upgrade rules for candidates.</div>
           </div>
 
-          <!-- Pillar 4: Orange/Gold Theme -->
-          <div style="background: linear-gradient(150deg, #ffffff 0%, #fffbeb 100%); border: 1.5px solid #fde68a; border-radius: 12px; padding: 1.1rem 1.15rem; border-left: 5px solid #d97706; box-shadow: 0 2px 10px rgba(217,119,6,0.04); transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer;" onmouseover="this.style.transform='translateY(-6px) scale(1.02)'; this.style.background='linear-gradient(135deg, #fef3c7 0%, #fffbeb 50%, #ffffff 100%)'; this.style.borderColor='#f59e0b'; this.style.boxShadow='0 14px 30px rgba(249, 115, 22, 0.22)';" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.background='linear-gradient(150deg, #ffffff 0%, #fffbeb 100%)'; this.style.borderColor='#fde68a'; this.style.boxShadow='0 2px 10px rgba(217,119,6,0.04)';">
-            <div style="font-size: 1.25rem; margin-bottom: 0.35rem;">🏢</div>
-            <div style="font-weight: 800; font-size: 0.88rem; color: #0f172a; margin-bottom: 0.3rem;">Corporate Enablement</div>
-            <div style="font-size: 0.76rem; color: #475569; line-height: 1.45;">1-Click JAF submission, custom criteria filters, candidate shortlisting, and live offer rollout tracking for HRs.</div>
+          <!-- Pillar 4 (Plain Light Amber) -->
+          <div style="background: #fffbeb; border: 1.5px solid #fde68a; border-top: 3px solid #d97706; border-radius: 12px; padding: 1.1rem 1.15rem; transition: all 0.25s ease;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 10px 20px rgba(217,119,6,0.12)'; this.style.background='#ffffff';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'; this.style.background='#fffbeb';">
+            <div style="font-weight: 800; font-size: 0.9rem; color: #0f172a; margin-bottom: 0.35rem;">Corporate Enablement</div>
+            <div style="font-size: 0.78rem; color: #475569; line-height: 1.5;">Direct JAF submissions, custom academic cutoffs, candidate shortlisting, and live offer tracking for HRs.</div>
           </div>
 
         </div>
@@ -151,110 +166,89 @@
     </div>
   </section>
 
-  <!-- 2. Multi-Role Portals & Gateway Access Section (Compact & Rich Color Themes) -->
+  <!-- 2. Multi-Role Portals & Gateway Access Section (Human Designed Grid) -->
   <section class="landing-section" id="portals">
-    <div class="section-title-wrap" style="margin-bottom: 1.25rem;">
-      <span class="section-kicker" style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; padding: 0.15rem 0.65rem; border-radius: 9999px;">Multi-User Placement Gateway</span>
-      <h2 style="font-size: 1.55rem; color: #0f172a; margin-top: 0.35rem; margin-bottom: 0.25rem;">Role-Based Portals & System Access</h2>
-      <p style="font-size: 0.84rem; color: #64748b;">Select your user category to register an account or log in to access university placement services.</p>
+    <div class="section-title-wrap" style="margin-bottom: 1.5rem; text-align: center;">
+      <span style="background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.75rem; border-radius: 9999px;">Placement System Access</span>
+      <h2 style="font-size: 1.6rem; font-weight: 800; color: #0f172a; margin-top: 0.4rem; margin-bottom: 0.25rem;">Role-Based Placement Portals</h2>
+      <p style="font-size: 0.88rem; color: #64748b; max-width: 600px; margin: 0 auto;">Select your user role to access university placement services, submit job announcements, or manage drives.</p>
     </div>
 
-    <div class="role-cards-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); justify-content: center; gap: 1.25rem; width: 100%; max-width: 1100px; margin: 0 auto;">
+    <div class="role-cards-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; width: 100%; max-width: 1100px; margin: 0 auto;">
       
-      <!-- Role 1: Students (Wider Card with Soft Light Ice-Blue Pastel Gradient) -->
-      <div class="role-card" style="background: linear-gradient(165deg, #ffffff 0%, #f0f7ff 45%, #e0f2fe 100%); border: 1.5px solid #bfdbfe; border-left: 4.5px solid #2563eb; border-radius: 16px; padding: 1.4rem 1.35rem; box-shadow: 0 4px 20px rgba(37,99,235,0.07); display: flex; flex-direction: column; transition: all 0.22s ease;" onmouseover="this.style.transform='translateY(-3px)'; this.style.borderColor='#93c5fd'; this.style.borderLeftColor='#1e40af'; this.style.boxShadow='0 10px 28px rgba(37,99,235,0.15)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='#bfdbfe'; this.style.borderLeftColor='#2563eb'; this.style.boxShadow='0 4px 20px rgba(37,99,235,0.07)';">
-        <div class="role-card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
-          <div class="role-icon-wrap" style="width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, #1e40af, #2563eb); color: #ffffff; font-size: 1.25rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 10px rgba(37,99,235,0.28); border: 2px solid #ffffff;">👨‍🎓</div>
-          <span class="role-tag" style="background: #ffffff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.65rem; border-radius: 9999px; box-shadow: 0 1px 4px rgba(0,0,0,0.04);">Student Gateway</span>
+      <!-- Role 1: Student Portal (Royal Blue Theme) -->
+      <div class="role-card" style="background: linear-gradient(150deg, #ffffff 0%, #f0f7ff 100%); border: 1.5px solid #bfdbfe; border-top: 4px solid #2563eb; border-radius: 16px; padding: 1.65rem 1.5rem; box-shadow: 0 4px 16px rgba(37,99,235,0.06); display: flex; flex-direction: column; transition: all 0.25s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 14px 30px rgba(37,99,235,0.14)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 16px rgba(37,99,235,0.06)';">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <span style="font-size: 0.75rem; font-weight: 700; color: #1e40af; background: #dbeafe; border: 1px solid #93c5fd; padding: 0.22rem 0.7rem; border-radius: 9999px;">Graduating Candidates</span>
         </div>
-        <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin-bottom: 0.35rem;">Student Portal</h3>
-        <p class="role-desc" style="font-size: 0.82rem; color: #475569; line-height: 1.5; margin-bottom: 1rem;">For graduating candidates to enroll, verify academic CPI, explore 350+ JAFs, and track application stages.</p>
-        <ul class="role-feature-list" style="font-size: 0.78rem; color: #1e3a8a; margin-bottom: 1.2rem; gap: 0.35rem;">
-          <li><span style="color:#2563eb; font-weight:800;">✓</span> 1-Click online enrollment & verification</li>
-          <li><span style="color:#2563eb; font-weight:800;">✓</span> DPC certified master resume freeze</li>
-          <li><span style="color:#2563eb; font-weight:800;">✓</span> 350+ active company JAF applications</li>
-          <li><span style="color:#2563eb; font-weight:800;">✓</span> Day 1 interview schedule & live tracker</li>
+        <h3 style="font-size: 1.25rem; font-weight: 800; color: #0f172a; margin-bottom: 0.4rem;">Student Portal</h3>
+        <p style="font-size: 0.84rem; color: #475569; line-height: 1.55; margin-bottom: 1.15rem;">Enables candidates to register, verify CPI & academic records, apply to company JAFs, and track interview slots.</p>
+        <ul style="font-size: 0.8rem; color: #334155; margin-bottom: 1.3rem; padding-left: 1.1rem; display: flex; flex-direction: column; gap: 0.45rem;">
+          <li>DPC certified academic record & resume lock</li>
+          <li>350+ active company JAF applications</li>
+          <li>Day 1 interview schedule & live stage status</li>
         </ul>
-        <div class="role-card-footer" style="margin-top: auto; display: flex; flex-direction: column; gap: 0.45rem;">
+        <div style="margin-top: auto; display: flex; flex-direction: column; gap: 0.55rem;">
           {% if is_student_logged_in %}
-          <a href="{% url 'students:student_dashboard' %}" class="btn btn-primary btn-sm" style="width: 100%; font-weight: 700; text-align: center; background: linear-gradient(135deg, #1e40af, #2563eb); padding: 0.55rem 0.95rem; font-size: 0.82rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(37,99,235,0.25);">
-            <span>🎓</span> Open Student Workspace →
-          </a>
-          <a href="{% url 'students:edit_profile' %}" class="btn btn-secondary btn-sm" style="width: 100%; font-weight: 700; text-align: center; background: #ffffff; color: #1e40af; border: 1px solid #bfdbfe; padding: 0.55rem 0.95rem; font-size: 0.82rem; border-radius: 8px;">
-            ✏️ Edit Academic Profile
+          <a href="{% url 'students:student_dashboard' %}" class="btn btn-primary btn-sm" style="width: 100%; font-weight: 700; text-align: center; background: #2563eb; color: #ffffff; padding: 0.65rem 1rem; font-size: 0.85rem; border-radius: 8px; border: none; box-shadow: 0 4px 14px rgba(37,99,235,0.25);">
+            Open Student Workspace →
           </a>
           {% else %}
-          <a href="{% url 'students:register' %}" class="btn btn-primary btn-sm" style="width: 100%; font-weight: 700; text-align: center; background: linear-gradient(135deg, #1e40af, #2563eb); padding: 0.55rem 0.95rem; font-size: 0.82rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(37,99,235,0.25);">
-            <span>🎓</span> Register New Student
+          <a href="{% url 'students:register' %}" class="btn btn-primary btn-sm" style="width: 100%; font-weight: 700; text-align: center; background: #2563eb; color: #ffffff; padding: 0.65rem 1rem; font-size: 0.85rem; border-radius: 8px; border: none; box-shadow: 0 4px 14px rgba(37,99,235,0.25);">
+            Register Student Account
           </a>
-          <a href="{% url 'students:login' %}?role=student" class="btn btn-secondary btn-sm" style="width: 100%; font-weight: 700; text-align: center; background: #ffffff; color: #1e40af; border: 1px solid #bfdbfe; padding: 0.55rem 0.95rem; font-size: 0.82rem; border-radius: 8px;">
-            <span>🔐</span> Student SSO Login
+          <a href="{% url 'students:login' %}?role=student" class="btn btn-secondary btn-sm" style="width: 100%; font-weight: 700; text-align: center; background: #ffffff; color: #1d4ed8; border: 1px solid #bfdbfe; padding: 0.65rem 1rem; font-size: 0.85rem; border-radius: 8px;">
+            Student Login
           </a>
           {% endif %}
         </div>
       </div>
 
-      <!-- Role 2: Placement Officers / TPO (Wider Card with Soft Light Lavender Pastel Gradient) -->
-      <div class="role-card" style="background: linear-gradient(165deg, #ffffff 0%, #fbf8ff 45%, #f3e8ff 100%); border: 1.5px solid #ddd6fe; border-left: 4.5px solid #7c3aed; border-radius: 16px; padding: 1.4rem 1.35rem; box-shadow: 0 4px 20px rgba(124,58,237,0.07); display: flex; flex-direction: column; transition: all 0.22s ease;" onmouseover="this.style.transform='translateY(-3px)'; this.style.borderColor='#c4b5fd'; this.style.borderLeftColor='#6d28d9'; this.style.boxShadow='0 10px 28px rgba(124,58,237,0.15)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='#ddd6fe'; this.style.borderLeftColor='#7c3aed'; this.style.boxShadow='0 4px 20px rgba(124,58,237,0.07)';">
-        <div class="role-card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
-          <div class="role-icon-wrap" style="width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, #6d28d9, #7c3aed); color: #ffffff; font-size: 1.25rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 10px rgba(124,58,237,0.28); border: 2px solid #ffffff;">🛡️</div>
-          <span class="role-tag" style="background: #ffffff; color: #6d28d9; border: 1px solid #ddd6fe; font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.65rem; border-radius: 9999px; box-shadow: 0 1px 4px rgba(0,0,0,0.04);">TPO Administration</span>
+      <!-- Role 2: Placement Officers (TPO) (Emerald Green Theme) -->
+      <div class="role-card" style="background: linear-gradient(150deg, #ffffff 0%, #f0fdf4 100%); border: 1.5px solid #a7f3d0; border-top: 4px solid #059669; border-radius: 16px; padding: 1.65rem 1.5rem; box-shadow: 0 4px 16px rgba(5,150,105,0.06); display: flex; flex-direction: column; transition: all 0.25s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 14px 30px rgba(5,150,105,0.14)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 16px rgba(5,150,105,0.06)';">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <span style="font-size: 0.75rem; font-weight: 700; color: #047857; background: #d1fae5; border: 1px solid #6ee7b7; padding: 0.22rem 0.7rem; border-radius: 9999px;">TPO Administration</span>
         </div>
-        <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin-bottom: 0.35rem;">Placement Officers (TPO)</h3>
-        <p class="role-desc" style="font-size: 0.82rem; color: #475569; line-height: 1.5; margin-bottom: 1rem;">For Training & Placement Officers to audit student records, assign Day 1 slots, and monitor live season metrics.</p>
-        <ul class="role-feature-list" style="font-size: 0.78rem; color: #5b21b6; margin-bottom: 1.2rem; gap: 0.35rem;">
-          <li><span style="color:#7c3aed; font-weight:800;">✓</span> 1-Click candidate verification queue</li>
-          <li><span style="color:#7c3aed; font-weight:800;">✓</span> Day 1 / Day 2 slot matrix manager</li>
-          <li><span style="color:#7c3aed; font-weight:800;">✓</span> JAF verification & approval desk</li>
-          <li><span style="color:#7c3aed; font-weight:800;">✓</span> Real-time season analytics & reports</li>
+        <h3 style="font-size: 1.25rem; font-weight: 800; color: #064e3b; margin-bottom: 0.4rem;">Placement Office (TPO)</h3>
+        <p style="font-size: 0.84rem; color: #475569; line-height: 1.55; margin-bottom: 1.15rem;">Allows placement officers to audit student credentials, verify company JAFs, manage Day 1 slots, and view analytics.</p>
+        <ul style="font-size: 0.8rem; color: #334155; margin-bottom: 1.3rem; padding-left: 1.1rem; display: flex; flex-direction: column; gap: 0.45rem;">
+          <li>Candidate academic verification queue</li>
+          <li>Day 1 / Day 2 interview slot matrix manager</li>
+          <li>Company JAF verification & real-time analytics</li>
         </ul>
-        <div class="role-card-footer" style="margin-top: auto; display: flex; flex-direction: column; gap: 0.45rem;">
+        <div style="margin-top: auto; display: flex; flex-direction: column; gap: 0.55rem;">
           {% if is_tpo_logged_in %}
-          <a href="{% url 'tpo_officer:dashboard' %}" class="btn btn-primary btn-sm" style="width: 100%; background: linear-gradient(135deg, #6d28d9, #7c3aed); font-weight: 700; text-align: center; padding: 0.55rem 0.95rem; font-size: 0.82rem; border-radius: 8px; border: none; box-shadow: 0 2px 8px rgba(124,58,237,0.25);">
-            <span>🛡️</span> Return to TPO Control Room →
-          </a>
-          <a href="{% url 'tpo_officer:verify_students' %}" class="btn btn-secondary btn-sm" style="width: 100%; font-weight: 700; text-align: center; background: #ffffff; color: #6d28d9; border: 1px solid #ddd6fe; padding: 0.55rem 0.95rem; font-size: 0.82rem; border-radius: 8px;">
-            Candidate Audit Desk
+          <a href="{% url 'tpo_officer:dashboard' %}" class="btn btn-primary btn-sm" style="width: 100%; background: #059669; color: #ffffff; font-weight: 700; text-align: center; padding: 0.65rem 1rem; font-size: 0.85rem; border-radius: 8px; border: none; box-shadow: 0 4px 14px rgba(5,150,105,0.25);">
+            Open TPO Control Room →
           </a>
           {% else %}
-          <a href="{% url 'students:login' %}?role=admin&next=/tpo/dashboard/" class="btn btn-primary btn-sm" style="width: 100%; background: linear-gradient(135deg, #6d28d9, #7c3aed); font-weight: 700; text-align: center; padding: 0.55rem 0.95rem; font-size: 0.82rem; border-radius: 8px; border: none; box-shadow: 0 2px 8px rgba(124,58,237,0.25);">
-            <span>🛡️</span> TPO Officer Login (ID/Pass)
-          </a>
-          <a href="{% url 'students:login' %}?role=admin&next=/tpo/students/verify/" class="btn btn-secondary btn-sm" style="width: 100%; font-weight: 700; text-align: center; background: #ffffff; color: #6d28d9; border: 1px solid #ddd6fe; padding: 0.55rem 0.95rem; font-size: 0.82rem; border-radius: 8px;">
-            Candidate Audit Desk (Login)
+          <a href="{% url 'students:login' %}?role=admin&next=/tpo/dashboard/" class="btn btn-primary btn-sm" style="width: 100%; background: #059669; color: #ffffff; font-weight: 700; text-align: center; padding: 0.65rem 1rem; font-size: 0.85rem; border-radius: 8px; border: none; box-shadow: 0 4px 14px rgba(5,150,105,0.25);">
+            TPO Officer Login
           </a>
           {% endif %}
         </div>
       </div>
 
-      <!-- Role 3: Corporate Recruiters (Wider Card with Soft Light Mint-Emerald Pastel Gradient) -->
-      <div class="role-card" style="background: linear-gradient(165deg, #ffffff 0%, #f0fdf9 45%, #ecfdf5 100%); border: 1.5px solid #a7f3d0; border-left: 4.5px solid #059669; border-radius: 16px; padding: 1.4rem 1.35rem; box-shadow: 0 4px 20px rgba(5,150,105,0.07); display: flex; flex-direction: column; transition: all 0.22s ease;" onmouseover="this.style.transform='translateY(-3px)'; this.style.borderColor='#86efac'; this.style.borderLeftColor='#047857'; this.style.boxShadow='0 10px 28px rgba(5,150,105,0.15)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='#a7f3d0'; this.style.borderLeftColor='#059669'; this.style.boxShadow='0 4px 20px rgba(5,150,105,0.07)';">
-        <div class="role-card-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem;">
-          <div class="role-icon-wrap" style="width: 42px; height: 42px; border-radius: 12px; background: linear-gradient(135deg, #059669, #10b981); color: #ffffff; font-size: 1.25rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 3px 10px rgba(5,150,105,0.28); border: 2px solid #ffffff;">🏢</div>
-          <span class="role-tag" style="background: #ffffff; color: #047857; border: 1px solid #a7f3d0; font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.65rem; border-radius: 9999px; box-shadow: 0 1px 4px rgba(0,0,0,0.04);">Corporate HR</span>
+      <!-- Role 3: Corporate Recruiters (Sky Cyan Theme) -->
+      <div class="role-card" style="background: linear-gradient(150deg, #ffffff 0%, #f0f9ff 100%); border: 1.5px solid #7dd3fc; border-top: 4px solid #0284c7; border-radius: 16px; padding: 1.65rem 1.5rem; box-shadow: 0 4px 16px rgba(2,132,199,0.06); display: flex; flex-direction: column; transition: all 0.25s ease;" onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 14px 30px rgba(2,132,199,0.14)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 16px rgba(2,132,199,0.06)';">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <span style="font-size: 0.75rem; font-weight: 700; color: #0369a1; background: #e0f2fe; border: 1px solid #38bdf8; padding: 0.22rem 0.7rem; border-radius: 9999px;">Corporate HR</span>
         </div>
-        <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin-bottom: 0.35rem;">Corporate Recruiters</h3>
-        <p class="role-desc" style="font-size: 0.82rem; color: #475569; line-height: 1.5; margin-bottom: 1rem;">For visiting corporate HRs to submit Job Announcement Forms, download resumes, and issue placement offers.</p>
-        <ul class="role-feature-list" style="font-size: 0.78rem; color: #065f46; margin-bottom: 1.2rem; gap: 0.35rem;">
-          <li><span style="color:#059669; font-weight:800;">✓</span> 1-Click JAF submission wizard</li>
-          <li><span style="color:#059669; font-weight:800;">✓</span> Download certified master PDF resumes</li>
-          <li><span style="color:#059669; font-weight:800;">✓</span> Live hiring stage roadmap setup</li>
-          <li><span style="color:#059669; font-weight:800;">✓</span> Real-time candidate offer rollouts</li>
+        <h3 style="font-size: 1.25rem; font-weight: 800; color: #0c4a6e; margin-bottom: 0.4rem;">Corporate Recruiters</h3>
+        <p style="font-size: 0.84rem; color: #475569; line-height: 1.55; margin-bottom: 1.15rem;">For visiting corporate HRs to post Job Announcement Forms, set eligibility criteria, inspect candidates, and roll out offers.</p>
+        <ul style="font-size: 0.8rem; color: #334155; margin-bottom: 1.3rem; padding-left: 1.1rem; display: flex; flex-direction: column; gap: 0.45rem;">
+          <li>1-Click JAF creation wizard & cutoffs</li>
+          <li>Candidate inspection & master resume access</li>
+          <li>Dynamic recruitment roadmap & offer rollout</li>
         </ul>
-        <div class="role-card-footer" style="margin-top: auto; display: flex; flex-direction: column; gap: 0.45rem;">
+        <div style="margin-top: auto; display: flex; flex-direction: column; gap: 0.55rem;">
           {% if is_recruiter_logged_in %}
-          <a href="{% url 'recruiters:dashboard' %}" class="btn btn-primary btn-sm" style="width: 100%; background: linear-gradient(135deg, #059669, #10b981); font-weight: 700; text-align: center; padding: 0.55rem 0.95rem; font-size: 0.82rem; border-radius: 8px; border: none; box-shadow: 0 2px 8px rgba(5,150,105,0.25);">
-            <span>🏢</span> Return to Recruiter Desk →
-          </a>
-          <a href="{% url 'recruiters:create_jaf' %}" class="btn btn-secondary btn-sm" style="width: 100%; font-weight: 700; text-align: center; background: #ffffff; color: #047857; border: 1px solid #a7f3d0; padding: 0.55rem 0.95rem; font-size: 0.82rem; border-radius: 8px;">
-            Post New Opening (JAF)
+          <a href="{% url 'recruiters:dashboard' %}" class="btn btn-primary btn-sm" style="width: 100%; background: #0284c7; color: #ffffff; font-weight: 700; text-align: center; padding: 0.65rem 1rem; font-size: 0.85rem; border-radius: 8px; border: none; box-shadow: 0 4px 14px rgba(2,132,199,0.25);">
+            Open Recruiter Desk →
           </a>
           {% else %}
-          <a href="{% url 'students:login' %}?role=recruiter&next=/recruiter/dashboard/" class="btn btn-primary btn-sm" style="width: 100%; background: linear-gradient(135deg, #059669, #10b981); font-weight: 700; text-align: center; padding: 0.55rem 0.95rem; font-size: 0.82rem; border-radius: 8px; border: none; box-shadow: 0 2px 8px rgba(5,150,105,0.25);">
-            <span>🏢</span> Recruiter HR Login (ID/Pass)
-          </a>
-          <a href="{% url 'students:login' %}?role=recruiter&next=/recruiter/jaf/create/" class="btn btn-secondary btn-sm" style="width: 100%; font-weight: 700; text-align: center; background: #ffffff; color: #047857; border: 1px solid #a7f3d0; padding: 0.55rem 0.95rem; font-size: 0.82rem; border-radius: 8px;">
-            Post New Opening (Login)
+          <a href="{% url 'students:login' %}?role=recruiter&next=/recruiter/dashboard/" class="btn btn-primary btn-sm" style="width: 100%; background: #0284c7; color: #ffffff; font-weight: 700; text-align: center; padding: 0.65rem 1rem; font-size: 0.85rem; border-radius: 8px; border: none; box-shadow: 0 4px 14px rgba(2,132,199,0.25);">
+            Recruiter Login
           </a>
           {% endif %}
         </div>
@@ -263,31 +257,36 @@
     </div>
   </section>
 
-  <!-- 3. Featured Recruiting Partners (Luminous Rich Background & Colored Cards) -->
-  <section class="landing-section" id="partners" style="background: linear-gradient(135deg, #090d16 0%, #0f172a 45%, #1e1b4b 100%); border-radius: 18px; padding: 2rem 1.75rem; border: 1px solid rgba(59, 130, 246, 0.35); box-shadow: 0 12px 36px rgba(0,0,0,0.25); position: relative; overflow: hidden;">
-    
-    <!-- Ambient Radial Glow Vignette -->
-    <div style="position: absolute; top: -50px; left: 50%; transform: translateX(-50%); width: 600px; height: 180px; background: radial-gradient(ellipse at center, rgba(37, 99, 235, 0.25) 0%, transparent 70%); pointer-events: none;"></div>
-
-    <div class="section-title-wrap" style="margin-bottom: 1.5rem; position: relative; z-index: 2;">
-      <span class="section-kicker" style="color: #38bdf8; background: rgba(2, 132, 199, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); padding: 0.2rem 0.65rem; border-radius: 9999px;">Industry Collaboration & Recruiters</span>
-      <h2 style="font-size: 1.65rem; color: #ffffff; margin-top: 0.4rem; margin-bottom: 0.35rem;">Premier Global Hiring Partners</h2>
-      <p style="font-size: 0.85rem; color: #94a3b8; max-width: 650px; margin: 0 auto;">Top multinational tech enterprises, quant trading firms, and global consultancies conducting Phase 1 campus placements.</p>
+  <!-- 3. Featured Recruiting Partners (Vibrant Human Designed Cards Grid) -->
+  <section class="landing-section" id="partners" style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #eff6ff 100%); border: 1px solid #cbd5e1; border-radius: 18px; padding: 2.25rem 1.75rem; box-shadow: 0 4px 24px rgba(15,23,42,0.04);">
+    <div class="section-title-wrap" style="margin-bottom: 1.65rem; text-align: center;">
+      <span style="background: #ffffff; color: #1d4ed8; border: 1px solid #bfdbfe; font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.85rem; border-radius: 9999px; box-shadow: 0 2px 8px rgba(37,99,235,0.08);">Industry Collaboration</span>
+      <h2 style="font-size: 1.7rem; font-weight: 800; color: #0f172a; margin-top: 0.5rem; margin-bottom: 0.3rem; letter-spacing: -0.01em;">Premier Global Hiring Partners</h2>
+      <p style="font-size: 0.9rem; color: #475569; max-width: 650px; margin: 0 auto;">Multinational technology companies, quant trading firms, and global enterprises conducting campus placements.</p>
     </div>
 
-    <div class="partners-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 0.95rem; position: relative; z-index: 2;">
+    <div class="partners-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.15rem;">
       {% for company in companies %}
-      <div class="partner-card" style="background: linear-gradient(145deg, rgba(30, 41, 59, 0.85) 0%, rgba(15, 23, 42, 0.95) 100%); border: 1px solid {% if company.sector == 'Software & AI' %}rgba(59, 130, 246, 0.4){% elif company.sector == 'Quant & Finance' %}rgba(245, 158, 11, 0.4){% elif company.sector == 'Management Consulting' %}rgba(16, 185, 129, 0.4){% else %}rgba(168, 85, 247, 0.4){% endif %}; border-radius: 14px; padding: 1.15rem 0.9rem; text-align: center; transition: all 0.25s ease; backdrop-filter: blur(8px); box-shadow: 0 4px 16px rgba(0,0,0,0.18);" onmouseover="this.style.transform='translateY(-3px)'; this.style.borderColor='#38bdf8'; this.style.boxShadow='0 8px 24px rgba(6,182,212,0.25)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='{% if company.sector == 'Software & AI' %}rgba(59, 130, 246, 0.4){% elif company.sector == 'Quant & Finance' %}rgba(245, 158, 11, 0.4){% elif company.sector == 'Management Consulting' %}rgba(16, 185, 129, 0.4){% else %}rgba(168, 85, 247, 0.4){% endif %}'; this.style.boxShadow='0 4px 16px rgba(0,0,0,0.18)';">
+      <div class="partner-card" style="background: {% if company.sector == 'Software & AI' %}linear-gradient(150deg, #ffffff 0%, #f0f7ff 100%){% elif company.sector == 'Quant & Finance' %}linear-gradient(150deg, #ffffff 0%, #fffbeb 100%){% elif company.sector == 'Management Consulting' %}linear-gradient(150deg, #ffffff 0%, #faf5ff 100%){% elif company.sector == 'Core Engineering' %}linear-gradient(150deg, #ffffff 0%, #f0fdf4 100%){% else %}linear-gradient(150deg, #ffffff 0%, #f0f9ff 100%){% endif %}; border: 1.5px solid {% if company.sector == 'Software & AI' %}#bfdbfe{% elif company.sector == 'Quant & Finance' %}#fde68a{% elif company.sector == 'Management Consulting' %}#ddd6fe{% elif company.sector == 'Core Engineering' %}#a7f3d0{% else %}#bae6fd{% endif %}; border-top: 3.5px solid {% if company.sector == 'Software & AI' %}#2563eb{% elif company.sector == 'Quant & Finance' %}#d97706{% elif company.sector == 'Management Consulting' %}#7c3aed{% elif company.sector == 'Core Engineering' %}#059669{% else %}#0284c7{% endif %}; border-radius: 14px; padding: 1.35rem 1rem; text-align: center; transition: all 0.25s ease; box-shadow: 0 4px 14px rgba(15,23,42,0.04);" onmouseover="this.style.transform='translateY(-5px) scale(1.02)'; this.style.boxShadow='0 14px 30px rgba(15,23,42,0.12)'; this.style.background='#ffffff';" onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 4px 14px rgba(15,23,42,0.04)'; this.style.background='{% if company.sector == 'Software & AI' %}linear-gradient(150deg, #ffffff 0%, #f0f7ff 100%){% elif company.sector == 'Quant & Finance' %}linear-gradient(150deg, #ffffff 0%, #fffbeb 100%){% elif company.sector == 'Management Consulting' %}linear-gradient(150deg, #ffffff 0%, #faf5ff 100%){% elif company.sector == 'Core Engineering' %}linear-gradient(150deg, #ffffff 0%, #f0fdf4 100%){% else %}linear-gradient(150deg, #ffffff 0%, #f0f9ff 100%){% endif %}';">
         
-        <!-- Company Vibrant Logo Icon Badge -->
-        <div style="width: 48px; height: 48px; margin: 0 auto 0.65rem auto; border-radius: 12px; {% if company.sector == 'Software & AI' %}background: linear-gradient(135deg, #1e40af, #0284c7);{% elif company.sector == 'Quant & Finance' %}background: linear-gradient(135deg, #b45309, #f59e0b);{% elif company.sector == 'Management Consulting' %}background: linear-gradient(135deg, #047857, #10b981);{% else %}background: linear-gradient(135deg, #6d28d9, #a855f7);{% endif %} color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; box-shadow: 0 4px 14px rgba(0,0,0,0.3); border: 1.5px solid rgba(255,255,255,0.25);">
-          {{ company.logo_fallback }}
+        <!-- Vibrant Circular Ring Logo Container -->
+        <div style="width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.85rem auto; background: #ffffff; border: 3px solid {% if company.name == 'A2Z IT HUB' %}#06b6d4{% elif company.sector == 'Software & AI' %}#2563eb{% elif company.sector == 'Quant & Finance' %}#d97706{% elif company.sector == 'Management Consulting' %}#7c3aed{% elif company.sector == 'Core Engineering' %}#059669{% else %}#0284c7{% endif %}; box-shadow: 0 4px 16px {% if company.name == 'A2Z IT HUB' %}rgba(6,182,212,0.25){% elif company.sector == 'Software & AI' %}rgba(37,99,235,0.22){% elif company.sector == 'Quant & Finance' %}rgba(217,119,6,0.22){% elif company.sector == 'Management Consulting' %}rgba(124,58,237,0.22){% elif company.sector == 'Core Engineering' %}rgba(5,150,105,0.22){% else %}rgba(2,132,199,0.22){% endif %}; overflow: hidden; position: relative;">
+          {% if company.display_logo_url %}
+            <img src="{{ company.display_logo_url }}" alt="{{ company.name }} Logo" style="width: 100%; height: 100%; object-fit: contain; padding: {% if 'Goldman' in company.name or 'McKinsey' in company.name or 'Jane' in company.name or 'Tower' in company.name %}11px{% else %}7px{% endif %}; background: #ffffff; border-radius: 50%;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div style="display: none; width: 100%; height: 100%; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; color: #ffffff; background: {% if company.name == 'A2Z IT HUB' %}#06b6d4{% elif company.sector == 'Software & AI' %}#2563eb{% elif company.sector == 'Quant & Finance' %}#d97706{% elif company.sector == 'Management Consulting' %}#7c3aed{% elif company.sector == 'Core Engineering' %}#059669{% else %}#0284c7{% endif %}; border-radius: 50%;">
+              {{ company.logo_fallback }}
+            </div>
+          {% else %}
+            <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; color: #ffffff; background: {% if company.name == 'A2Z IT HUB' %}#06b6d4{% elif company.sector == 'Software & AI' %}#2563eb{% elif company.sector == 'Quant & Finance' %}#d97706{% elif company.sector == 'Management Consulting' %}#7c3aed{% elif company.sector == 'Core Engineering' %}#059669{% else %}#0284c7{% endif %}; border-radius: 50%;">
+              {{ company.logo_fallback }}
+            </div>
+          {% endif %}
         </div>
 
-        <div style="font-weight: 800; font-size: 0.92rem; color: #ffffff; margin-bottom: 0.35rem; letter-spacing: -0.01em;">{{ company.name }}</div>
+        <div style="font-weight: 800; font-size: 0.95rem; color: #0f172a; margin-bottom: 0.4rem;">{{ company.name }}</div>
 
-        <!-- Glowing Sector Tag Badge -->
-        <div style="display: inline-block; font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 9999px; {% if company.sector == 'Software & AI' %}background: rgba(2, 132, 199, 0.18); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.35);{% elif company.sector == 'Quant & Finance' %}background: rgba(245, 158, 11, 0.18); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.35);{% elif company.sector == 'Management Consulting' %}background: rgba(16, 185, 129, 0.18); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.35);{% else %}background: rgba(168, 85, 247, 0.18); color: #c084fc; border: 1px solid rgba(192, 132, 252, 0.35);{% endif %}">
+        <!-- Sector Tag Badge with Matching Theme Color -->
+        <div style="display: inline-block; font-size: 0.72rem; font-weight: 700; padding: 0.2rem 0.65rem; border-radius: 9999px; {% if company.sector == 'Software & AI' %}background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd;{% elif company.sector == 'Quant & Finance' %}background: #fef3c7; color: #b45309; border: 1px solid #fde68a;{% elif company.sector == 'Management Consulting' %}background: #ede9fe; color: #6d28d9; border: 1px solid #c4b5fd;{% elif company.sector == 'Core Engineering' %}background: #d1fae5; color: #047857; border: 1px solid #6ee7b7;{% else %}background: #e0f2fe; color: #0369a1; border: 1px solid #7dd3fc;{% endif %}">
           {{ company.sector }}
         </div>
       </div>
@@ -295,67 +294,84 @@
     </div>
   </section>
 
-  <!-- 4. Phase 1 Recruitment Process Roadmap (Vibrant Modern Tint) -->
-  <section class="landing-section" id="roadmap" style="background: linear-gradient(145deg, #ffffff 0%, #f8fafc 60%, #eff6ff 100%); border: 1px solid #cbd5e1; border-radius: 18px; padding: 1.85rem 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.03);">
-    <div class="section-title-wrap" style="margin-bottom: 1.35rem;">
-      <span class="section-kicker" style="background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; padding: 0.15rem 0.6rem; border-radius: 9999px;">Placement Season Roadmap</span>
-      <h2 style="font-size: 1.55rem; color: #0f172a; margin-top: 0.35rem;">Structured 5-Stage Recruitment Pipeline</h2>
-      <p style="font-size: 0.85rem; color: #64748b;">Ensuring transparent, merit-driven, and highly efficient hiring for students and corporate recruiters.</p>
+  <!-- 4. Phase 1 Recruitment Process Roadmap (Human Designed Steps) -->
+  <section class="landing-section" id="roadmap" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 2rem 1.75rem;">
+    <div class="section-title-wrap" style="margin-bottom: 1.5rem; text-align: center;">
+      <span style="background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.75rem; border-radius: 9999px;">Recruitment Roadmap</span>
+      <h2 style="font-size: 1.6rem; font-weight: 800; color: #0f172a; margin-top: 0.4rem; margin-bottom: 0.25rem;">Structured 5-Stage Hiring Process</h2>
+      <p style="font-size: 0.88rem; color: #64748b;">Transparent, merit-driven recruitment workflow for students and corporate HRs.</p>
     </div>
 
-    <div class="process-steps-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.85rem;">
+    <div class="process-steps-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); gap: 1.1rem;">
       
-      <div class="process-step-card" style="background: #ffffff; border: 1px solid #bfdbfe; border-top: 3.5px solid #2563eb; border-radius: 12px; padding: 1.1rem 1rem; position: relative; box-shadow: 0 2px 8px rgba(37,99,235,0.05);">
-        <div class="step-num" style="font-size: 1.2rem; font-weight: 800; color: #2563eb; font-family: 'Outfit', sans-serif; margin-bottom: 0.35rem;">01</div>
-        <h4 style="font-size: 0.92rem; font-weight: 800; color: #0f172a; margin-bottom: 0.3rem;">JAF Registration</h4>
-        <p style="font-size: 0.75rem; color: #64748b; line-height: 1.4; margin: 0;">Companies submit Job Announcement Forms with CTC breakdown, eligibility, and slots.</p>
+      <!-- Step 01: JAF Submission (Royal Blue Theme) -->
+      <div class="process-step-card" style="background: linear-gradient(150deg, #ffffff 0%, #f0f7ff 100%); border: 1.5px solid #bfdbfe; border-top: 3.5px solid #2563eb; border-radius: 14px; padding: 1.25rem 1rem; text-align: left; transition: all 0.25s ease; box-shadow: 0 4px 14px rgba(37,99,235,0.06);" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(37,99,235,0.14)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 14px rgba(37,99,235,0.06)';">
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; background: #2563eb; color: #ffffff; font-size: 0.85rem; font-weight: 800; margin-bottom: 0.75rem; box-shadow: 0 3px 10px rgba(37,99,235,0.3);">01</div>
+        <h4 style="font-size: 0.95rem; font-weight: 800; color: #0f172a; margin-bottom: 0.35rem;">JAF Submission</h4>
+        <p style="font-size: 0.78rem; color: #475569; line-height: 1.5; margin: 0;">Companies submit Job Announcement Forms with CTC breakdown, cutoffs, and schedules.</p>
       </div>
 
-      <div class="process-step-card" style="background: #ffffff; border: 1px solid #a7f3d0; border-top: 3.5px solid #059669; border-radius: 12px; padding: 1.1rem 1rem; position: relative; box-shadow: 0 2px 8px rgba(5,150,105,0.05);">
-        <div class="step-num" style="font-size: 1.2rem; font-weight: 800; color: #059669; font-family: 'Outfit', sans-serif; margin-bottom: 0.35rem;">02</div>
-        <h4 style="font-size: 0.92rem; font-weight: 800; color: #0f172a; margin-bottom: 0.3rem;">Resume Audit</h4>
-        <p style="font-size: 0.75rem; color: #64748b; line-height: 1.4; margin: 0;">Students upload master resumes which are verified and cryptographically locked by DPC.</p>
+      <!-- Step 02: Resume Audit (Violet Purple Theme) -->
+      <div class="process-step-card" style="background: linear-gradient(150deg, #ffffff 0%, #faf5ff 100%); border: 1.5px solid #c4b5fd; border-top: 3.5px solid #7c3aed; border-radius: 14px; padding: 1.25rem 1rem; text-align: left; transition: all 0.25s ease; box-shadow: 0 4px 14px rgba(124,58,237,0.06);" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(124,58,237,0.14)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 14px rgba(124,58,237,0.06)';">
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; background: #7c3aed; color: #ffffff; font-size: 0.85rem; font-weight: 800; margin-bottom: 0.75rem; box-shadow: 0 3px 10px rgba(124,58,237,0.3);">02</div>
+        <h4 style="font-size: 0.95rem; font-weight: 800; color: #4c1d95; margin-bottom: 0.35rem;">Resume Audit</h4>
+        <p style="font-size: 0.78rem; color: #475569; line-height: 1.5; margin: 0;">Candidates upload master resumes which are verified and certified by Placement Head.</p>
       </div>
 
-      <div class="process-step-card" style="background: #ffffff; border: 1px solid #ddd6fe; border-top: 3.5px solid #7c3aed; border-radius: 12px; padding: 1.1rem 1rem; position: relative; box-shadow: 0 2px 8px rgba(124,58,237,0.05);">
-        <div class="step-num" style="font-size: 1.2rem; font-weight: 800; color: #7c3aed; font-family: 'Outfit', sans-serif; margin-bottom: 0.35rem;">03</div>
-        <h4 style="font-size: 0.92rem; font-weight: 800; color: #0f172a; margin-bottom: 0.3rem;">Online Tests</h4>
-        <p style="font-size: 0.75rem; color: #64748b; line-height: 1.4; margin: 0;">Coding assessments, technical evaluations, and domain rounds conducted online.</p>
+      <!-- Step 03: Online Tests (Sky Cyan Theme) -->
+      <div class="process-step-card" style="background: linear-gradient(150deg, #ffffff 0%, #f0f9ff 100%); border: 1.5px solid #7dd3fc; border-top: 3.5px solid #0284c7; border-radius: 14px; padding: 1.25rem 1rem; text-align: left; transition: all 0.25s ease; box-shadow: 0 4px 14px rgba(2,132,199,0.06);" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(2,132,199,0.14)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 14px rgba(2,132,199,0.06)';">
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; background: #0284c7; color: #ffffff; font-size: 0.85rem; font-weight: 800; margin-bottom: 0.75rem; box-shadow: 0 3px 10px rgba(2,132,199,0.3);">03</div>
+        <h4 style="font-size: 0.95rem; font-weight: 800; color: #0369a1; margin-bottom: 0.35rem;">Online Tests</h4>
+        <p style="font-size: 0.78rem; color: #475569; line-height: 1.5; margin: 0;">Coding assessments, technical evaluations, and domain rounds conducted online.</p>
       </div>
 
-      <div class="process-step-card" style="background: #ffffff; border: 1px solid #fde68a; border-top: 3.5px solid #d97706; border-radius: 12px; padding: 1.1rem 1rem; position: relative; box-shadow: 0 2px 8px rgba(217,119,6,0.05);">
-        <div class="step-num" style="font-size: 1.2rem; font-weight: 800; color: #d97706; font-family: 'Outfit', sans-serif; margin-bottom: 0.35rem;">04</div>
-        <h4 style="font-size: 0.92rem; font-weight: 800; color: #0f172a; margin-bottom: 0.3rem;">Day 1 Superday</h4>
-        <p style="font-size: 0.75rem; color: #64748b; line-height: 1.4; margin: 0;">Intensive technical & HR interviews allocated conflict-free across Day 1 Slot 1 & Slot 2.</p>
+      <!-- Step 04: Day 1 Interviews (Warm Amber Gold Theme) -->
+      <div class="process-step-card" style="background: linear-gradient(150deg, #ffffff 0%, #fffbeb 100%); border: 1.5px solid #fde68a; border-top: 3.5px solid #d97706; border-radius: 14px; padding: 1.25rem 1rem; text-align: left; transition: all 0.25s ease; box-shadow: 0 4px 14px rgba(217,119,6,0.06);" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(217,119,6,0.14)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 14px rgba(217,119,6,0.06)';">
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; background: #d97706; color: #ffffff; font-size: 0.85rem; font-weight: 800; margin-bottom: 0.75rem; box-shadow: 0 3px 10px rgba(217,119,6,0.3);">04</div>
+        <h4 style="font-size: 0.95rem; font-weight: 800; color: #78350f; margin-bottom: 0.35rem;">Day 1 Interviews</h4>
+        <p style="font-size: 0.78rem; color: #475569; line-height: 1.5; margin: 0;">Technical & HR interviews allocated conflict-free across Slot 1 & Slot 2.</p>
       </div>
 
-      <div class="process-step-card" style="background: #ffffff; border: 1px solid #bae6fd; border-top: 3.5px solid #0284c7; border-radius: 12px; padding: 1.1rem 1rem; position: relative; box-shadow: 0 2px 8px rgba(2,132,199,0.05);">
-        <div class="step-num" style="font-size: 1.2rem; font-weight: 800; color: #0284c7; font-family: 'Outfit', sans-serif; margin-bottom: 0.35rem;">05</div>
-        <h4 style="font-size: 0.92rem; font-weight: 800; color: #0f172a; margin-bottom: 0.3rem;">Offer Rollout</h4>
-        <p style="font-size: 0.75rem; color: #64748b; line-height: 1.4; margin: 0;">Direct campus placement offer letters with 1-student-1-job compliance sign-off.</p>
+      <!-- Step 05: Offer Rollout (Fresh Emerald Mint Theme) -->
+      <div class="process-step-card" style="background: linear-gradient(150deg, #ffffff 0%, #f0fdf4 100%); border: 1.5px solid #a7f3d0; border-top: 3.5px solid #059669; border-radius: 14px; padding: 1.25rem 1rem; text-align: left; transition: all 0.25s ease; box-shadow: 0 4px 14px rgba(5,150,105,0.06);" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(5,150,105,0.14)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 14px rgba(5,150,105,0.06)';">
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; background: #059669; color: #ffffff; font-size: 0.85rem; font-weight: 800; margin-bottom: 0.75rem; box-shadow: 0 3px 10px rgba(5,150,105,0.3);">05</div>
+        <h4 style="font-size: 0.95rem; font-weight: 800; color: #065f46; margin-bottom: 0.35rem;">Offer Rollout</h4>
+        <p style="font-size: 0.78rem; color: #475569; line-height: 1.5; margin: 0;">Direct campus placement offer letters with 1-student-1-job compliance sign-off.</p>
       </div>
 
     </div>
   </section>
 
   <!-- 5. Placement Cell Leadership -->
-  <section class="landing-section" id="leadership" style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(248, 250, 252, 0.75) 100%); backdrop-filter: blur(16px); border-radius: 18px; padding: 1.85rem 1.5rem; border: 1.5px solid rgba(255, 255, 255, 0.9); box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);">
-    <div class="section-title-wrap" style="margin-bottom: 1.35rem;">
-      <span class="section-kicker" style="background: #f0fdf4; color: #059669; border: 1px solid #a7f3d0; padding: 0.15rem 0.6rem; border-radius: 9999px;">Leadership & Support</span>
-      <h2 style="font-size: 1.55rem; color: #0f172a; margin-top: 0.35rem;">Placement Cell Coordination Team</h2>
-      <p style="font-size: 0.85rem; color: #64748b;">Dedicated faculty and student placement coordinators assisting recruiters and candidates 24/7.</p>
+  <section class="landing-section" id="leadership" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 2rem 1.75rem; box-shadow: 0 4px 20px rgba(15,23,42,0.03);">
+    <div class="section-title-wrap" style="margin-bottom: 1.5rem; text-align: center;">
+      <span style="background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; font-size: 0.75rem; font-weight: 700; padding: 0.2rem 0.75rem; border-radius: 9999px;">Leadership & Coordination</span>
+      <h2 style="font-size: 1.6rem; font-weight: 800; color: #0f172a; margin-top: 0.4rem; margin-bottom: 0.25rem;">Placement Coordination Team</h2>
+      <p style="font-size: 0.88rem; color: #64748b;">Faculty and student coordinators assisting recruiters and candidates throughout the season.</p>
     </div>
 
-    <!-- Dynamic Frosted Glass Leadership Cards -->
+    <!-- Dynamic Leadership Cards -->
     <div class="team-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
       {% for leader in leadership_team %}
-      <div class="team-card team-card-{{ leader.theme_color|default:'blue' }}" style="background: {% if leader.theme_color == 'green' %}linear-gradient(145deg, rgba(236, 253, 245, 0.75) 0%, rgba(255, 255, 255, 0.9) 100%){% elif leader.theme_color == 'purple' %}linear-gradient(145deg, rgba(245, 243, 255, 0.75) 0%, rgba(255, 255, 255, 0.9) 100%){% elif leader.theme_color == 'gold' %}linear-gradient(145deg, rgba(254, 243, 199, 0.65) 0%, rgba(255, 255, 255, 0.9) 100%){% else %}linear-gradient(145deg, rgba(239, 246, 255, 0.75) 0%, rgba(255, 255, 255, 0.9) 100%){% endif %}; backdrop-filter: blur(12px); border: 1.5px solid {% if leader.theme_color == 'green' %}rgba(167, 243, 208, 0.8){% elif leader.theme_color == 'purple' %}rgba(221, 214, 254, 0.8){% elif leader.theme_color == 'gold' %}rgba(253, 230, 138, 0.8){% else %}rgba(191, 219, 254, 0.8){% endif %}; border-radius: 14px; padding: 1.25rem 0.95rem; text-align: center; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer; box-shadow: 0 6px 16px {% if leader.theme_color == 'green' %}rgba(5, 150, 105, 0.07){% elif leader.theme_color == 'purple' %}rgba(124, 58, 237, 0.07){% elif leader.theme_color == 'gold' %}rgba(217, 119, 6, 0.07){% else %}rgba(37, 99, 235, 0.07){% endif %}, inset 0 1px 2px rgba(255, 255, 255, 0.95);"
-      onmouseover="this.style.transform='translateY(-6px) scale(1.03)'; this.style.background='{% if leader.theme_color == 'green' %}linear-gradient(145deg, rgba(209, 250, 229, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%){% elif leader.theme_color == 'purple' %}linear-gradient(145deg, rgba(237, 233, 254, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%){% elif leader.theme_color == 'gold' %}linear-gradient(145deg, rgba(253, 230, 138, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%){% else %}linear-gradient(145deg, rgba(219, 234, 254, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%){% endif %}'; this.style.borderColor='{% if leader.theme_color == 'green' %}#10b981{% elif leader.theme_color == 'purple' %}#8b5cf6{% elif leader.theme_color == 'gold' %}#f59e0b{% else %}#3b82f6{% endif %}'; this.style.boxShadow='0 16px 36px {% if leader.theme_color == 'green' %}rgba(5, 150, 105, 0.22){% elif leader.theme_color == 'purple' %}rgba(124, 58, 237, 0.22){% elif leader.theme_color == 'gold' %}rgba(217, 119, 6, 0.22){% else %}rgba(37, 99, 235, 0.22){% endif %}';"
-      onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.background='{% if leader.theme_color == 'green' %}linear-gradient(145deg, rgba(236, 253, 245, 0.75) 0%, rgba(255, 255, 255, 0.9) 100%){% elif leader.theme_color == 'purple' %}linear-gradient(145deg, rgba(245, 243, 255, 0.75) 0%, rgba(255, 255, 255, 0.9) 100%){% elif leader.theme_color == 'gold' %}linear-gradient(145deg, rgba(254, 243, 199, 0.65) 0%, rgba(255, 255, 255, 0.9) 100%){% else %}linear-gradient(145deg, rgba(239, 246, 255, 0.75) 0%, rgba(255, 255, 255, 0.9) 100%){% endif %}'; this.style.borderColor='{% if leader.theme_color == 'green' %}rgba(167, 243, 208, 0.8){% elif leader.theme_color == 'purple' %}rgba(221, 214, 254, 0.8){% elif leader.theme_color == 'gold' %}rgba(253, 230, 138, 0.8){% else %}rgba(191, 219, 254, 0.8){% endif %}'; this.style.boxShadow='0 6px 16px {% if leader.theme_color == 'green' %}rgba(5, 150, 105, 0.07){% elif leader.theme_color == 'purple' %}rgba(124, 58, 237, 0.07){% elif leader.theme_color == 'gold' %}rgba(217, 119, 6, 0.07){% else %}rgba(37, 99, 235, 0.07){% endif %}';">
-        <div class="team-avatar" style="width: 48px; height: 48px; margin: 0 auto 0.6rem auto; border-radius: 50%; background: {% if leader.theme_color == 'green' %}linear-gradient(135deg, #059669, #10b981){% elif leader.theme_color == 'purple' %}linear-gradient(135deg, #7c3aed, #a855f7){% elif leader.theme_color == 'gold' %}linear-gradient(135deg, #d97706, #f59e0b){% else %}linear-gradient(135deg, #1e40af, #2563eb){% endif %}; color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; font-size: 1rem; box-shadow: 0 4px 12px {% if leader.theme_color == 'green' %}rgba(5,150,105,0.3){% elif leader.theme_color == 'purple' %}rgba(124,58,237,0.3){% elif leader.theme_color == 'gold' %}rgba(217,119,6,0.3){% else %}rgba(30,64,175,0.3){% endif %}; border: 2.5px solid #ffffff;">{{ leader.initials }}</div>
-        <div class="team-name" style="font-weight: 800; font-size: 0.92rem; color: #0f172a;">{{ leader.name }}</div>
-        <div class="team-role" style="font-size: 0.72rem; color: {% if leader.theme_color == 'green' %}#047857{% elif leader.theme_color == 'purple' %}#6d28d9{% elif leader.theme_color == 'gold' %}#b45309{% else %}#1d4ed8{% endif %}; font-weight: 700; margin-top: 0.2rem;">{{ leader.role_title }}</div>
-        <div class="team-contact" style="font-size: 0.72rem; color: #475569; font-weight: 600; margin-top: 0.4rem; background: #ffffff; padding: 0.25rem 0.5rem; border-radius: 6px; border: 1px solid {% if leader.theme_color == 'green' %}#d1fae5{% elif leader.theme_color == 'purple' %}#ede9fe{% elif leader.theme_color == 'gold' %}#fef3c7{% else %}#dbeafe{% endif %}; display: inline-block;">{{ leader.contact_info }}</div>
+      <div class="team-card" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 1.35rem 1rem; text-align: center; transition: all 0.25s ease; box-shadow: 0 2px 10px rgba(15,23,42,0.03);" onmouseover="this.style.transform='translateY(-4px)'; this.style.borderColor='#3b82f6'; this.style.boxShadow='0 12px 24px rgba(37,99,235,0.12)';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='#e2e8f0'; this.style.boxShadow='0 2px 10px rgba(15,23,42,0.03)';">
+        
+        <!-- Team Leader Photo Avatar -->
+        <div class="team-avatar-wrap" style="width: 64px; height: 64px; margin: 0 auto 0.75rem auto; position: relative;">
+          {% if leader.image_url %}
+            <img src="{{ leader.image_url }}" alt="{{ leader.name }}" style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover; object-position: center; border: 2.5px solid #2563eb; box-shadow: 0 4px 14px rgba(37,99,235,0.2);" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div style="display: none; width: 64px; height: 64px; border-radius: 50%; background: #0f172a; color: #ffffff; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; border: 2.5px solid #2563eb;">
+              {{ leader.initials }}
+            </div>
+          {% else %}
+            <div style="width: 64px; height: 64px; border-radius: 50%; background: #0f172a; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; border: 2.5px solid #2563eb;">
+              {{ leader.initials }}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="team-name" style="font-weight: 800; font-size: 0.95rem; color: #0f172a;">{{ leader.name }}</div>
+        <div class="team-role" style="font-size: 0.76rem; color: #2563eb; font-weight: 700; margin-top: 0.2rem;">{{ leader.role_title }}</div>
+        <div class="team-contact" style="font-size: 0.72rem; color: #475569; font-weight: 600; margin-top: 0.5rem; background: #f8fafc; padding: 0.25rem 0.6rem; border-radius: 9999px; border: 1px solid #cbd5e1; display: inline-block;">{{ leader.contact_info }}</div>
       </div>
       {% empty %}
       <div style="grid-column: 1 / -1; text-align: center; color: #64748b; font-size: 0.85rem;">No leadership members defined yet.</div>
@@ -364,15 +380,15 @@
   </section>
 
   <!-- 6. Bottom Call to Action Banner -->
-  <section class="landing-cta-banner" style="background: linear-gradient(135deg, #090d16 0%, #0f172a 45%, #1e3a8a 100%); border-radius: 16px; padding: 2rem 1.5rem; text-align: center; color: #ffffff; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 1px solid rgba(59, 130, 246, 0.3);">
-    <h2 style="font-size: 1.65rem; color: #ffffff; margin-bottom: 0.4rem;">Ready to Participate in Phase 1 Placement Season?</h2>
-    <p style="font-size: 0.88rem; color: #94a3b8; max-width: 600px; margin: 0 auto 1.25rem auto; line-height: 1.5;">Join over 350+ leading corporate employers and 1,400+ top engineering and computing candidates today.</p>
+  <section class="landing-cta-banner" style="background: #0f172a; border-radius: 16px; padding: 2.25rem 1.5rem; text-align: center; color: #ffffff; box-shadow: 0 10px 30px rgba(15,23,42,0.12);">
+    <h2 style="font-size: 1.65rem; font-weight: 800; color: #ffffff; margin-bottom: 0.4rem;">Participate in Phase 1 Placement Season</h2>
+    <p style="font-size: 0.88rem; color: #94a3b8; max-width: 600px; margin: 0 auto 1.35rem auto; line-height: 1.55;">Join 350+ leading corporate employers and graduating engineering candidates today.</p>
     <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
-      <a href="{% url 'students:register' %}" class="btn btn-primary btn-sm" style="background: #ffffff; color: #1e40af; font-weight: 800; box-shadow: 0 4px 14px rgba(0,0,0,0.15); padding: 0.6rem 1.4rem; border-radius: 8px;">
-        <span>🎓</span> Register New Student Account
+      <a href="{% url 'students:register' %}" class="btn btn-primary btn-sm" style="background: #2563eb; color: #ffffff; font-weight: 700; padding: 0.65rem 1.4rem; border-radius: 8px; text-decoration: none;">
+        Register Student Account
       </a>
-      <a href="{% url 'students:login' %}" class="btn btn-sm" style="background: rgba(255,255,255,0.12); color: #ffffff; border: 1px solid rgba(255,255,255,0.3); font-weight: 700; padding: 0.6rem 1.2rem; border-radius: 8px;">
-        <span>🔐</span> Log In to Portal
+      <a href="{% url 'students:login' %}" class="btn btn-sm" style="background: rgba(255,255,255,0.1); color: #ffffff; border: 1px solid rgba(255,255,255,0.25); font-weight: 700; padding: 0.65rem 1.3rem; border-radius: 8px; text-decoration: none;">
+        Log In to Portal
       </a>
     </div>
   </section>

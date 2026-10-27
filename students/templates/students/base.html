@@ -14,7 +14,7 @@
 
   {% if active_tab == 'home' %}
     <!-- 1. PUBLIC LANDING NAVBAR (WITH DYNAMIC RETURN TO PORTAL BUTTON FOR LOGGED IN USERS) -->
-    <header class="navbar navbar-public-landing">
+    <header class="navbar navbar-public-landing" style="background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 2px solid #bfdbfe; box-shadow: 0 4px 18px rgba(37, 99, 235, 0.06);">
       <div class="nav-container">
         
         <!-- Brand Logo -->
@@ -26,30 +26,24 @@
           </div>
         </a>
 
-        <!-- Public Navigation Tabs -->
-        <nav class="nav-tabs public-nav-tabs" aria-label="Public Navigation">
-          <a href="/" class="nav-tab-link {% if request.path == '/' or active_tab == 'home' %}active{% endif %}">
-            <span>🏠</span>
+        <!-- Public Navigation Tabs (Touch-Scrollable Responsive Pill Capsule Bar) -->
+        <nav class="nav-tabs public-nav-tabs" aria-label="Public Navigation" style="display: inline-flex; align-items: center; gap: 0.35rem; background: #eef2ff; border: 1.5px solid #c7d2fe; border-radius: 9999px; padding: 0.35rem 0.5rem; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.06); max-width: 100%; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none;">
+          <a href="/" class="nav-tab-link {% if request.path == '/' or active_tab == 'home' %}active{% endif %}" style="text-decoration: none; font-size: 0.84rem; font-weight: 800; color: #334155; padding: 0.45rem 1.15rem; border-radius: 9999px; border: 1.5px solid transparent; transition: all 0.25s ease;" onmouseover="this.style.background='#ffffff'; this.style.color='#1d4ed8'; this.style.borderColor='#2563eb'; this.style.boxShadow='0 4px 12px rgba(37,99,235,0.18)';" onmouseout="this.style.background='transparent'; this.style.color='#334155'; this.style.borderColor='transparent'; this.style.boxShadow='none';">
             <span>Home</span>
           </a>
-          <a href="/#about" class="nav-tab-link">
-            <span>🏛️</span>
+          <a href="/#about" class="nav-tab-link" style="text-decoration: none; font-size: 0.84rem; font-weight: 800; color: #334155; padding: 0.45rem 1.15rem; border-radius: 9999px; border: 1.5px solid transparent; transition: all 0.25s ease;" onmouseover="this.style.background='#ffffff'; this.style.color='#1d4ed8'; this.style.borderColor='#2563eb'; this.style.boxShadow='0 4px 12px rgba(37,99,235,0.18)';" onmouseout="this.style.background='transparent'; this.style.color='#334155'; this.style.borderColor='transparent'; this.style.boxShadow='none';">
             <span>About</span>
           </a>
-          <a href="/#portals" class="nav-tab-link">
-            <span>👥</span>
+          <a href="/#portals" class="nav-tab-link" style="text-decoration: none; font-size: 0.84rem; font-weight: 800; color: #334155; padding: 0.45rem 1.15rem; border-radius: 9999px; border: 1.5px solid transparent; transition: all 0.25s ease;" onmouseover="this.style.background='#ffffff'; this.style.color='#1d4ed8'; this.style.borderColor='#2563eb'; this.style.boxShadow='0 4px 12px rgba(37,99,235,0.18)';" onmouseout="this.style.background='transparent'; this.style.color='#334155'; this.style.borderColor='transparent'; this.style.boxShadow='none';">
             <span>Portals & Roles</span>
           </a>
-          <a href="/#partners" class="nav-tab-link">
-            <span>🏢</span>
+          <a href="/#partners" class="nav-tab-link" style="text-decoration: none; font-size: 0.84rem; font-weight: 800; color: #334155; padding: 0.45rem 1.15rem; border-radius: 9999px; border: 1.5px solid transparent; transition: all 0.25s ease;" onmouseover="this.style.background='#ffffff'; this.style.color='#1d4ed8'; this.style.borderColor='#2563eb'; this.style.boxShadow='0 4px 12px rgba(37,99,235,0.18)';" onmouseout="this.style.background='transparent'; this.style.color='#334155'; this.style.borderColor='transparent'; this.style.boxShadow='none';">
             <span>Hiring Partners</span>
           </a>
-          <a href="/#roadmap" class="nav-tab-link">
-            <span>📈</span>
+          <a href="/#roadmap" class="nav-tab-link" style="text-decoration: none; font-size: 0.84rem; font-weight: 800; color: #334155; padding: 0.45rem 1.15rem; border-radius: 9999px; border: 1.5px solid transparent; transition: all 0.25s ease;" onmouseover="this.style.background='#ffffff'; this.style.color='#1d4ed8'; this.style.borderColor='#2563eb'; this.style.boxShadow='0 4px 12px rgba(37,99,235,0.18)';" onmouseout="this.style.background='transparent'; this.style.color='#334155'; this.style.borderColor='transparent'; this.style.boxShadow='none';">
             <span>Roadmap</span>
           </a>
-          <a href="/#leadership" class="nav-tab-link">
-            <span>📞</span>
+          <a href="/#leadership" class="nav-tab-link" style="text-decoration: none; font-size: 0.84rem; font-weight: 800; color: #334155; padding: 0.45rem 1.15rem; border-radius: 9999px; border: 1.5px solid transparent; transition: all 0.25s ease;" onmouseover="this.style.background='#ffffff'; this.style.color='#1d4ed8'; this.style.borderColor='#2563eb'; this.style.boxShadow='0 4px 12px rgba(37,99,235,0.18)';" onmouseout="this.style.background='transparent'; this.style.color='#334155'; this.style.borderColor='transparent'; this.style.boxShadow='none';">
             <span>Leadership</span>
           </a>
         </nav>
@@ -84,12 +78,64 @@
             </a>
 
           {% else %}
-            <a href="{% url 'students:login' %}" class="btn btn-secondary btn-sm nav-btn-login {% if '/login' in request.path %}active-nav-btn{% endif %}" title="A2Z SSO Login Gateway">
-              <span>🔐</span> Login
-            </a>
-            <a href="{% url 'students:register' %}" class="btn btn-primary btn-sm nav-btn-register {% if '/register' in request.path %}active-nav-btn{% endif %}" title="Register New Student Account">
-              <span>🎓</span> Register
-            </a>
+            <!-- Login Dropdown Gateway -->
+            <div class="nav-dropdown-wrap" style="position: relative; display: inline-block;" onmouseleave="document.getElementById('login-dropdown-menu').style.display='none';">
+              <button class="btn btn-secondary btn-sm" style="background: #ffffff; color: #1e293b; border: 1px solid #cbd5e1; font-weight: 700; padding: 0.5rem 1rem; border-radius: 8px; display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer;" onclick="var m=document.getElementById('login-dropdown-menu'); m.style.display=m.style.display==='block'?'none':'block';" onmouseover="document.getElementById('login-dropdown-menu').style.display='block'; document.getElementById('register-dropdown-menu').style.display='none';">
+                <span>🔐</span>
+                <span>Login ▾</span>
+              </button>
+              
+              <div id="login-dropdown-menu" style="display: none; position: absolute; left: 0; top: 105%; background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 12px; min-width: 250px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15); z-index: 1000; padding: 0.5rem;">
+                <div style="font-size: 0.72rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.4rem 0.65rem 0.2rem;">Select Role to Login</div>
+                <a href="{% url 'students:login' %}?role=student" style="display: flex; align-items: center; gap: 0.65rem; padding: 0.55rem 0.75rem; border-radius: 8px; text-decoration: none; color: #0f172a; font-weight: 700; font-size: 0.84rem; transition: background 0.15s ease;" onmouseover="this.style.background='#f0f7ff'; this.style.color='#2563eb';" onmouseout="this.style.background='transparent'; this.style.color='#0f172a';">
+                  <span style="font-size: 1.1rem;">🎓</span>
+                  <div>
+                    <div>Student Login</div>
+                    <div style="font-size: 0.71rem; color: #64748b; font-weight: 500;">Candidate portal & JAF application</div>
+                  </div>
+                </a>
+                <a href="{% url 'students:login' %}?role=admin&next=/tpo/dashboard/" style="display: flex; align-items: center; gap: 0.65rem; padding: 0.55rem 0.75rem; border-radius: 8px; text-decoration: none; color: #0f172a; font-weight: 700; font-size: 0.84rem; transition: background 0.15s ease;" onmouseover="this.style.background='#f0fdf4'; this.style.color='#059669';" onmouseout="this.style.background='transparent'; this.style.color='#0f172a';">
+                  <span style="font-size: 1.1rem;">🛡️</span>
+                  <div>
+                    <div>TPO Officer Login</div>
+                    <div style="font-size: 0.71rem; color: #64748b; font-weight: 500;">Placement office control room</div>
+                  </div>
+                </a>
+                <a href="{% url 'students:login' %}?role=recruiter&next=/recruiter/dashboard/" style="display: flex; align-items: center; gap: 0.65rem; padding: 0.55rem 0.75rem; border-radius: 8px; text-decoration: none; color: #0f172a; font-weight: 700; font-size: 0.84rem; transition: background 0.15s ease;" onmouseover="this.style.background='#f0f9ff'; this.style.color='#0284c7';" onmouseout="this.style.background='transparent'; this.style.color='#0f172a';">
+                  <span style="font-size: 1.1rem;">🏢</span>
+                  <div>
+                    <div>Recruiter Login</div>
+                    <div style="font-size: 0.71rem; color: #64748b; font-weight: 500;">Corporate HR & JAF management</div>
+                  </div>
+                </a>
+              </div>
+            </div>
+
+            <!-- Register Dropdown Gateway -->
+            <div class="nav-dropdown-wrap" style="position: relative; display: inline-block;" onmouseleave="document.getElementById('register-dropdown-menu').style.display='none';">
+              <button class="btn btn-primary btn-sm" style="background: #2563eb; color: #ffffff; font-weight: 700; border: none; padding: 0.5rem 1.1rem; border-radius: 8px; display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer; box-shadow: 0 4px 14px rgba(37,99,235,0.25);" onclick="var m=document.getElementById('register-dropdown-menu'); m.style.display=m.style.display==='block'?'none':'block';" onmouseover="document.getElementById('register-dropdown-menu').style.display='block'; document.getElementById('login-dropdown-menu').style.display='none';">
+                <span>🎓</span>
+                <span>Register ▾</span>
+              </button>
+              
+              <div id="register-dropdown-menu" style="display: none; position: absolute; right: 0; top: 105%; background: #ffffff; border: 1.5px solid #bfdbfe; border-radius: 12px; min-width: 260px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15); z-index: 1000; padding: 0.5rem;">
+                <div style="font-size: 0.72rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.4rem 0.65rem 0.2rem;">Select Registration Type</div>
+                <a href="{% url 'students:register' %}" style="display: flex; align-items: center; gap: 0.65rem; padding: 0.6rem 0.75rem; border-radius: 8px; text-decoration: none; color: #0f172a; font-weight: 700; font-size: 0.84rem; transition: background 0.15s ease;" onmouseover="this.style.background='#f0f7ff'; this.style.color='#2563eb';" onmouseout="this.style.background='transparent'; this.style.color='#0f172a';">
+                  <span style="font-size: 1.15rem;">🎓</span>
+                  <div>
+                    <div>Student Registration</div>
+                    <div style="font-size: 0.72rem; color: #64748b; font-weight: 500;">For graduating engineering candidates</div>
+                  </div>
+                </a>
+                <a href="{% url 'recruiters:register' %}" style="display: flex; align-items: center; gap: 0.65rem; padding: 0.6rem 0.75rem; border-radius: 8px; text-decoration: none; color: #0f172a; font-weight: 700; font-size: 0.84rem; transition: background 0.15s ease;" onmouseover="this.style.background='#f0f9ff'; this.style.color='#0284c7';" onmouseout="this.style.background='transparent'; this.style.color='#0f172a';">
+                  <span style="font-size: 1.15rem;">🏢</span>
+                  <div>
+                    <div>Recruiter Registration</div>
+                    <div style="font-size: 0.72rem; color: #64748b; font-weight: 500;">For corporate HRs & company recruiters</div>
+                  </div>
+                </a>
+              </div>
+            </div>
           {% endif %}
         </div>
 

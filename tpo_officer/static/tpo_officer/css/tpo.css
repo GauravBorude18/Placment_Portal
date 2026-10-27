@@ -8,3 +8,46 @@
   color: #059669;
   border: 1px solid rgba(16, 185, 129, 0.3);
 }
+
+/* ==========================================================================
+   TPO CONTROL ROOM RESPONSIVE ADAPTATIONS (@media QUERIES)
+   ========================================================================== */
+@media (max-width: 992px) {
+  .tpo-layout, .tpo-app-layout {
+    flex-direction: column !important;
+  }
+
+  .tpo-sidebar {
+    position: relative !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    height: auto !important;
+    border-right: none !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    padding: 1rem !important;
+  }
+
+  .tpo-main-content {
+    margin-left: 0 !important;
+    width: 100% !important;
+    padding: 1rem !important;
+  }
+
+  .tpo-topbar, .tpo-header {
+    height: auto !important;
+    padding: 0.85rem 1rem !important;
+    flex-wrap: wrap !important;
+    gap: 0.75rem !important;
+  }
+
+  .tpo-metrics-grid, .slot-matrix-grid, .tpo-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.85rem !important;
+  }
+
+  .tpo-table-wrap, .verification-table-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    width: 100% !important;
+  }
+}

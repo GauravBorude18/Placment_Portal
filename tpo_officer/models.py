@@ -84,6 +84,7 @@ class LeadershipMember(models.Model):
     name = models.CharField(max_length=200)
     role_title = models.CharField(max_length=200)
     contact_info = models.CharField(max_length=200, help_text="Email or Phone Number (e.g. ✉️ dpc.incharge@a2z.edu.in)")
+    image_url = models.URLField(max_length=500, blank=True, help_text="Official photo URL for teacher or coordinator")
     theme_color = models.CharField(max_length=20, choices=THEME_CHOICES, default='blue')
     order = models.IntegerField(default=1)
     is_active = models.BooleanField(default=True)
